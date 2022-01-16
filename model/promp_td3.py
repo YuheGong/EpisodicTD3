@@ -162,7 +162,7 @@ class ProMPTD3(BaseAlgorithm):
 
         self.critic = self.policy.critic
         self.critic_target = self.policy.critic_target
-        self.lr = 0.00001
+        self.lr = 0.0001
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.lr)#self.learning_rate)
 
         self.weights_noise = False

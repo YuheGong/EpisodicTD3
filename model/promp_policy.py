@@ -77,7 +77,7 @@ class DetPMPWrapper(ABC):
             trajectory = self.trajectory_with_noise[timesteps] #+ action_noise()
             velocity = self.velocity_with_noise[timesteps]
         else:
-            n_actions =(5,5)  # env.action_space.shape[-1]
+            n_actions =(5,)  # env.action_space.shape[-1]
             #action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * abs(self.trajectory[timesteps].cpu().detach().numpy()))
             sigma = np.maximum(self.mp.weights.cpu().detach().numpy(), -self.mp.weights.cpu().detach().numpy())
             noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
@@ -156,14 +156,14 @@ class DetPMPWrapper(ABC):
         #velocity = self.velocity.cpu().detach().numpy()
 
         # if timesteps == 0:
-        n_actions = (200,5 )
+        n_actions = (5,5)
         noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
-                                       sigma=0.3 * np.ones(n_actions))
+                                       sigma=0.1 * np.ones(n_actions))
         noise = noise_dist()
-        # _, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
+        _, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
 
-        self.trajectory_noise = self.trajectory + noise
-        self.velocity_noise = self.velocity#+ noise_vel
+        self.trajectory_noise = self.trajectory +noise_traj
+        self.velocity_noise = self.velocity+ noise_vel
         trajectory = self.trajectory_noise
         velocity = self.velocity_noise
         env.reset()

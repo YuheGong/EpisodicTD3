@@ -40,7 +40,7 @@ env.reset()
 model = ALGO(policy, env, policy_kwargs=policy_kwargs, verbose=1, create_eval_env=True,
                  tensorboard_log=data['path'], action_noise=action_noise,
                  learning_rate=data["algo_params"]['learning_rate'],
-                 batch_size=data["algo_params"]['batch_size'], train_freq=200, gradient_steps=5000,
+                 batch_size=data["algo_params"]['batch_size'], train_freq=200, gradient_steps=200,
                  policy_delay=2, data_path=data["path"], gamma=0.99)#, tau=0.9)
 
 # csv file path

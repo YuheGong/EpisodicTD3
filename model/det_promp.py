@@ -29,9 +29,14 @@ class DeterministicProMP:
         t = np.linspace(0, 1, N)
         self.pos_features_np , self.vel_features_np , self.acc_features_np = self._exponential_kernel(t)
 
-        self.pos_features_np = self.pos_features_np[:, self.n_zero_bases:]
-        self.vel_features_np = self.vel_features_np[:, self.n_zero_bases:]
-        self.acc_features_np = self.acc_features_np[:, self.n_zero_bases:]
+        #self.pos_features_np = self.pos_features_np[:, self.n_zero_bases:]
+        #self.vel_features_np = self.vel_features_np[:, self.n_zero_bases:]
+        #self.acc_features_np = self.acc_features_np[:, self.n_zero_bases:]
+        self.pos_features_np = self.pos_features_np[:, 0:-2]
+        print("sjape", self.pos_features_np.shape)
+        self.vel_features_np = self.vel_features_np[:, 0:-2]
+        self.acc_features_np = self.acc_features_np[:, 0:-2]
+
         self.t_np = t
 
         self.pos_features = th.Tensor(self.pos_features_np).to(device="cuda")
