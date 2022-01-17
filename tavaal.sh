@@ -11,7 +11,7 @@
 # Cluster Settings
 #SBATCH -n 1         # Number of tasks
 #SBATCH -c 8  # Number of cores per task
-#SBATCH -t 40:0:00             # 1:00:00 Hours, minutes and seconds, or '#SBATCH -t 10' - only minutes
+#SBATCH -t 20:0:00             # 1:00:00 Hours, minutes and seconds, or '#SBATCH -t 10' - only minutes
 
 #SBATCH --gres gpu:1
 # -------------------------------
