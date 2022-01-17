@@ -10,10 +10,10 @@ class DeterministicProMP:
         self.weights = np.zeros(shape=(self.n_basis, self.n_dof))
         self.n_zero_bases = n_zero_bases
         add_basis = 0
-        if zero_start:
-            add_basis += n_zero_bases
-        if zero_goal:
-            add_basis += n_zero_bases
+        #if zero_start:
+        #    add_basis += n_zero_bases
+        #if zero_goal:
+        #    add_basis += n_zero_bases
         self.centers = np.linspace(-off, 1. + off, self.n_basis + add_basis)
         if width is None:
             self.widths = np.ones(self.n_basis + add_basis) * ((1. + off) / (2. * (self.n_basis + add_basis)))

@@ -41,7 +41,7 @@ class PDStepController(BaseController):
 
 class DetPMPWrapper(ABC):
     def __init__(self, env: gym.Wrapper, num_dof: int, num_basis: int, width: int, step_length=None,
-                 weights_scale=1, zero_start=False, zero_goal=False, promp_params=None, noise=None,
+                 weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None,
                  **mp_kwargs):
 
         self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
@@ -54,6 +54,8 @@ class DetPMPWrapper(ABC):
         self.step_length = step_length
         self.env = env
         dt = self.env.envs[0].dt
+        self.noise_sigma = noise_sigma
+        self.num_dof = num_dof
         self.mp = det_promp.DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width, off=0.01,
                                                zero_start=zero_start, zero_goal=zero_goal, n_zero_bases=2, step_length=self.step_length,
                                                dt=dt)
@@ -65,77 +67,50 @@ class DetPMPWrapper(ABC):
         return actions
 
     def update(self):
-        #_, des_pos, des_vel, __ = self.mp.compute_trajectory()
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
-        self.trajectory += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
+        # self.trajectory += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
+        self.trajectory_np = self.trajectory.cpu().detach().numpy()
+        self.velocity_np = self.velocity.cpu().detach().numpy()
 
 
-    def get_action(self, timesteps, weights_noise=None, action_noise=None):
+    def get_action(self, timesteps):
         """ This function generates a trajectory based on a DMP and then does the usual loop over reset and step"""
-        if weights_noise:
-            trajectory = self.trajectory_with_noise[timesteps] #+ action_noise()
-            velocity = self.velocity_with_noise[timesteps]
-        else:
-            n_actions =(5,)  # env.action_space.shape[-1]
-            #action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * abs(self.trajectory[timesteps].cpu().detach().numpy()))
-            sigma = np.maximum(self.mp.weights.cpu().detach().numpy(), -self.mp.weights.cpu().detach().numpy())
-            noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
-                                             sigma=0.3 * np.ones(n_actions))
-            #noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
-            #                              sigma=0.3 * sigma)
-            #noise = noise_dist()
-            #_, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
-            #if timesteps == 0:
-            #weights = self.mp.weights.copy()
-            #noise = weights.cpu().detach().numpy() + noise_dist()
-            #_, self.trajectory_noise, self.velocity_noise, __ = self.mp.compute_trajectory_with_noise(noise)
-            self.trajectory_noise = self.trajectory.cpu().detach().numpy() #+ noise_traj
-            self.velocity_noise = self.velocity.cpu().detach().numpy() #+ noise_vel
-            #else:
-            #    self.trajectory_noise = self.trajectory_noise + noise_traj
-            #    self.velocity_noise = self.velocity_noise + noise_vel
-            trajectory = self.trajectory_noise[timesteps] + noise_dist()
-            velocity = self.velocity_noise[timesteps]#.cpu().detach().numpy() #+ noise_vel[timesteps]
+        n_actions =(self.num_dof,)  # env.action_space.shape[-1]
+        noise_dist = NormalActionNoise(mean=np.zeros(n_actions), sigma=self.noise_sigma * np.ones(n_actions))
 
-        action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)  # , action_noise)
+        trajectory = self.trajectory_np[timesteps] + noise_dist()
+        velocity = self.velocity_np[timesteps]
+
+        action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
         return action
 
     def obs(self):
         return self.env.envs[0].get_obs()
 
     def eval_rollout(self, env, a):
-        weights = a.cpu().detach().numpy() #+ noise().reshape(self.mp.weights.shape[0], self.mp.weights.shape[1])
-        _, des_pos, des_vel, __ = self.mp.compute_trajectory_with_noise(weights)
-        trajectory = des_pos
-        velocity = des_vel
-        trajectory += self.obs()[-10:-5]
-        reward = 0
+        rewards = 0
         self.plot_pos = np.zeros((200,5))
         self.plot_vel = np.zeros((200, 5))
 
-        for t, pos_vel in enumerate(zip(trajectory, velocity)):
-            des_pos = pos_vel[0] #+ noise()
-            des_vel = pos_vel[1] #+ noise()
+        for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
+            des_pos = pos_vel[0]
+            des_vel = pos_vel[1]
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             ac = np.clip(ac, -1, 1).reshape(1,5)
-            obs, rewards, done, info = env.step(ac)
+            obs, reward, done, info = env.step(ac)
             self.plot_pos[t,:] = obs[:, -10:-5].reshape(-1)
             self.plot_vel[t,:] = obs[:, -5:].reshape(-1)
-            reward += rewards
-        #return reward[0]
-        return self.env.envs[0].compare
+            rewards += reward[0]
+        return rewards
 
 
     def load(self, action):
         action = torch.FloatTensor(action)
         params = action.reshape(self.mp.n_basis, self.mp.n_dof) * self.weights_scale
         self.mp.weights = params.to(device="cuda")
-        _, des_pos, des_vel, __ = self.mp.compute_trajectory( self.mp.weights)
-
-        if self.mp.zero_start:
-            des_pos += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
-
+        _, des_pos, des_vel, __ = self.mp.compute_trajectory(self.mp.weights)
+        #des_pos += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
         return des_pos, des_vel
 
 

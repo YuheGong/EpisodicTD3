@@ -92,17 +92,14 @@ class ProMPTD3(BaseAlgorithm):
         self.policy_delay = policy_delay
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
-        self.distribution = th.distributions.MultivariateNormal(th.zeros(25,), scale_tril=torch.cholesky(1.e-2*th.eye(25)))
-        self.sample = self.distribution.sample()
-        self.cov = th.Tensor(th.ones(25, 25).float()).float()
 
-        self.mean = 0.1 * th.ones(35)#torch.randn(25,)
-        self.cov_target = self.cov
-        self.mean_target = self.mean
-        #self.promp_params = ((self.mean + self.cov @ self.sample).reshape(5,5)).to(device="cuda")
-        self.promp_params = ((self.mean).reshape(-1, 5)).to(device="cuda")
+        self.basis_num = 10
+        self.dof = 5
+        self.noise_sigma = 0.3
+        self.actor_lr = 0.00001
 
-        self.promp_target_params = self.promp_params
+        self.mean = 0.1 * th.ones(self.basis_num*self.dof)#torch.randn(25,)
+        self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
 
         self.data_path = data_path
         self.best_model = -9000000
@@ -110,12 +107,7 @@ class ProMPTD3(BaseAlgorithm):
         self.max_episode_steps = 200
         self.ls_number = 0
         self.action_noise = action_noise
-        self.noise_rate = 0.1
-        self.rate = 1
-        #self.max_episode_steps = self.env.venv.envs[0]._max_episode_steps,
-        self.eval_log = False
         self.eval_freq = 1000
-
 
         self._setup_model()
 
@@ -143,27 +135,26 @@ class ProMPTD3(BaseAlgorithm):
         self._create_aliases()
 
     def _create_aliases(self) -> None:
-        actor_kwargs = {"policy_kwargs": {"p_gains": 1,
-                                           "d_gains": 0.1}}
+        actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
 
-        self.actor = DetPMPWrapper(self.env, num_dof=5, num_basis=7, duration=4, width=0.025,
+        self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, duration=4, width=0.025,
                                           policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
-                                          policy_kwargs=actor_kwargs, promp_params=self.promp_params, noise=self.action_noise)
+                                          policy_kwargs=actor_kwargs, noise_sigma=self.noise_sigma)
 
-        self.actor_target = DetPMPWrapper(self.env, num_dof=5, num_basis=7, duration=4, width=0.025,
+        self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, duration=4, width=0.025,
                                           policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
-                                          policy_kwargs=actor_kwargs, promp_params=self.promp_target_params)
+                                          policy_kwargs=actor_kwargs, oise_sigma=self.noise_sigma)
 
         self.actor.mp.weights = self.promp_params
         (self.actor.mp.weights).requires_grad = True
-        self.actor_target.mp.weights = (self.promp_params * self.tau)# + (1 - self.tau) * self.actor_target.mp.weights)
+        self.actor_target.mp.weights = self.actor.mp.weights #(self.promp_params * self.tau) # + (1 - self.tau) * self.actor_target.mp.weights)
         self.actor.update()
         self.actor_target.update()
 
         self.critic = self.policy.critic
         self.critic_target = self.policy.critic_target
-        self.lr = 0.00001
-        self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.lr)#self.learning_rate)
+
+        self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_lr)
 
         self.weights_noise = False
 
@@ -172,26 +163,12 @@ class ProMPTD3(BaseAlgorithm):
         # Update learning rate according to lr schedule
         self.reward_with_noise = self.env.envs[0].rewards_intotal
 
-        #if self.num_timesteps % self.eval_freq == 0 or self.num_timesteps == 2200:
-        self.eval_log = True
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,5))
         if self.best_model < self.env.envs[0].rewards_intotal:
             self.best_model = self.env.envs[0].rewards_intotal
             np.save(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
         np.save(self.data_path + "/algo_mean.npy", self.actor.mp.weights.cpu().detach().numpy())
         self._update_learning_rate([self.critic.optimizer])
-
-        #if self.eval_reward < 60 and  self.eval_reward > 50:
-        #    self.lr = 0.00003
-        #    self.actor_optimizer.param_groups[0]["lr"] = self.lr
-        #elif self.eval_reward < 50 and  self.eval_reward > 45:
-        #    self.lr = 0.00001
-        #    self.actor_optimizer.param_groups[0]["lr"] = self.lr
-        #elif self.eval_reward <45 and  self.eval_reward >40:
-        #    self.lr = 0.000008
-        #    self.actor_optimizer.param_groups[0]["lr"] = self.lr
-
-
 
         #if self.num_timesteps == 2200 or self.num_timesteps == 2001:
         #    self.polt_trajectory()
@@ -201,7 +178,6 @@ class ProMPTD3(BaseAlgorithm):
         actor_losses, critic_losses = [], []
 
         for gradient_step in range(gradient_steps):
-        #for gradient_step in range(2000):
 
             self._n_updates += 1
             # Sample replay buffer
@@ -250,7 +226,6 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
-        self.sample = self.distribution.sample()
         if self.num_timesteps % 800 == 0:
             print("weights", self.actor.mp.weights)
         #print("self.cov@simple", self.sample)
@@ -259,10 +234,11 @@ class ProMPTD3(BaseAlgorithm):
             logger.record("train/actor_loss", np.mean(actor_losses))
         logger.record("train/critic_loss", np.mean(critic_losses))
         logger.record("eval/noise_reward", self.reward_with_noise) #self.env.venv.envs[0].rewards_intotal)
-        logger.record("train/actor_learning_rate", self.lr)
+        logger.record("train/actor_learning_rate", self.actor_lr)
         logger.record("train/gradient_steps", gradient_steps)
-        if self.eval_log:
-            logger.record("eval/mean_reward", self.eval_reward)
+        logger.record("train/noise_sigma", self.noise_sigma)
+        logger.record("train/num_basis", self.basis_num)
+        logger.record("eval/mean_reward", self.eval_reward)
 
     def learn(
             self,
@@ -312,7 +288,7 @@ class ProMPTD3(BaseAlgorithm):
     def _sample_action(
         self, episode_timesteps: int, action_noise: Optional[ActionNoise] = None) -> Tuple[np.ndarray, np.ndarray]:
 
-        unscaled_action = self.actor.get_action(episode_timesteps, action_noise=action_noise)
+        unscaled_action = self.actor.get_action(episode_timesteps)
         #unscaled_action = self.actor.get_action(episode_timesteps, weights_noise=self.weights_noise)
         #print("action", action_noise)
         #unscaled_action = self.actor.get_action(episode_timesteps, action_noise=self.action_noise)
