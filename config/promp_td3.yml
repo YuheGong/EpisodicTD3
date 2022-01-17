@@ -12,7 +12,7 @@ DeepMindBallInCup-v0:
     policy: MlpPolicy
     policy_type: off_policy
     policy_kwargs:
-      activation_fn: tanh
+      activation_fn: ReLU
       pi: 256
       qf: 256
   env_params:
@@ -36,7 +36,7 @@ DeepMindBallInCup-v1:
     policy: MlpPolicy
     policy_type: off_policy
     policy_kwargs:
-      activation_fn: tanh
+      activation_fn: ReLU
       pi: 256
       qf: 256
   env_params:
@@ -60,7 +60,7 @@ DeepMindBallInCup-v2:
     policy: MlpPolicy
     policy_type: off_policy
     policy_kwargs:
-      activation_fn: tanh
+      activation_fn: ReLU
       pi: 256
       qf: 256
   env_params:
