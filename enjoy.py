@@ -19,7 +19,7 @@ file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
 
 # create log folder
-path = "logs/promp_td3/ALRReacherBalance-v1_15"
+path = "logs/promp_td3/ALRReacherBalance-v1_19"
 data['path'] = path
 
 # make the environment

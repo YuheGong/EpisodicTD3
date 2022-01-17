@@ -96,11 +96,11 @@ class ProMPTD3(BaseAlgorithm):
         self.sample = self.distribution.sample()
         self.cov = th.Tensor(th.ones(25, 25).float()).float()
 
-        self.mean = 0.1 * th.ones(25)#torch.randn(25,)
+        self.mean = 0.1 * th.ones(35)#torch.randn(25,)
         self.cov_target = self.cov
         self.mean_target = self.mean
         #self.promp_params = ((self.mean + self.cov @ self.sample).reshape(5,5)).to(device="cuda")
-        self.promp_params = ((self.mean).reshape(5, 5)).to(device="cuda")
+        self.promp_params = ((self.mean).reshape(-1, 5)).to(device="cuda")
 
         self.promp_target_params = self.promp_params
 
@@ -146,12 +146,12 @@ class ProMPTD3(BaseAlgorithm):
         actor_kwargs = {"policy_kwargs": {"p_gains": 1,
                                            "d_gains": 0.1}}
 
-        self.actor = DetPMPWrapper(self.env, num_dof=5, num_basis=5, duration=4, width=0.025,
-                                          policy_type="motor", weights_scale=1, zero_start=True, step_length=self.max_episode_steps,
+        self.actor = DetPMPWrapper(self.env, num_dof=5, num_basis=7, duration=4, width=0.025,
+                                          policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, promp_params=self.promp_params, noise=self.action_noise)
 
-        self.actor_target = DetPMPWrapper(self.env, num_dof=5, num_basis=5, duration=4, width=0.025,
-                                          policy_type="motor", weights_scale=1, zero_start=True, step_length=self.max_episode_steps,
+        self.actor_target = DetPMPWrapper(self.env, num_dof=5, num_basis=7, duration=4, width=0.025,
+                                          policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, promp_params=self.promp_target_params)
 
         self.actor.mp.weights = self.promp_params
@@ -162,7 +162,7 @@ class ProMPTD3(BaseAlgorithm):
 
         self.critic = self.policy.critic
         self.critic_target = self.policy.critic_target
-        self.lr = 0.0001
+        self.lr = 0.00001
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.lr)#self.learning_rate)
 
         self.weights_noise = False
@@ -174,7 +174,7 @@ class ProMPTD3(BaseAlgorithm):
 
         #if self.num_timesteps % self.eval_freq == 0 or self.num_timesteps == 2200:
         self.eval_log = True
-        self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(5,5))
+        self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,5))
         if self.best_model < self.env.envs[0].rewards_intotal:
             self.best_model = self.env.envs[0].rewards_intotal
             np.save(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())

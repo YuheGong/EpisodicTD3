@@ -156,7 +156,7 @@ class DetPMPWrapper(ABC):
         #velocity = self.velocity.cpu().detach().numpy()
 
         # if timesteps == 0:
-        n_actions = (5,5)
+        n_actions = (7,5)
         noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
                                        sigma=0.1 * np.ones(n_actions))
         noise = noise_dist()
@@ -198,7 +198,7 @@ class DetPMPWrapper(ABC):
             #print("t", t)
 
             print("original", t, pos_vel[0])
-            n_actions = (5, 5)
+            n_actions = (7, 5)
             noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
                                            sigma=0.3 * np.ones(n_actions))
             noise = noise_dist()

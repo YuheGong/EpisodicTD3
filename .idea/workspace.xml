@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_15/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_15/algo_mean.npy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_15/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_15/best_model.npy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_15/run_1/events.out.tfevents.1642152065.yre-Legion-5-Pro-16ACH6H.180417.0" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_15/run_1/events.out.tfevents.1642152065.yre-Legion-5-Pro-16ACH6H.180417.0" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_16/run_1/events.out.tfevents.1642334137.yre-Legion-5-Pro-16ACH6H.8870.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_17/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_17/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_17/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_17/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_17/run_1/events.out.tfevents.1642334159.yre-Legion-5-Pro-16ACH6H.8947.0" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalance-v1_17/run_1/events.out.tfevents.1642334159.yre-Legion-5-Pro-16ACH6H.8947.0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/det_promp.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/det_promp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_policy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_td3.py" afterDir="false" />
@@ -18,7 +19,6 @@
       <change beforePath="$PROJECT_DIR$/position_joint_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/position_joint_2.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/position_joint_3.png" beforeDir="false" afterPath="$PROJECT_DIR$/position_joint_3.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/position_joint_4.png" beforeDir="false" afterPath="$PROJECT_DIR$/position_joint_4.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/simple.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/velocity_joint_0.png" beforeDir="false" afterPath="$PROJECT_DIR$/velocity_joint_0.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/velocity_joint_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/velocity_joint_1.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/velocity_joint_2.png" beforeDir="false" afterPath="$PROJECT_DIR$/velocity_joint_2.png" afterDir="false" />
@@ -46,7 +46,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/continue.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/simple.py" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -54,7 +54,7 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager">
-    <configuration name="continue" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="simple" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="GradientProMP_6" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -67,7 +67,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/continue.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/simple.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -88,7 +88,7 @@
       <workItem from="1640945761443" duration="987000" />
       <workItem from="1641979148975" duration="4886000" />
       <workItem from="1642001808327" duration="18721000" />
-      <workItem from="1642331811458" duration="1768000" />
+      <workItem from="1642331811458" duration="13478000" />
     </task>
     <servers />
   </component>
@@ -108,10 +108,25 @@
           <line>349</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/det_promp.py</url>
+          <line>64</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/det_promp.py</url>
+          <line>62</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/promp_td3.py</url>
+          <line>159</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="continue Coverage Results" MODIFIED="1642139961879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

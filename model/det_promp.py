@@ -32,10 +32,10 @@ class DeterministicProMP:
         #self.pos_features_np = self.pos_features_np[:, self.n_zero_bases:]
         #self.vel_features_np = self.vel_features_np[:, self.n_zero_bases:]
         #self.acc_features_np = self.acc_features_np[:, self.n_zero_bases:]
-        self.pos_features_np = self.pos_features_np[:, 0:-2]
-        print("sjape", self.pos_features_np.shape)
-        self.vel_features_np = self.vel_features_np[:, 0:-2]
-        self.acc_features_np = self.acc_features_np[:, 0:-2]
+        self.pos_features_np = self.pos_features_np[:, :]
+        #print("sjape", self.pos_features_np.shape)
+        self.vel_features_np = self.vel_features_np[:, :]
+        self.acc_features_np = self.acc_features_np[:, :]
 
         self.t_np = t
 
