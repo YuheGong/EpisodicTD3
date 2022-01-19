@@ -93,12 +93,12 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 10
+        self.basis_num = 7
         self.dof = 5
         self.noise_sigma = 0.3
         self.actor_lr = 0.00001
 
-        self.mean = 0.1 * th.ones(self.basis_num*self.dof)#torch.randn(25,)
+        self.mean = 1 * th.ones(self.basis_num*self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
 
         self.data_path = data_path
@@ -147,7 +147,7 @@ class ProMPTD3(BaseAlgorithm):
 
         self.actor.mp.weights = self.promp_params
         (self.actor.mp.weights).requires_grad = True
-        self.actor_target.mp.weights = self.actor.mp.weights #(self.promp_params * self.tau) # + (1 - self.tau) * self.actor_target.mp.weights)
+        self.actor_target.mp.weights = (self.promp_params * self.tau) # + (1 - self.tau) * self.actor_target.mp.weights)
         self.actor.update()
         self.actor_target.update()
 

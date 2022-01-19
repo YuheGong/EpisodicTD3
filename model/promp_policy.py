@@ -69,7 +69,7 @@ class DetPMPWrapper(ABC):
     def update(self):
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
-        # self.trajectory += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
+        #self.trajectory += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 
@@ -131,7 +131,7 @@ class DetPMPWrapper(ABC):
         #velocity = self.velocity.cpu().detach().numpy()
 
         # if timesteps == 0:
-        n_actions = (7,5)
+        n_actions = (15,5)
         noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
                                        sigma=0.1 * np.ones(n_actions))
         noise = noise_dist()
@@ -173,7 +173,7 @@ class DetPMPWrapper(ABC):
             #print("t", t)
 
             print("original", t, pos_vel[0])
-            n_actions = (7, 5)
+            n_actions = (15, 5)
             noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
                                            sigma=0.3 * np.ones(n_actions))
             noise = noise_dist()
