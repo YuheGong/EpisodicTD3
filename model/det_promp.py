@@ -9,9 +9,8 @@ class DeterministicProMP:
         self.n_dof = n_dof
         self.weights = np.zeros(shape=(self.n_basis, self.n_dof))
         self.n_zero_bases = n_zero_bases
-        add_basis = 0
-        #if zero_start:
-        #    add_basis += n_zero_bases
+        #add_basis = 0
+        add_basis = n_zero_bases
         #if zero_goal:
         #    add_basis += n_zero_bases
         self.centers = np.linspace(-off, 1. + off, self.n_basis + add_basis)
@@ -32,10 +31,10 @@ class DeterministicProMP:
         #self.pos_features_np = self.pos_features_np[:, self.n_zero_bases:]
         #self.vel_features_np = self.vel_features_np[:, self.n_zero_bases:]
         #self.acc_features_np = self.acc_features_np[:, self.n_zero_bases:]
-        self.pos_features_np = self.pos_features_np[:, :]
+        self.pos_features_np = self.pos_features_np[:, self.n_zero_bases:]
         #print("sjape", self.pos_features_np.shape)
-        self.vel_features_np = self.vel_features_np[:, :]
-        self.acc_features_np = self.acc_features_np[:, :]
+        self.vel_features_np = self.vel_features_np[:, self.n_zero_bases:]
+        self.acc_features_np = self.acc_features_np[:, self.n_zero_bases:]
 
         self.t_np = t
 

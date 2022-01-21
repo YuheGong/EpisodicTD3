@@ -93,7 +93,7 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 7
+        self.basis_num = 15
         self.dof = 5
         self.noise_sigma = 0.3
         self.actor_lr = 0.00001
