@@ -6,7 +6,7 @@ def read_yaml(file_name):
     return data
 
 def write_yaml(data: dict):
-    data = wrapper_config(data)
+    #data = wrapper_config(data)
     path = data['path']
     file = open(path + "/" + "config.yml", "w")
     yaml.dump(data, file)
