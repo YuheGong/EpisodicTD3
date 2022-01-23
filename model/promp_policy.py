@@ -102,7 +102,7 @@ class DetPMPWrapper(ABC):
             #self.plot_pos[t,:] = obs[:, -10:-5].reshape(-1)
             #self.plot_vel[t,:] = obs[:, -5:].reshape(-1)
             rewards += reward[0]
-        return rewards
+        return env.envs[0].rewards_no_ip
 
 
     def load(self, action):
