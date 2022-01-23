@@ -146,80 +146,12 @@ DeepMindBallInCupDense-v2:
 
 
 ### ALR Reacher ENV with different goal
-ALRReacherBalance-v0:
-  algorithm: sac
+ALRReacherBalance-v:
+  algorithm: promp_td3
   algo_params:
-    batch_size: 200
     learning_rate: 0.0001
     n_steps:  20000
     total_timesteps: 5.e+6
-    train_freq: 1
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: tanh
-      pi: 256
-      qf: 256
-  env_params:
-    env_name: alr_envs:ALRReacherBalance-v0
-    num_envs: 1
-    wrapper: VecNormalize
-  eval_env:
-    n_eval_episode: 10
-    eval_freq: 1000
-
-ALRReacherBalance-v1:
-  algorithm: promp_td3
-  algo_params:
-    batch_size: 200
-    learning_rate: 0.0001
-    n_steps:  20000
-    total_timesteps: 1.e+7
-    train_freq: 1
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: tanh
-      pi: 256
-      qf: 256
-  env_params:
-    env_name: alr_envs:ALRReacherBalance-v1
-    num_envs: 1
-    wrapper: None
-  eval_env:
-    n_eval_episode: 10
-    eval_freq: 1000
-
-ALRReacherBalance-v2:
-  algorithm: promp_td3
-  algo_params:
-    batch_size: 200
-    learning_rate: 0.0001
-    n_steps:  20000
-    total_timesteps: 1.e+7
-    train_freq: 1
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: ReLU
-      pi: 256
-      qf: 256
-  env_params:
-    env_name: alr_envs:ALRReacherBalance-v2
-    num_envs: 1
-    wrapper: None
-  eval_env:
-    n_eval_episode: 10
-    eval_freq: 1000
-
-ALRReacherBalance-v345:
-  algorithm: promp_td3
-  algo_params:
-    batch_size: 200
-    learning_rate: 0.0001
-    n_steps:  20000
-    total_timesteps: 5.e+6
-    train_freq: 1
     policy: MlpPolicy
     policy_type: off_policy
     policy_kwargs:
@@ -229,10 +161,6 @@ ALRReacherBalance-v345:
   env_params:
     env_name: alr_envs:ALRReacherBalance-v
     num_envs: 1
-    wrapper: None
-  eval_env:
-    n_eval_episode: 10
-    eval_freq: 1000
 
 ALRReacherBalanceIP-v:
   algorithm: promp_td3
@@ -255,59 +183,6 @@ ALRReacherBalanceIP-v:
   eval_env:
     n_eval_episode: 10
     eval_freq: 1000
-
-ALRReacherBalanceSparse-v2:
-  algorithm: promp_td3
-  algo_params:
-    batch_size: 200
-    learning_rate: 0.0001
-    n_steps:  2000
-    total_timesteps: 5.e+6
-    train_freq: 1
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: tanh
-      pi: 256
-      qf: 256
-  env_params:
-    env_name: alr_envs:ALRReacherBalanceSparse-v2
-    num_envs: 1
-    wrapper: VecNormalize
-  eval_env:
-    n_eval_episode: 10
-    eval_freq: 1000
-
-GradientALRReacherBalanceSparseProMP-v0:
-  name: ALRReacher + ProMP
-  algorithm: promp_td3
-  algo_params:
-    x_init: 0
-    dimension: 25
-    sigma0: 0.1
-    popsize: 10
-    iteration: 5000
-    stop_criterion: None
-    batch_size: 200
-    learning_rate: 0.0001
-    n_steps: 20000
-    total_timesteps: 1.e+6
-    train_freq: 1
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: tanh
-      pi: 256
-      qf: 256
-  env_params:
-    env_name: alr_envs:f'ALRReacherBalanceSparseProMP-v2'
-    num_envs: 1
-    wrapper: VecNormalize
-  eval_env:
-    n_eval_episode: 10
-    eval_freq: 1000
-
-
 
 ### Meta World
 MetaButtonPress-v2:

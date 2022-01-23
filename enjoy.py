@@ -15,8 +15,9 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "promp_td3"
 
-env_id = "ALRReacherBalanceIP-v5"
-path = "logs/promp_td3/ALRReacherBalance-v4_1"
+env_id = "ALRReacherBalanceIP-v"
+env = env_id + '5'
+path = "logs/promp_td3/" + env + "_1"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -33,7 +34,7 @@ data['path'] = path
 # make the environment
 stats_file = 'env_normalize.pkl'
 stats_path = os.path.join(path, stats_file)
-env = gym.make(data["env_params"]['env_name'])
+env = gym.make("alr_envs:" + env)
 algo_path = path + "/algo_mean.npy"
 #algo_path = path + "/best_model.npy"
 
@@ -56,7 +57,7 @@ policy = data['algo_params']['policy']
 model = ALGO(policy, env, verbose=1, create_eval_env=True,
                  tensorboard_log=data['path'],
                  learning_rate=data["algo_params"]['learning_rate'],
-                 batch_size=data["algo_params"]['batch_size'], train_freq=200, gradient_steps=200,
+                 batch_size=data["algo_params"]['batch_size'],
                  policy_delay=2, data_path=data["path"])
 
 if data['algorithm'] == "td3":
