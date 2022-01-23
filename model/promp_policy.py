@@ -61,8 +61,8 @@ class DetPMPWrapper(ABC):
                                                dt=dt)
 
     def predict_action(self, step, observation):
-        self.calculate_traj = self.trajectory[step].reshape(self.trajectory.shape)
-        self.calculate_vel = self.velocity[step].reshape(self.velocity.shape)
+        self.calculate_traj = self.trajectory[step].reshape(-1,self.num_dof)
+        self.calculate_vel = self.velocity[step].reshape(-1,self.num_dof)
         actions = self.controller.predict_actions(self.calculate_traj, self.calculate_vel, observation)
         return actions
 
@@ -90,8 +90,8 @@ class DetPMPWrapper(ABC):
 
     def eval_rollout(self, env, a):
         rewards = 0
-        self.plot_pos = np.zeros((200,5))
-        self.plot_vel = np.zeros((200, 5))
+        #self.plot_pos = np.zeros((200,5))
+        #self.plot_vel = np.zeros((200, 5))
 
         for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
             des_pos = pos_vel[0]
@@ -99,8 +99,8 @@ class DetPMPWrapper(ABC):
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             ac = np.clip(ac, -1, 1).reshape(1,5)
             obs, reward, done, info = env.step(ac)
-            self.plot_pos[t,:] = obs[:, -10:-5].reshape(-1)
-            self.plot_vel[t,:] = obs[:, -5:].reshape(-1)
+            #self.plot_pos[t,:] = obs[:, -10:-5].reshape(-1)
+            #self.plot_vel[t,:] = obs[:, -5:].reshape(-1)
             rewards += reward[0]
         return rewards
 
@@ -131,17 +131,17 @@ class DetPMPWrapper(ABC):
         #velocity = self.velocity.cpu().detach().numpy()
 
         # if timesteps == 0:
-        n_actions = (7,5)
-        noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
-                                       sigma=0.1 * np.ones(n_actions))
-        noise = noise_dist()
-        _, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
+        #n_actions = (50,5)
+        #noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
+        #                               sigma=0.1 * np.ones(n_actions))
+        #noise = noise_dist()
+        #_, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
 
-        self.trajectory_noise = self.trajectory +noise_traj
-        self.velocity_noise = self.velocity+ noise_vel
-        trajectory = self.trajectory_noise
-        velocity = self.velocity_noise
-        env.reset()
+        #self.trajectory_noise = self.trajectory +noise_traj
+        #self.velocity_noise = self.velocity+ noise_vel
+        #trajectory = self.trajectory_noise
+        #velocity = self.velocity_noise
+        #env.reset()
         obses = []
         '''
         for t, pos_vel in enumerate(zip(trajectory, velocity)):
@@ -173,11 +173,11 @@ class DetPMPWrapper(ABC):
             #print("t", t)
 
             print("original", t, pos_vel[0])
-            n_actions = (7, 5)
-            noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
-                                           sigma=0.3 * np.ones(n_actions))
-            noise = noise_dist()
-            _, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
+            #n_actions = (50, 5)
+            #noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
+            #                               sigma=0.3 * np.ones(n_actions))
+            #noise = noise_dist()
+            # _, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
             trajectory = trajectory #+ noise_traj
             velocity = velocity# + noise_traj
             des_pos = (trajectory)[t]

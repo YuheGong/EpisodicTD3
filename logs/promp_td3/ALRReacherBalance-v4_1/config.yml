@@ -8,7 +8,7 @@ algo_params:
     pi: 256
     qf: 256
   policy_type: off_policy
-  total_timesteps: 5000000.0
+  total_timesteps: 10000000.0
   train_freq: 1
 algorithm: promp_td3
 env_params:

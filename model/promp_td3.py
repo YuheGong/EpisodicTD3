@@ -38,8 +38,6 @@ class ProMPTD3(BaseAlgorithm):
         batch_size: int = 100,
         tau: float = 0.005,
         gamma: float = 0.99,
-        train_freq: Union[int, Tuple[int, str]] = (1, "episode"),
-        gradient_steps: int = -1,
         action_noise: Optional[ActionNoise] = None,
         optimize_memory_usage: bool = False,
         policy_delay: int = 2,
@@ -67,11 +65,10 @@ class ProMPTD3(BaseAlgorithm):
             supported_action_spaces=None,
         )
         self.buffer_size = buffer_size
-        self.batch_size = batch_size
         self.learning_starts = learning_starts
         self.tau = tau
         self.gamma = gamma
-        self.gradient_steps = gradient_steps
+
         self.action_noise = action_noise
         self.optimize_memory_usage = optimize_memory_usage
 
@@ -79,7 +76,10 @@ class ProMPTD3(BaseAlgorithm):
         self.remove_time_limit_termination = False
 
         # Save train freq parameter, will be converted later to TrainFreq object
-        self.train_freq = train_freq
+        self.max_episode_steps = 200 + self.env.envs[0].init_phase
+        self.train_freq = self.max_episode_steps
+        self.gradient_steps = self.max_episode_steps
+        self.batch_size = self.max_episode_steps
 
         self.actor = None  # type: Optional[th.nn.Module]
         self.replay_buffer = None  # type: Optional[ReplayBuffer]
@@ -104,7 +104,6 @@ class ProMPTD3(BaseAlgorithm):
         self.data_path = data_path
         self.best_model = -9000000
 
-        self.max_episode_steps = 200
         self.ls_number = 0
         self.action_noise = action_noise
         self.eval_freq = 1000
@@ -161,11 +160,11 @@ class ProMPTD3(BaseAlgorithm):
 
     def train(self, gradient_steps: int, batch_size: int = 100) -> None:
         # Update learning rate according to lr schedule
-        self.reward_with_noise = self.env.envs[0].rewards_intotal
+        self.reward_with_noise = self.env.envs[0].rewards_no_ip
 
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,5))
-        if self.best_model < self.env.envs[0].rewards_intotal:
-            self.best_model = self.env.envs[0].rewards_intotal
+        if self.best_model < self.env.envs[0].rewards_no_ip:
+            self.best_model = self.env.envs[0].rewards_no_ip
             np.save(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
         np.save(self.data_path + "/algo_mean.npy", self.actor.mp.weights.cpu().detach().numpy())
         self._update_learning_rate([self.critic.optimizer])
@@ -228,12 +227,11 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.update()
         if self.num_timesteps % 800 == 0:
             print("weights", self.actor.mp.weights)
-        #print("self.cov@simple", self.sample)
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
         logger.record("train/critic_loss", np.mean(critic_losses))
-        logger.record("eval/noise_reward", self.reward_with_noise) #self.env.venv.envs[0].rewards_intotal)
+        logger.record("eval/noise_reward", self.reward_with_noise)
         logger.record("train/actor_learning_rate", self.actor_lr)
         logger.record("train/gradient_steps", gradient_steps)
         logger.record("train/noise_sigma", self.noise_sigma)
@@ -289,19 +287,13 @@ class ProMPTD3(BaseAlgorithm):
         self, episode_timesteps: int, action_noise: Optional[ActionNoise] = None) -> Tuple[np.ndarray, np.ndarray]:
 
         unscaled_action = self.actor.get_action(episode_timesteps)
-        #unscaled_action = self.actor.get_action(episode_timesteps, weights_noise=self.weights_noise)
-        #print("action", action_noise)
-        #unscaled_action = self.actor.get_action(episode_timesteps, action_noise=self.action_noise)
+
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
-            scaled_action = self.policy.scale_action(unscaled_action).reshape(1, 5)  # 2.0 * ((action - low) / (high - low)) - 1.0
-            #if action_noise is not None:
-            #    scaled_action = np.clip(scaled_action.reshape(1, 5) + action_noise(), -1, 1)
-            #action_noise = NormalActionNoise(mean=np.zeros(scaled_action.shape), sigma=0 * np.ones(scaled_action.shape))
-            #scaled_action = np.clip(scaled_action+action_noise().reshape(1,5), -1, 1)
+            scaled_action = self.policy.scale_action(unscaled_action).reshape(1, 5)
             scaled_action = np.clip(scaled_action, -1, 1)
             buffer_action = scaled_action
-            action = self.policy.unscale_action(scaled_action) #low + (0.5 * (scaled_action + 1.0) * (high - low))
+            action = self.policy.unscale_action(scaled_action)
         else:
             # Discrete case, no need to normalize or clip
             buffer_action = np.clip(unscaled_action+action_noise(), -1, 1)
@@ -409,8 +401,8 @@ class ProMPTD3(BaseAlgorithm):
                 # Rescale and perform actionp
                 action = action.reshape(action.shape[0], -1)
                 new_obs, reward, done, infos = env.step(action)
-                self.plot_pos_with_noise[self.episode_timesteps] = new_obs[:, -10:-5].reshape(-1)
-                self.plot_vel_with_noise[self.episode_timesteps] = new_obs[:, -5:].reshape(-1)
+                #self.plot_pos_with_noise[self.episode_timesteps] = new_obs[:, -10:-5].reshape(-1)
+                #self.plot_vel_with_noise[self.episode_timesteps] = new_obs[:, -5:].reshape(-1)
 
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
@@ -430,8 +422,8 @@ class ProMPTD3(BaseAlgorithm):
 
                 # Store data in replay buffer (normalized action and unnormalized observation)
                 next_step = self.episode_timesteps
-                if self.episode_timesteps == 200:
-                    next_step = 199
+                if self.episode_timesteps == self.max_episode_steps:
+                    next_step = self.max_episode_steps-1
                 self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
                                        self.episode_timesteps - 1, next_step)
 

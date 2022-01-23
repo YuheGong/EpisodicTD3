@@ -2,10 +2,15 @@ from utils.logger import logging
 from utils.yaml import write_yaml, read_yaml
 import gym
 import numpy as np
+import argparse
 from stable_baselines3.common.callbacks import EvalCallback
 from utils.model import policy_kwargs_building
 from model.promp_td3 import ProMPTD3
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--e", type=str, help="the environment")
+args = parser.parse_args()
 
 
 def make_env(env_name, path, rank, seed=0):
@@ -15,10 +20,11 @@ def make_env(env_name, path, rank, seed=0):
     return _init
 
 algo = "promp_td3"
-env_id = "ALRReacherBalance-v4"
+env_id = "ALRReacherBalanceIP-v"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
+data['env_params']['env_name'] = data['env_params']['env_name'] + args.e
 
 # create log folder
 path = logging(data['env_params']['env_name'], data['algorithm'])
@@ -40,7 +46,7 @@ env.reset()
 model = ALGO(policy, env, policy_kwargs=policy_kwargs, verbose=1, create_eval_env=True,
                  tensorboard_log=data['path'], action_noise=action_noise,
                  learning_rate=data["algo_params"]['learning_rate'],
-                 batch_size=data["algo_params"]['batch_size'], train_freq=200, gradient_steps=200,
+                 batch_size=data["algo_params"]['batch_size'],
                  policy_delay=2, data_path=data["path"], gamma=0.99)#, tau=0.9)
 
 # csv file path

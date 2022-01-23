@@ -212,13 +212,13 @@ ALRReacherBalance-v2:
     n_eval_episode: 10
     eval_freq: 1000
 
-ALRReacherBalance-v3:
+ALRReacherBalance-v345:
   algorithm: promp_td3
   algo_params:
     batch_size: 200
     learning_rate: 0.0001
     n_steps:  20000
-    total_timesteps: 1.e+7
+    total_timesteps: 5.e+6
     train_freq: 1
     policy: MlpPolicy
     policy_type: off_policy
@@ -227,20 +227,20 @@ ALRReacherBalance-v3:
       pi: 256
       qf: 256
   env_params:
-    env_name: alr_envs:ALRReacherBalance-v3
+    env_name: alr_envs:ALRReacherBalance-v
     num_envs: 1
     wrapper: None
   eval_env:
     n_eval_episode: 10
     eval_freq: 1000
 
-ALRReacherBalance-v4:
+ALRReacherBalanceIP-v:
   algorithm: promp_td3
   algo_params:
     batch_size: 200
     learning_rate: 0.0001
     n_steps:  20000
-    total_timesteps: 1.e+7
+    total_timesteps: 5.e+6
     train_freq: 1
     policy: MlpPolicy
     policy_type: off_policy
@@ -249,7 +249,7 @@ ALRReacherBalance-v4:
       pi: 256
       qf: 256
   env_params:
-    env_name: alr_envs:ALRReacherBalance-v4
+    env_name: alr_envs:ALRReacherBalanceIP-v
     num_envs: 1
     wrapper: None
   eval_env:

@@ -15,14 +15,14 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "promp_td3"
 
-env_id = "ALRReacherBalance-v4"
+env_id = "ALRReacherBalanceIP-v5"
 path = "logs/promp_td3/ALRReacherBalance-v4_1"
 
-env_id = "ALRReacherBalance-v3"
-path = "logs/promp_td3/ALRReacherBalance-v3_2"
+#env_id = "ALRReacherBalance-v3"
+#path = "logs/promp_td3/ALRReacherBalance-v3_2"
 
-env_id = "ALRReacherBalance-v1"
-path = "logs/promp_td3/ALRReacherBalance-v1_100"
+#env_id = "ALRReacherBalance-v1"
+#path = "logs/promp_td3/ALRReacherBalance-v1_1"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
