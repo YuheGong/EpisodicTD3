@@ -225,8 +225,8 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
-        if self.num_timesteps % 800 == 0:
-            print("weights", self.actor.mp.weights)
+        #if self.num_timesteps % 800 == 0:
+        #    print("weights", self.actor.mp.weights)
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
