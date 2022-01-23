@@ -165,7 +165,6 @@ ALRReacherBalance-v:
 ALRReacherBalanceIP-v:
   algorithm: promp_td3
   algo_params:
-    batch_size: 200
     learning_rate: 0.0001
     n_steps:  20000
     total_timesteps: 5.e+6

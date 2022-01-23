@@ -34,8 +34,6 @@ class ProMPTD3(BaseAlgorithm):
         env: Union[GymEnv, str],
         learning_rate: Union[float, Schedule] = 1e-3,
         buffer_size: int = int(1e6),
-        learning_starts: int = 2000,
-        batch_size: int = 100,
         tau: float = 0.005,
         gamma: float = 0.99,
         action_noise: Optional[ActionNoise] = None,
@@ -44,7 +42,6 @@ class ProMPTD3(BaseAlgorithm):
         target_policy_noise: float = 0.2,
         target_noise_clip: float = 0.5,
         tensorboard_log: Optional[str] = None,
-        create_eval_env: bool = False,
         policy_kwargs: Dict[str, Any] = None,
         verbose: int = 0,
         seed: Optional[int] = None,
@@ -65,7 +62,7 @@ class ProMPTD3(BaseAlgorithm):
             supported_action_spaces=None,
         )
         self.buffer_size = buffer_size
-        self.learning_starts = learning_starts
+
         self.tau = tau
         self.gamma = gamma
 
@@ -76,10 +73,11 @@ class ProMPTD3(BaseAlgorithm):
         self.remove_time_limit_termination = False
 
         # Save train freq parameter, will be converted later to TrainFreq object
-        self.max_episode_steps = 200 + self.env.envs[0].init_phase
+        self.max_episode_steps = 300 #200 + self.env.envs[0].init_phase
         self.train_freq = self.max_episode_steps
         self.gradient_steps = self.max_episode_steps
         self.batch_size = self.max_episode_steps
+        self.learning_starts = self.max_episode_steps
 
         self.actor = None  # type: Optional[th.nn.Module]
         self.replay_buffer = None  # type: Optional[ReplayBuffer]
@@ -93,10 +91,10 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 50
+        self.basis_num = 7
         self.dof = 5
         self.noise_sigma = 0.3
-        self.actor_lr = 0.00001
+        self.actor_lr = 0.00003
 
         self.mean = 1 * th.ones(self.basis_num*self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
@@ -136,11 +134,11 @@ class ProMPTD3(BaseAlgorithm):
     def _create_aliases(self) -> None:
         actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
 
-        self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, duration=4, width=0.025,
+        self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.025,
                                           policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, noise_sigma=self.noise_sigma)
 
-        self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, duration=4, width=0.025,
+        self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.025,
                                           policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, oise_sigma=self.noise_sigma)
 
@@ -225,8 +223,8 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
-        #if self.num_timesteps % 800 == 0:
-        #    print("weights", self.actor.mp.weights)
+        if self.num_timesteps % 800 == 0:
+            print("weights", self.actor.mp.weights)
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
@@ -370,9 +368,6 @@ class ProMPTD3(BaseAlgorithm):
         episode_rewards, total_timesteps = [], []
         num_collected_steps, num_collected_episodes = 0, 0
 
-        assert isinstance(env, VecEnv), "You must pass a VecEnv"
-        assert env.num_envs == 1, "OffPolicyAlgorithm only support single environment"
-        assert train_freq.frequency > 0, "Should at least collect one step or episode."
 
         if self.use_sde:
             self.actor.reset_noise()
@@ -396,6 +391,7 @@ class ProMPTD3(BaseAlgorithm):
 
                 # Select action randomly or according to policy
                 ### TODO: only use one WEIGHT in the beginning
+                #print("self.episode_timesteps", self.episode_timesteps)
                 action, buffer_action = self._sample_action(self.episode_timesteps, action_noise)
 
                 # Rescale and perform actionp

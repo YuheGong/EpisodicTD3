@@ -17,7 +17,7 @@ algo = "promp_td3"
 
 env_id = "ALRReacherBalanceIP-v"
 env = env_id + '5'
-path = "logs/promp_td3/" + env + "_1"
+path = "logs/promp_td3/" + env + "_2"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
