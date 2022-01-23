@@ -73,11 +73,11 @@ class ProMPTD3(BaseAlgorithm):
         self.remove_time_limit_termination = False
 
         # Save train freq parameter, will be converted later to TrainFreq object
-        self.max_episode_steps = 300 #200 + self.env.envs[0].init_phase
+        self.max_episode_steps = 225 #200 + self.env.envs[0].init_phase
         self.train_freq = self.max_episode_steps
         self.gradient_steps = self.max_episode_steps
         self.batch_size = self.max_episode_steps
-        self.learning_starts = self.max_episode_steps
+        self.learning_starts = self.max_episode_steps * 10
 
         self.actor = None  # type: Optional[th.nn.Module]
         self.replay_buffer = None  # type: Optional[ReplayBuffer]
@@ -94,7 +94,7 @@ class ProMPTD3(BaseAlgorithm):
         self.basis_num = 7
         self.dof = 5
         self.noise_sigma = 0.3
-        self.actor_lr = 0.00003
+        self.actor_lr = 0.00001
 
         self.mean = 1 * th.ones(self.basis_num*self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
@@ -223,8 +223,8 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
-        if self.num_timesteps % 800 == 0:
-            print("weights", self.actor.mp.weights)
+        #if self.num_timesteps % 800 == 0:
+        #    print("weights", self.actor.mp.weights)
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))

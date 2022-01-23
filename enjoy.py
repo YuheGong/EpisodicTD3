@@ -54,10 +54,9 @@ ALGOS = {
 ALGO = ALGOS[algo]
 policy = data['algo_params']['policy']
 
-model = ALGO(policy, env, verbose=1, create_eval_env=True,
+model = ALGO(policy, env, verbose=1,
                  tensorboard_log=data['path'],
                  learning_rate=data["algo_params"]['learning_rate'],
-                 batch_size=data["algo_params"]['batch_size'],
                  policy_delay=2, data_path=data["path"])
 
 if data['algorithm'] == "td3":
