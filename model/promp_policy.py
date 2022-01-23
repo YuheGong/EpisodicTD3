@@ -36,7 +36,7 @@ class PDStepController(BaseController):
         return trq
 
     def obs(self):
-        return self.env.envs[0].get_obs()
+        return self.env.get_obs()
 
 
 class DetPMPWrapper(ABC):
@@ -53,7 +53,7 @@ class DetPMPWrapper(ABC):
 
         self.step_length = step_length
         self.env = env
-        dt = self.env.envs[0].dt
+        dt = self.env.dt
         self.noise_sigma = noise_sigma
         self.num_dof = num_dof
         self.mp = det_promp.DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width, off=0.01,
@@ -86,23 +86,18 @@ class DetPMPWrapper(ABC):
         return action
 
     def obs(self):
-        return self.env.envs[0].get_obs()
+        return self.env.get_obs()
 
     def eval_rollout(self, env, a):
         rewards = 0
-        #self.plot_pos = np.zeros((200,5))
-        #self.plot_vel = np.zeros((200, 5))
-
         for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
             des_pos = pos_vel[0]
             des_vel = pos_vel[1]
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             ac = np.clip(ac, -1, 1).reshape(1,5)
             obs, reward, done, info = env.step(ac)
-            #self.plot_pos[t,:] = obs[:, -10:-5].reshape(-1)
-            #self.plot_vel[t,:] = obs[:, -5:].reshape(-1)
-            rewards += reward[0]
-        return env.envs[0].rewards_no_ip
+            rewards += reward
+        return env.rewards_no_ip
 
 
     def load(self, action):
@@ -110,9 +105,8 @@ class DetPMPWrapper(ABC):
         params = action.reshape(self.mp.n_basis, self.mp.n_dof) * self.weights_scale
         self.mp.weights = params.to(device="cuda")
         _, des_pos, des_vel, __ = self.mp.compute_trajectory(self.mp.weights)
-        #des_pos += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
+        des_pos += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
         return des_pos, des_vel
-
 
     def render_rollout(self, action, env, noise):
         import time

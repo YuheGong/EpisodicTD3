@@ -96,7 +96,7 @@ class ProMPTD3(BaseAlgorithm):
         self.noise_sigma = 0.3
         self.actor_lr = 0.00001
 
-        self.mean = 1 * th.ones(self.basis_num*self.dof)#torch.randn(25,)
+        self.mean = 1 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
 
         self.data_path = data_path
@@ -158,11 +158,12 @@ class ProMPTD3(BaseAlgorithm):
 
     def train(self, gradient_steps: int, batch_size: int = 100) -> None:
         # Update learning rate according to lr schedule
-        self.reward_with_noise = self.env.envs[0].rewards_no_ip
+        self.reward_with_noise = self.env.rewards_no_ip
 
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,5))
-        if self.best_model < self.env.envs[0].rewards_no_ip:
-            self.best_model = self.env.envs[0].rewards_no_ip
+        self.env.reset()
+        if self.best_model < self.env.rewards_no_ip:
+            self.best_model = self.env.rewards_no_ip
             np.save(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
         np.save(self.data_path + "/algo_mean.npy", self.actor.mp.weights.cpu().detach().numpy())
         self._update_learning_rate([self.critic.optimizer])
@@ -235,6 +236,8 @@ class ProMPTD3(BaseAlgorithm):
         logger.record("train/noise_sigma", self.noise_sigma)
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
+        #print("logger", logger)
+        #assert 1==123
 
     def learn(
             self,
@@ -330,22 +333,8 @@ class ProMPTD3(BaseAlgorithm):
             next_steps: np.ndarray
     ) -> None:
 
-        if self._vec_normalize_env is not None:
-            new_obs_ = self._vec_normalize_env.get_original_obs()
-            reward_ = self._vec_normalize_env.get_original_reward()
-        else:
-            # Avoid changing the original ones
-            self._last_original_obs, new_obs_, reward_ = self._last_obs, new_obs, reward
-
-        # As the VecEnv resets automatically, new_obs is already the
-        # first observation of the next episode
-        if done and infos[0].get("terminal_observation") is not None:
-            next_obs = infos[0]["terminal_observation"]
-            # VecNormalize normalizes the terminal observation
-            if self._vec_normalize_env is not None:
-                next_obs = self._vec_normalize_env.unnormalize_obs(next_obs)
-        else:
-            next_obs = new_obs_
+        self._last_original_obs, new_obs_, reward_ = self._last_obs, new_obs, reward
+        next_obs = new_obs_
 
         replay_buffer.add(self._last_original_obs, next_obs, buffer_action, reward_, done, steps, next_steps)
 
@@ -382,7 +371,7 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor.update_tra_with_noise((action_noise))
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
-                self.ls_number < self.learning_starts:  # TrainFreq(frequency=1, unit=<TrainFrequencyUnit.STEP: 'step'>) 0 0
+                self.ls_number < self.learning_starts:
             # loop for episode
             done = False
             episode_reward = 0.0
@@ -391,14 +380,11 @@ class ProMPTD3(BaseAlgorithm):
 
                 # Select action randomly or according to policy
                 ### TODO: only use one WEIGHT in the beginning
-                #print("self.episode_timesteps", self.episode_timesteps)
                 action, buffer_action = self._sample_action(self.episode_timesteps, action_noise)
 
                 # Rescale and perform actionp
                 action = action.reshape(action.shape[0], -1)
                 new_obs, reward, done, infos = env.step(action)
-                #self.plot_pos_with_noise[self.episode_timesteps] = new_obs[:, -10:-5].reshape(-1)
-                #self.plot_vel_with_noise[self.episode_timesteps] = new_obs[:, -5:].reshape(-1)
 
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
@@ -407,14 +393,7 @@ class ProMPTD3(BaseAlgorithm):
 
                 # Give access to local variables
                 callback.update_locals(locals())
-                # Only stop training if return value is False, not when it is None.
-                if callback.on_step() is False:
-                    return RolloutReturn(0.0, num_collected_steps, num_collected_episodes, continue_training=False)
-
                 episode_reward += reward
-
-                # Retrieve reward and episode length if using Monitor wrapper
-                self._update_info_buffer(infos, done)
 
                 # Store data in replay buffer (normalized action and unnormalized observation)
                 next_step = self.episode_timesteps
@@ -441,9 +420,11 @@ class ProMPTD3(BaseAlgorithm):
 
                 # Log training infos
                 if log_interval is not None and self._episode_num % log_interval == 0:
+                    print("")
                     self._dump_logs()
                 if self.weights_noise:
                     self.actor.update_tra_with_noise((action_noise))
+                env.reset()
 
                 # self.actor.update()
 

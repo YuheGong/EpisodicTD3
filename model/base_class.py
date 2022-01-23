@@ -147,16 +147,19 @@ class BaseAlgorithm(ABC):
 
         # Create and wrap the env if needed
         if env is not None:
-            if isinstance(env, str):
-                if create_eval_env:
-                    self.eval_env = maybe_make_env(env, self.verbose)
+            #print("env", env)
+            #assert 1==123
+            #if isinstance(env, str):
+            #    if create_eval_env:
+            #        self.eval_env = maybe_make_env(env, self.verbose)
 
             env = maybe_make_env(env, self.verbose)
-            env = self._wrap_env(env, self.verbose, monitor_wrapper)
+            #env = self._wrap_env(env, self.verbose, monitor_wrapper)
 
             self.observation_space = env.observation_space
             self.action_space = env.action_space
-            self.n_envs = env.num_envs
+            #assert 1==123
+            #self.n_envs = env.num_envs
             self.env = env
 
             if supported_action_spaces is not None:
@@ -165,10 +168,7 @@ class BaseAlgorithm(ABC):
                     f"but {self.action_space} was provided"
                 )
 
-            if not support_multi_env and self.n_envs > 1:
-                raise ValueError(
-                    "Error: the model does not support multiple envs; it requires " "a single vectorized environment."
-                )
+
 
             if self.use_sde and not isinstance(self.action_space, gym.spaces.Box):
                 raise ValueError("generalized State-Dependent Exploration (gSDE) can only be used with continuous actions.")
@@ -376,7 +376,7 @@ class BaseAlgorithm(ABC):
         # Avoid resetting the environment when calling ``.learn()`` consecutive times
         if reset_num_timesteps or self._last_obs is None:
             self._last_obs = self.env.reset()
-            self._last_dones = np.zeros((self.env.num_envs,), dtype=bool)
+            self._last_dones = np.zeros((1,), dtype=bool)
             # Retrieve unnormalized observation for saving into the buffer
             if self._vec_normalize_env is not None:
                 self._last_original_obs = self._vec_normalize_env.get_original_obs()
@@ -406,6 +406,7 @@ class BaseAlgorithm(ABC):
             dones = np.array([False] * len(infos))
         #print("info". infos)
         for idx, info in enumerate(infos):
+            print("info", info)
             maybe_ep_info = info.get("episode")
             maybe_is_success = info.get("is_success")
             if maybe_ep_info is not None:

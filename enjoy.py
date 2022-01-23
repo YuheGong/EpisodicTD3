@@ -39,7 +39,7 @@ algo_path = path + "/algo_mean.npy"
 #algo_path = path + "/best_model.npy"
 
 algorithm = np.load(algo_path)
-
+"alr_envs:" + env
 # make the model and save the model
 ALGOS = {
         'a2c': A2C,
