@@ -40,6 +40,9 @@ class DeterministicProMP:
 
         self.pos_features = th.Tensor(self.pos_features_np).to(device="cuda")
         self.vel_features = th.Tensor(self.vel_features_np).to(device="cuda")
+        self.pos_features.requires_grad = True
+        self.vel_features.requires_grad = True
+
         self.acc_features = th.Tensor(self.acc_features_np).to(device="cuda")
         self.cr_scale = th.Tensor([self.corrected_scale]).to(device="cuda")
         self.t = th.Tensor(t).cuda()
@@ -61,11 +64,16 @@ class DeterministicProMP:
     def compute_trajectory(self, weights):
         if self.weights.requires_grad == False:
             self.weights.requires_grad = True
+
         return self.t * self.cr_scale, th.matmul(self.pos_features, weights), \
                th.matmul(self.vel_features, weights) / self.cr_scale, \
                th.matmul(self.acc_features, weights) / th.square(self.cr_scale)
 
     def compute_trajectory_with_noise(self, weights):
+        self.pos_features_np = self.pos_features
+        self.pos_features_np = self.pos_features_np.cpu().detach().numpy()
+        self.vel_features_np = self.vel_features
+        self.vel_features_np = self.vel_features_np.cpu().detach().numpy()
         return self.t_np * self.corrected_scale, np.dot(self.pos_features_np, weights), \
                np.dot(self.vel_features_np, weights) / self.corrected_scale, \
                np.dot(self.acc_features_np, weights) / np.square(self.corrected_scale)

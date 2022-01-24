@@ -91,7 +91,7 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 7
+        self.basis_num = 50
         self.dof = 5
         self.noise_sigma = 0.3
         self.actor_lr = 0.00001
@@ -152,6 +152,8 @@ class ProMPTD3(BaseAlgorithm):
         self.critic_target = self.policy.critic_target
 
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_lr)
+        self.pos_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_lr)
+        self.vel_optimizer = th.optim.Adam([self.actor.mp.vel_features], lr=self.actor_lr)
 
         self.weights_noise = False
 
@@ -222,6 +224,25 @@ class ProMPTD3(BaseAlgorithm):
 
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
+                self.actor.update()
+                self.actor_target.update()
+
+            if self._n_updates % self.policy_delay == 1:
+                # Compute actor loss
+                act = self.actor.predict_action(replay_data.steps, replay_data.observations)
+                actor_loss = -self.critic.q1_forward(replay_data.observations, act,  (replay_data.steps+1)/self.max_episode_steps).mean()
+                actor_losses.append(actor_loss.item())
+
+                # Optimize the actor
+                self.pos_optimizer.zero_grad()
+                self.vel_optimizer.zero_grad()
+                actor_loss.backward()
+                self.pos_optimizer.step()
+                self.vel_optimizer.step()
+
+                polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
+                self.actor_target.mp.pos_features = self.actor.mp.pos_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
+                self.actor_target.mp.vel_features = self.actor.mp.vel_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
         #if self.num_timesteps % 800 == 0:

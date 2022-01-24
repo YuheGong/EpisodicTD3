@@ -40,7 +40,7 @@ policy_kwargs = policy_kwargs_building(data)
 policy = data['algo_params']['policy']
 
 n_actions = 5#env.action_space.shape[-1]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.3 * np.ones(n_actions))
+action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0 * np.ones(n_actions))
 env.reset()
 #print("env", env)
 model = ALGO(policy, env, policy_kwargs=policy_kwargs, verbose=1,

@@ -112,6 +112,8 @@ class DetPMPWrapper(ABC):
         import time
 
         self.trajectory, self.velocity = self.load(action)
+        #self.trajectory += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
+
         #self.update_tra_with_noise(noise())
 
         a = action
@@ -154,6 +156,8 @@ class DetPMPWrapper(ABC):
             obses.append(obs)
             #env.render()
         '''
+        self.trajectory += self.obs()[-10:-5]
+
         self.trajectory_noise = self.trajectory  # + noise_traj
         self.velocity_noise = self.velocity  # + noise_vel
         trajectory = self.trajectory_noise
@@ -167,14 +171,14 @@ class DetPMPWrapper(ABC):
             #print("t", t)
 
             print("original", t, pos_vel[0])
-            #n_actions = (50, 5)
-            #noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
-            #                               sigma=0.3 * np.ones(n_actions))
+            n_actions = (5,)
+            noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
+                                           sigma=0.01 * np.ones(n_actions))
             #noise = noise_dist()
             # _, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
-            trajectory = trajectory #+ noise_traj
+            trajectory = trajectory
             velocity = velocity# + noise_traj
-            des_pos = (trajectory)[t]
+            des_pos = (trajectory)[t] + noise_dist()
             print("addnoise", des_pos)
             des_vel = (velocity)[t]
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
