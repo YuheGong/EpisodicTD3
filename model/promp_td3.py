@@ -168,8 +168,8 @@ class ProMPTD3(BaseAlgorithm):
             self.best_model = self.env.rewards_no_ip
             np.save(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
         np.save(self.data_path + "/algo_mean.npy", self.actor.mp.weights.cpu().detach().numpy())
-        np.save(self.data_path + "/pos_features.npy", self.actor.mp.pos_features_np)
-        np.save(self.data_path + "/vel_features.npy", self.actor.mp.vel_features_np)
+        np.save(self.data_path + "/pos_features.npy", self.actor.mp.pos_features.cpu().detach().numpy())
+        np.save(self.data_path + "/vel_features.npy", self.actor.mp.vel_features.cpu().detach().numpy())
 
         self._update_learning_rate([self.critic.optimizer])
 

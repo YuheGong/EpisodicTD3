@@ -18,7 +18,7 @@ algo = "promp_td3"
 
 env_id = "ALRReacherBalanceIP-v"
 env = env_id + '5'
-path = "logs/promp_td3/" + env + "_11"
+path = "logs/promp_td3/" + env + "_13"
 
 
 #env_id = "ALRReacherBalance-v3"
@@ -32,13 +32,15 @@ data = read_yaml(file_name)[env_id]
 
 # create log folder
 data['path'] = path
-data['continue_path'] = "logs/promp_td3/" + env + "_11"
+#data['continue_path'] = "logs/promp_td3/" + env + "_13"
 
 # make the environment
 stats_file = 'env_normalize.pkl'
 stats_path = os.path.join(path, stats_file)
 env = gym.make("alr_envs:" + env)
 algo_path = path + "/algo_mean.npy"
+pos_feature = np.load(path + "/pos_features.npy")
+vel_feature = np.load(path + "/vel_features.npy")
 #algo_path = path + "/best_model.npy"
 
 algorithm = np.load(algo_path)
@@ -59,13 +61,13 @@ policy = data['algo_params']['policy']
 print(env)
 #assert 1==123
 #nv, eval_env = env_continue_load(data)
-model_path = os.path.join(data['continue_path'], 'model')
-model = ProMPTD3.continue_load(model_path, tensorboard_log=data['path'], env=env)
+#model_path = os.path.join(data['continue_path'], 'model')
+#model = ProMPTD3.continue_load(model_path, tensorboard_log=data['path'], env=env)
 
-#model = ALGO(policy, env, verbose=1,
-#                 tensorboard_log=data['path'],
-##                 learning_rate=data["algo_params"]['learning_rate'],
-#                 policy_delay=2, data_path=data["path"])
+model = ALGO(policy, env, verbose=1,
+                 tensorboard_log=data['path'],
+                 learning_rate=data["algo_params"]['learning_rate'],
+                 policy_delay=2, data_path=data["path"])
 
 if data['algorithm'] == "td3":
     print("td3")
@@ -84,4 +86,4 @@ elif data['algorithm'] == "promp_td3":
     #print("noise", noise)
     print("algo", algorithm)
     #assert 1==123
-    model.load(algorithm, env, noise)
+    model.load(algorithm, env, noise, pos_feature=pos_feature, vel_feature=vel_feature)

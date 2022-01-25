@@ -108,61 +108,16 @@ class DetPMPWrapper(ABC):
         des_pos += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
         return des_pos, des_vel
 
-    def render_rollout(self, action, env, noise):
+    def render_rollout(self, action, env, noise,  pos_feature, vel_feature):
         import time
-
-        self.trajectory, self.velocity = self.load(action)
-        #self.trajectory += th.Tensor(self.obs()[-10:-5]).to(device='cuda')
-
-        #self.update_tra_with_noise(noise())
-
+        env.reset()
         a = action
         weights = a#.cpu().detach().numpy() #+ noise().reshape(self.mp.weights.shape[0], self.mp.weights.shape[1])
-        _, des_pos, des_vel, __ = self.mp.compute_trajectory_with_noise(weights)
-        self.trajectory = des_pos #+ noise()
-        self.velocity = des_vel
-        self.trajectory += self.obs()[-10:-5]
+        des_pos = np.dot(pos_feature, weights)
+        des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale
 
-        #trajectory = self.trajectory.cpu().detach().numpy()
-        #velocity = self.velocity.cpu().detach().numpy()
-
-        # if timesteps == 0:
-        #n_actions = (50,5)
-        #noise_dist = NormalActionNoise(mean=np.zeros(n_actions),
-        #                               sigma=0.1 * np.ones(n_actions))
-        #noise = noise_dist()
-        #_, noise_traj, noise_vel, __ = self.mp.compute_trajectory_with_noise(noise)
-
-        #self.trajectory_noise = self.trajectory +noise_traj
-        #self.velocity_noise = self.velocity+ noise_vel
-        #trajectory = self.trajectory_noise
-        #velocity = self.velocity_noise
-        #env.reset()
-        obses = []
-        '''
-        for t, pos_vel in enumerate(zip(trajectory, velocity)):
-            time.sleep(0.1)
-            #print("t", t)
-            print("original", t, pos_vel[0])
-            des_pos = pos_vel[0]
-            print("addnoise", des_pos)
-            des_vel = pos_vel[1] #+ noise()
-            ac, _, __ = self.controller.get_action(des_pos, des_vel)
-            #print("ac_origin", ac)
-            ac = np.clip(ac, -1, 1) #+ noise()
-            #ac = np.tanh(ac)
-            print("ac", ac)
-            obs, rewards, done, info = env.step(ac)
-            obses.append(obs)
-            #env.render()
-        '''
-        self.trajectory += self.obs()[-10:-5]
-
-        self.trajectory_noise = self.trajectory  # + noise_traj
-        self.velocity_noise = self.velocity  # + noise_vel
-        trajectory = self.trajectory_noise
-        velocity = self.velocity_noise
-        env.reset()
+        trajectory = des_pos
+        velocity = des_vel + self.obs()[-10:-5]
 
         obses_noise = []
 
