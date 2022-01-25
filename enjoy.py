@@ -6,6 +6,7 @@ import numpy as np
 from stable_baselines3 import PPO, A2C, DQN, HER, SAC, TD3, DDPG
 from stable_baselines3.common.noise import NormalActionNoise
 from model.promp_td3 import ProMPTD3
+from utils.env import env_maker, env_save, env_continue_load
 
 def make_env(env_name, path, rank, seed=0):
     def _init():
@@ -17,7 +18,8 @@ algo = "promp_td3"
 
 env_id = "ALRReacherBalanceIP-v"
 env = env_id + '5'
-path = "logs/promp_td3/" + env + "_7"
+path = "logs/promp_td3/" + env + "_11"
+
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -30,6 +32,7 @@ data = read_yaml(file_name)[env_id]
 
 # create log folder
 data['path'] = path
+data['continue_path'] = "logs/promp_td3/" + env + "_11"
 
 # make the environment
 stats_file = 'env_normalize.pkl'
@@ -53,11 +56,16 @@ ALGOS = {
 }
 ALGO = ALGOS[algo]
 policy = data['algo_params']['policy']
+print(env)
+#assert 1==123
+#nv, eval_env = env_continue_load(data)
+model_path = os.path.join(data['continue_path'], 'model')
+model = ProMPTD3.continue_load(model_path, tensorboard_log=data['path'], env=env)
 
-model = ALGO(policy, env, verbose=1,
-                 tensorboard_log=data['path'],
-                 learning_rate=data["algo_params"]['learning_rate'],
-                 policy_delay=2, data_path=data["path"])
+#model = ALGO(policy, env, verbose=1,
+#                 tensorboard_log=data['path'],
+##                 learning_rate=data["algo_params"]['learning_rate'],
+#                 policy_delay=2, data_path=data["path"])
 
 if data['algorithm'] == "td3":
     print("td3")

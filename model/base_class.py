@@ -626,15 +626,15 @@ class BaseAlgorithm(ABC):
         if "observation_space" not in data or "action_space" not in data:
             raise KeyError("The observation_space and action_space were not given, can't verify new environments")
 
-        if env is not None:
+        #if env is not None:
             # Wrap first if needed
-            env = cls._wrap_env(env, data["verbose"])
+            #env = cls._wrap_env(env, data["verbose"])
             # Check if given env is valid
-            check_for_correct_spaces(env, data["observation_space"], data["action_space"])
-        else:
+        check_for_correct_spaces(env, data["observation_space"], data["action_space"])
+        #else:
             # Use stored env, if one exists. If not, continue as is (can be used for predict)
-            if "env" in data:
-                env = data["env"]
+        #    if "env" in data:
+        #        env = data["env"]
 
         # noinspection PyArgumentList
         model = cls(  # pytype: disable=not-instantiable,wrong-keyword-args

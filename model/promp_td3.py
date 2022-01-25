@@ -91,10 +91,10 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 50
+        self.basis_num = 100
         self.dof = 5
         self.noise_sigma = 0.3
-        self.actor_lr = 0.00001
+        self.actor_lr = 0.0001
 
         self.mean = 1 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
@@ -168,6 +168,9 @@ class ProMPTD3(BaseAlgorithm):
             self.best_model = self.env.rewards_no_ip
             np.save(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
         np.save(self.data_path + "/algo_mean.npy", self.actor.mp.weights.cpu().detach().numpy())
+        np.save(self.data_path + "/pos_features.npy", self.actor.mp.pos_features_np)
+        np.save(self.data_path + "/vel_features.npy", self.actor.mp.vel_features_np)
+
         self._update_learning_rate([self.critic.optimizer])
 
         #if self.num_timesteps == 2200 or self.num_timesteps == 2001:
