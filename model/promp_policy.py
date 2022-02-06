@@ -10,11 +10,21 @@ from stable_baselines3.common.noise import NormalActionNoise
 
 
 class PosStepController(BaseController):
+
+    def __init__(self,
+                 env: None,
+                 num_dof: None):
+        self.num_dof = num_dof
+        super(PosStepController, self).__init__(env)
+
     def get_action(self, des_pos, des_vel):
-        return des_pos
+        return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):
         return des_pos
+
+    def obs(self):
+        return self.env.obs_for_promp()
 
 
 class PDStepController(BaseController):
