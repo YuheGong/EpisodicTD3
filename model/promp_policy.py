@@ -53,6 +53,7 @@ class DetPMPWrapper(ABC):
 
         self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
                                        d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
+        self.controller = PosStepController(env, num_dof=num_dof)
 
         self.weights_scale = torch.Tensor(weights_scale)
         self.trajectory = None
