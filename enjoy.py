@@ -18,7 +18,7 @@ algo = "promp_td3"
 
 env_id = "ALRReacherBalanceIP-v"
 env = env_id + '5'
-path = "logs/promp_td3/" + env + "_13"
+path = "logs/promp_td3/" + env + "_1"
 
 
 #env_id = "ALRReacherBalance-v3"
@@ -39,7 +39,9 @@ stats_file = 'env_normalize.pkl'
 stats_path = os.path.join(path, stats_file)
 env = gym.make("alr_envs:" + env)
 algo_path = path + "/algo_mean.npy"
-pos_feature = np.load(path + "/pos_features.npy")
+a = path + "/pos_features.npy"
+algorithm = np.load(algo_path)
+pos_feature = np.load(a)
 vel_feature = np.load(path + "/vel_features.npy")
 #algo_path = path + "/best_model.npy"
 

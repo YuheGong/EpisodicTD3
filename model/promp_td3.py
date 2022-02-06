@@ -73,7 +73,7 @@ class ProMPTD3(BaseAlgorithm):
         self.remove_time_limit_termination = False
 
         # Save train freq parameter, will be converted later to TrainFreq object
-        self.max_episode_steps = 225 #200 + self.env.envs[0].init_phase
+        self.max_episode_steps = self.env.max_episode_steps #200 + self.env.envs[0].init_phase
         self.train_freq = self.max_episode_steps
         self.gradient_steps = self.max_episode_steps
         self.batch_size = self.max_episode_steps
@@ -91,8 +91,8 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 100
-        self.dof = 5
+        self.basis_num = 10
+        self.dof = env.action_space.shape[0]
         self.noise_sigma = 0.3
         self.actor_lr = 0.0001
 
