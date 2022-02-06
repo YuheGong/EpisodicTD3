@@ -315,7 +315,7 @@ class ProMPTD3(BaseAlgorithm):
 
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
-            scaled_action = self.policy.scale_action(unscaled_action).reshape(1, 5)
+            scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
             scaled_action = np.clip(scaled_action, -1, 1)
             buffer_action = scaled_action
             action = self.policy.unscale_action(scaled_action)

@@ -32,8 +32,8 @@ class PDStepController(BaseController):
         super(PDStepController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):#, action_noise=None):
-        cur_pos = self.obs()[-2*self.num_dof:-self.num_dof].reshape(5)
-        cur_vel = self.obs()[-self.num_dof:].reshape(5)
+        cur_pos = self.obs()[-2*self.num_dof:-self.num_dof].reshape(self.num_dof)
+        cur_vel = self.obs()[-self.num_dof:].reshape(self.num_dof)
         trq = self.p_g * (des_pos - cur_pos) + self.d_g * (des_vel - cur_vel)
         return trq, des_pos, des_vel
 
