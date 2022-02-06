@@ -143,7 +143,26 @@ DeepMindBallInCupDense-v2:
     n_eval_episode: 10
     eval_freq: 500
 
-
+FetchReacher-v:
+  algorithm: promp_td3
+  algo_params:
+    learning_rate: 0.0001
+    n_steps:  20000
+    total_timesteps: 5.e+6
+    train_freq: 1
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  env_params:
+    env_name: alr_envs:FetchReacher-v
+    num_envs: 1
+    wrapper: None
+  eval_env:
+    n_eval_episode: 10
+    eval_freq: 1000
 
 ### ALR Reacher ENV with different goal
 ALRReacherBalance-v:
