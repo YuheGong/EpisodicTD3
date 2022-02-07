@@ -87,7 +87,7 @@ class DetPMPWrapper(ABC):
     def update(self):
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
-        self.trajectory += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof]).to(device='cuda')
+        #self.trajectory += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof]).to(device='cuda')
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 
@@ -132,7 +132,7 @@ class DetPMPWrapper(ABC):
         des_pos = np.dot(pos_feature, weights)
         des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale
 
-        trajectory = des_pos + self.controller.obs()[-2*self.num_dof:-self.num_dof]
+        trajectory = des_pos #+ self.controller.obs()[-2*self.num_dof:-self.num_dof]
         velocity = des_vel
         obses = []
         target = []

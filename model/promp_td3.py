@@ -94,9 +94,9 @@ class ProMPTD3(BaseAlgorithm):
         self.basis_num = 10
         self.dof = env.action_space.shape[0]
         self.noise_sigma = 0.3
-        self.actor_lr = 0.0001
+        self.actor_lr = 0.00005
 
-        self.mean = 1 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
+        self.mean = 0.0001 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
 
         self.data_path = data_path
@@ -249,7 +249,7 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor.update()
                 self.actor_target.update()
         #if self.num_timesteps % 800 == 0:
-        #    print("weights", self.actor.mp.weights)
+        print("weights", self.actor.mp.weights)
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))

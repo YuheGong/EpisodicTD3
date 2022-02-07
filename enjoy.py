@@ -16,9 +16,9 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "promp_td3"
 
-env_id = "ALRReacherBalanceIP-v"
-env = env_id + '5'
-path = "logs/promp_td3/" + env + "_1"
+env_id = "FetchReacher-v"
+env = env_id + '0'
+path = "logs/promp_td3/" + env + "_16"
 
 
 #env_id = "ALRReacherBalance-v3"
