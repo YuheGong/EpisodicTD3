@@ -1,0 +1,22 @@
+algo_params:
+  learning_rate: 0.0001
+  n_steps: 20000
+  policy: MlpPolicy
+  policy_kwargs:
+    activation_fn: ReLU
+    pi: 256
+    qf: 256
+  policy_type: off_policy
+  total_timesteps: 5000000.0
+  train_freq: 1
+algorithm: promp_td3
+env_params:
+  env_name: alr_envs:FetchReacher-v0
+  num_envs: 1
+  wrapper: None
+eval_env:
+  eval_freq: 1000
+  n_eval_episode: 10
+path: logs/promp_td3/FetchReacher-v0_24
+path_in: logs/promp_td3/FetchReacher-v0_24/PROMP_TD3_1
+path_out: logs/promp_td3/FetchReacher-v0_24/data.csv

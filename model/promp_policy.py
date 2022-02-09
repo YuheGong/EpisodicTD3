@@ -75,7 +75,7 @@ class DetPMPWrapper(ABC):
         self.noise_sigma = noise_sigma
         self.num_dof = num_dof
         self.mp = det_promp.DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width, off=0.01,
-                                               zero_start=zero_start, zero_goal=zero_goal, n_zero_bases=2, step_length=self.step_length,
+                                               zero_start=zero_start, zero_goal=zero_goal, n_zero_bases=0, step_length=self.step_length,
                                                dt=dt)
 
     def predict_action(self, step, observation):

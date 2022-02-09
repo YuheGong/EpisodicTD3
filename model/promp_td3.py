@@ -76,7 +76,7 @@ class ProMPTD3(BaseAlgorithm):
         self.max_episode_steps = self.env.max_episode_steps #200 + self.env.envs[0].init_phase
         self.train_freq = self.max_episode_steps
         self.gradient_steps = self.max_episode_steps
-        self.batch_size = self.max_episode_steps
+        self.batch_size = 200#self.max_episode_steps
         self.learning_starts = self.max_episode_steps * 10
 
         self.actor = None  # type: Optional[th.nn.Module]
@@ -91,10 +91,10 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 10
+        self.basis_num = 5
         self.dof = env.action_space.shape[0]
-        self.noise_sigma = 0.3
-        self.actor_lr = 0.00005
+        self.noise_sigma = 0.1
+        self.actor_lr = 0.0001
 
         self.mean = 0.0001 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
@@ -135,11 +135,11 @@ class ProMPTD3(BaseAlgorithm):
         actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
 
         self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.025,
-                                          policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
+                                          policy_type="motor", weights_scale=[0.1], zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, noise_sigma=self.noise_sigma)
 
         self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.025,
-                                          policy_type="motor", weights_scale=1, zero_start=False, step_length=self.max_episode_steps,
+                                          policy_type="motor", weights_scale=[0.1], zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, oise_sigma=self.noise_sigma)
 
         self.actor.mp.weights = self.promp_params
@@ -162,7 +162,9 @@ class ProMPTD3(BaseAlgorithm):
         # Update learning rate according to lr schedule
         self.reward_with_noise = self.env.rewards_no_ip
 
-        self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,5))
+        self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
+        #if self.eval_reward > -10:
+        #    self.actor_optimizer.param_groups[0]['lr'] = 0.000005
         self.env.reset()
         if self.best_model < self.env.rewards_no_ip:
             self.best_model = self.env.rewards_no_ip
@@ -214,6 +216,7 @@ class ProMPTD3(BaseAlgorithm):
             self.critic.optimizer.step()
 
             # Delayed policy updates
+
             if self._n_updates % self.policy_delay == 0:
                 # Compute actor loss
                 act = self.actor.predict_action(replay_data.steps, replay_data.observations)
@@ -244,10 +247,11 @@ class ProMPTD3(BaseAlgorithm):
                 self.vel_optimizer.step()
 
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
-                self.actor_target.mp.pos_features = self.actor.mp.pos_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
+                self.actor_target.mp.pos_features = 0.0001 * self.actor.mp.pos_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor_target.mp.vel_features = self.actor.mp.vel_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
+
         #if self.num_timesteps % 800 == 0:
         print("weights", self.actor.mp.weights)
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")

@@ -4,7 +4,7 @@ import torch as th
 
 class DeterministicProMP:
 
-    def __init__(self, n_basis, n_dof, width=None, off=0.2, zero_start=False, zero_goal=False, n_zero_bases=2, step_length=None, dt=0.02):
+    def __init__(self, n_basis, n_dof, width=None, off=0.2, zero_start=False, zero_goal=False, n_zero_bases=0, step_length=None, dt=0.02):
         self.n_basis = n_basis
         self.n_dof = n_dof
         self.weights = np.zeros(shape=(self.n_basis, self.n_dof))

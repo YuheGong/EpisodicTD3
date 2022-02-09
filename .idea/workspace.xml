@@ -7,10 +7,142 @@
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v3_1/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v3_1/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v3_1/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v3_1/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v3_1/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v3_1/run_1/events.out.tfevents.1643545647.basset.21125.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v3_1/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v4_1/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v4_1/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v4_1/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v4_1/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v4_1/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v4_1/run_1/events.out.tfevents.1643545638.basset.21083.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v4_1/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_1/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_1/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_1/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_1/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_1/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_1/run_1/events.out.tfevents.1643541218.basset.20060.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_1/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_2/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_2/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_2/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_2/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_2/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_2/run_1/events.out.tfevents.1644010330.yre-Legion-5-Pro-16ACH6H.5543.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_2/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_3/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_3/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_3/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_3/run_1/events.out.tfevents.1644183604.yre-Legion-5-Pro-16ACH6H.9075.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_3/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_4/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_4/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_4/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_4/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_4/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_4/run_1/events.out.tfevents.1644183624.yre-Legion-5-Pro-16ACH6H.9145.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_4/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_5/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_5/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_5/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_5/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_5/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_5/run_1/events.out.tfevents.1644184051.yre-Legion-5-Pro-16ACH6H.9321.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v5_5/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v6_1/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v6_1/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v6_1/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v6_1/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v6_1/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v6_1/run_1/events.out.tfevents.1643541194.basset.20008.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/ALRReacherBalanceIP-v6_1/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_1/run_1/events.out.tfevents.1644186225.yre-Legion-5-Pro-16ACH6H.11866.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/run_1/events.out.tfevents.1644246098.yre-Legion-5-Pro-16ACH6H.15325.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/run_1/events.out.tfevents.1644246137.yre-Legion-5-Pro-16ACH6H.15482.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/run_1/events.out.tfevents.1644246197.yre-Legion-5-Pro-16ACH6H.15658.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/run_1/events.out.tfevents.1644247041.yre-Legion-5-Pro-16ACH6H.16666.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_13/vel_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/run_1/events.out.tfevents.1644247110.yre-Legion-5-Pro-16ACH6H.16766.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_14/vel_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/run_1/events.out.tfevents.1644247244.yre-Legion-5-Pro-16ACH6H.16853.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_15/vel_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/run_1/events.out.tfevents.1644247394.yre-Legion-5-Pro-16ACH6H.16954.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_16/vel_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/run_1/events.out.tfevents.1644249654.yre-Legion-5-Pro-16ACH6H.17711.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_17/vel_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_18/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_18/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_18/run_1/events.out.tfevents.1644251673.yre-Legion-5-Pro-16ACH6H.18923.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/run_1/events.out.tfevents.1644251684.yre-Legion-5-Pro-16ACH6H.18995.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_19/vel_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_2/run_1/events.out.tfevents.1644186244.yre-Legion-5-Pro-16ACH6H.11950.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_3/run_1/events.out.tfevents.1644186259.yre-Legion-5-Pro-16ACH6H.12028.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/run_1/events.out.tfevents.1644186275.yre-Legion-5-Pro-16ACH6H.12092.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/vel_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/run_1/events.out.tfevents.1644235942.yre-Legion-5-Pro-16ACH6H.9756.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/run_1/events.out.tfevents.1644235972.yre-Legion-5-Pro-16ACH6H.9842.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/run_1/events.out.tfevents.1644236958.yre-Legion-5-Pro-16ACH6H.10264.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/run_1/events.out.tfevents.1644240477.yre-Legion-5-Pro-16ACH6H.10917.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/model.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/pos_features.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/run_1/events.out.tfevents.1644245877.yre-Legion-5-Pro-16ACH6H.15092.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/vel_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/vel_features.npy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/det_promp.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/det_promp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_policy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_td3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/simple.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,7 +165,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/enjoy.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -41,7 +173,7 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager">
-    <configuration name="enjoy" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="simple" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="GradientProMP_6" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -54,8 +186,8 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/enjoy.py" />
-      <option name="PARAMETERS" value="--e 5" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/simple.py" />
+      <option name="PARAMETERS" value="--e 0" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -80,6 +212,10 @@
       <workItem from="1642667298801" duration="26000" />
       <workItem from="1642667326347" duration="4673000" />
       <workItem from="1643015810901" duration="2092000" />
+      <workItem from="1644235918760" duration="11413000" />
+      <workItem from="1644346884703" duration="11318000" />
+      <workItem from="1644359829942" duration="3360000" />
+      <workItem from="1644395896378" duration="4548000" />
     </task>
     <servers />
   </component>
@@ -91,7 +227,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/promp_td3.py</url>
-          <line>183</line>
+          <line>185</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -109,11 +245,28 @@
           <line>162</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/promp_policy.py</url>
+          <line>102</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/promp_policy.py</url>
+          <line>88</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/Fetch/Reacher.py</url>
+          <line>111</line>
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1644401889442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="simple Coverage Results" MODIFIED="1644246929257" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1643017231862" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
