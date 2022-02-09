@@ -18,9 +18,13 @@ class PosStepController(BaseController):
         super(PosStepController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):
+        cur_pos = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
+        des_pos = des_pos-cur_pos
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):
+        cur_pos = observation[:, -2 * self.num_dof:-self.num_dof].reshape(-1, self.num_dof)
+        des_pos = des_pos - cur_pos
         return des_pos
 
     def obs(self):
@@ -75,7 +79,7 @@ class DetPMPWrapper(ABC):
         self.noise_sigma = noise_sigma
         self.num_dof = num_dof
         self.mp = det_promp.DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width, off=0.01,
-                                               zero_start=zero_start, zero_goal=zero_goal, n_zero_bases=0, step_length=self.step_length,
+                                               zero_start=zero_start, zero_goal=zero_goal, n_zero_bases=2, step_length=self.step_length,
                                                dt=dt)
 
     def predict_action(self, step, observation):
@@ -87,7 +91,7 @@ class DetPMPWrapper(ABC):
     def update(self):
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
-        #self.trajectory += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof]).to(device='cuda')
+        self.trajectory += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof]).to(device='cuda')
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 
