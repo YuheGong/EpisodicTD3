@@ -19,7 +19,7 @@ class PosStepController(BaseController):
 
     def get_action(self, des_pos, des_vel):
         cur_pos = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
-        des_pos = des_pos-cur_pos
+        des_pos = des_pos - cur_pos
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):
@@ -136,7 +136,7 @@ class DetPMPWrapper(ABC):
         des_pos = np.dot(pos_feature, weights)
         des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale
 
-        trajectory = des_pos #+ self.controller.obs()[-2*self.num_dof:-self.num_dof]
+        trajectory = des_pos + self.controller.obs()[-2*self.num_dof:-self.num_dof]
         velocity = des_vel
         obses = []
         target = []
