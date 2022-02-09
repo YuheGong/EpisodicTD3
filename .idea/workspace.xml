@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_47/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_47/algo_mean.npy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_47/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_47/pos_features.npy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_47/run_1/events.out.tfevents.1644402245.yre-Legion-5-Pro-16ACH6H.10060.0" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_47/run_1/events.out.tfevents.1644402245.yre-Legion-5-Pro-16ACH6H.10060.0" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/promp_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_policy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_59/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_59/algo_mean.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_59/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_59/best_model.npy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_59/run_1/events.out.tfevents.1644404347.yre-Legion-5-Pro-16ACH6H.12693.0" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_59/run_1/events.out.tfevents.1644404347.yre-Legion-5-Pro-16ACH6H.12693.0" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_td3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -84,7 +82,7 @@
       <workItem from="1644235918760" duration="11413000" />
       <workItem from="1644346884703" duration="11318000" />
       <workItem from="1644359829942" duration="3360000" />
-      <workItem from="1644395896378" duration="6734000" />
+      <workItem from="1644395896378" duration="9856000" />
     </task>
     <servers />
   </component>
@@ -119,12 +117,17 @@
           <line>416</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/promp_policy.py</url>
+          <line>107</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1644403896898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1644407496455" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="simple Coverage Results" MODIFIED="1644246929257" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1643017231862" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
