@@ -9,13 +9,13 @@ from mp_env_api.utils.policies import BaseController
 from stable_baselines3.common.noise import NormalActionNoise
 
 
-class PosStepController(BaseController):
+class PosVelStepController(BaseController):
 
     def __init__(self,
                  env: None,
                  num_dof: None):
-        self.num_dof = num_dof
-        super(PosStepController, self).__init__(env)
+        self.num_dof = int(num_dof/2)
+        super(PosVelStepController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):
         cur_pos = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
@@ -67,7 +67,7 @@ class DetPMPWrapper(ABC):
 
         self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
                                        d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
-        self.controller = PosStepController(env, num_dof=num_dof)
+        self.controller = PosVelStepController(env, num_dof=num_dof)
 
         self.weights_scale = torch.Tensor(weights_scale)
         self.trajectory = None
