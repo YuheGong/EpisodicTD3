@@ -6,6 +6,65 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_1/run_1/events.out.tfevents.1644505209.yre-Legion-5-Pro-16ACH6H.4470.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/run_1/events.out.tfevents.1644505862.yre-Legion-5-Pro-16ACH6H.5899.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_10/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/run_1/events.out.tfevents.1644534091.yre-Legion-5-Pro-16ACH6H.15884.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_11/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/run_1/events.out.tfevents.1644535917.yre-Legion-5-Pro-16ACH6H.16169.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_12/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_2/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_2/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_2/run_1/events.out.tfevents.1644505300.yre-Legion-5-Pro-16ACH6H.4900.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_3/run_1/events.out.tfevents.1644505388.yre-Legion-5-Pro-16ACH6H.5198.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_4/run_1/events.out.tfevents.1644505419.yre-Legion-5-Pro-16ACH6H.5269.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_5/run_1/events.out.tfevents.1644505436.yre-Legion-5-Pro-16ACH6H.5334.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_6/run_1/events.out.tfevents.1644505475.yre-Legion-5-Pro-16ACH6H.5414.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/run_1/events.out.tfevents.1644505505.yre-Legion-5-Pro-16ACH6H.5614.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_7/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/run_1/events.out.tfevents.1644505558.yre-Legion-5-Pro-16ACH6H.5713.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_8/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/algo_mean.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/best_model.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/pos_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/run_1/events.out.tfevents.1644505694.yre-Legion-5-Pro-16ACH6H.5810.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_9/vel_features.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sac/FetchReacher-v0_1/SAC_1/events.out.tfevents.1644174228.basset.4495.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sac/FetchReacher-v0_1/eval/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sac/FetchReacher-v0_1/eval/evaluations.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/td3/FetchReacher-v0_1/TD3_1/events.out.tfevents.1644174236.basset.4539.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/td3/FetchReacher-v0_1/eval/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/td3/FetchReacher-v0_1/eval/evaluations.npz" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_policy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_td3.py" afterDir="false" />
     </list>
@@ -30,7 +89,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/enjoy.py" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -38,7 +97,7 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager">
-    <configuration name="simple" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+    <configuration name="enjoy" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="GradientProMP_6" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -51,7 +110,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/simple.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/enjoy.py" />
       <option name="PARAMETERS" value="--e 0" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -81,7 +140,11 @@
       <workItem from="1644346884703" duration="11318000" />
       <workItem from="1644359829942" duration="3360000" />
       <workItem from="1644395896378" duration="34262000" />
-      <workItem from="1644505006461" duration="4458000" />
+      <workItem from="1644505006461" duration="5826000" />
+      <workItem from="1644569521647" duration="36163000" />
+      <workItem from="1644657373647" duration="29892000" />
+      <workItem from="1644744685013" duration="19534000" />
+      <workItem from="1644824350349" duration="2250000" />
     </task>
     <servers />
   </component>
@@ -97,21 +160,31 @@
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/model/promp_td3.py</url>
-          <line>160</line>
-          <option name="timeStamp" value="6" />
+          <url>file://$PROJECT_DIR$/model/promp_policy.py</url>
+          <line>167</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/promp_policy.py</url>
-          <line>166</line>
-          <option name="timeStamp" value="8" />
+          <line>156</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/Fetch/Reacher.py</url>
+          <line>52</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/Fetch/Reacher.py</url>
+          <line>119</line>
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1644505462917" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="enjoy Coverage Results" MODIFIED="1644606839512" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="simple Coverage Results" MODIFIED="1644246929257" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1643017231862" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

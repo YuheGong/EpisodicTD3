@@ -91,18 +91,18 @@ class ProMPTD3(BaseAlgorithm):
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 50
+        self.basis_num = 10
         self.dof = env.action_space.shape[0]
-        self.noise_sigma = 0.03
+        self.noise_sigma = 0.2
         self.actor_lr = 0.00001
 
-        self.mean = 0.1 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
+        self.mean = 0.01 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
 
         self.data_path = data_path
         self.best_model = -9000000
 
-        self.ls_number = 0
+        self.ls_number = 2000
         self.action_noise = action_noise
         self.eval_freq = 1000
 
@@ -164,8 +164,21 @@ class ProMPTD3(BaseAlgorithm):
         self.reward_with_noise = self.env.rewards_no_ip
 
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
-        #if self.eval_reward > -10:
-        #    self.actor_optimizer.param_groups[0]['lr'] = 0.000005
+        #if self.eval_reward > -8 and self.eval_reward <= -5:
+        #    self.noise_sigma = 0.05
+        #    self.actor.noise_sigma = self.noise_sigma
+        #elif self.eval_reward > -5:
+        #    self.noise_sigma = 0.01
+        #    self.actor.noise_sigma = self.noise_sigma
+        #else:
+        #    self.noise_sigma = 0.1
+        #   self.actor.noise_sigma = self.noise_sigma
+        #if self.eval_reward > -4:
+        #    self.actor_lr = 0.000001
+        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
+        #else:
+        #    self.actor_lr = 0.00001
+        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
         self.env.reset()
         if self.best_model < self.env.rewards_no_ip:
             self.best_model = self.env.rewards_no_ip
@@ -233,7 +246,7 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
-            '''
+
             if self._n_updates % self.policy_delay == 1:
                 # Compute actor loss
                 act = self.actor.predict_action(replay_data.steps, replay_data.observations)
@@ -252,10 +265,11 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.mp.vel_features = self.actor.mp.vel_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 self.actor.update()
                 self.actor_target.update()
-            '''
+
 
         #if self.num_timesteps % 800 == 0:
-        print("weights", self.actor.mp.weights)
+        print("weights", self.actor.mp.weights[0])
+        print("trajectory", self.actor.trajectory_np[0])
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))

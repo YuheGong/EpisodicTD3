@@ -14,11 +14,11 @@ class PosVelStepController(BaseController):
     def __init__(self,
                  env: None,
                  num_dof: None):
-        self.num_dof = int(num_dof/2)
+        self.num_dof = int(num_dof)
         super(PosVelStepController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):
-        cur_pos = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
+        #cur_pos = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
         des_pos = des_pos #- cur_pos
         return des_pos, des_pos, des_vel
 
@@ -65,8 +65,8 @@ class DetPMPWrapper(ABC):
                  weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None,
                  **mp_kwargs):
 
-        self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
-                                       d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
+        #self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
+        #                               d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
         self.controller = PosVelStepController(env, num_dof=num_dof)
 
         self.weights_scale = torch.Tensor(weights_scale)
@@ -79,7 +79,7 @@ class DetPMPWrapper(ABC):
         self.noise_sigma = noise_sigma
         self.num_dof = num_dof
         self.mp = det_promp.DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width, off=0.01,
-                                               zero_start=zero_start, zero_goal=zero_goal, n_zero_bases=0, step_length=self.step_length,
+                                               zero_start=zero_start, zero_goal=zero_goal, n_zero_bases=2, step_length=self.step_length,
                                                dt=dt)
 
     def predict_action(self, step, observation):
@@ -98,7 +98,8 @@ class DetPMPWrapper(ABC):
 
     def get_action(self, timesteps):
         """ This function generates a trajectory based on a DMP and then does the usual loop over reset and step"""
-        n_actions =(self.num_dof,)  # env.action_space.shape[-1]
+        n_actions = \
+            (self.num_dof,)  # env.action_space.shape[-1]
         noise_dist = NormalActionNoise(mean=np.zeros(n_actions), sigma=self.noise_sigma * np.ones(n_actions))
 
         trajectory = self.trajectory_np[timesteps] + noise_dist()
@@ -136,7 +137,7 @@ class DetPMPWrapper(ABC):
         des_pos = np.dot(pos_feature, weights)
         des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale
 
-        trajectory = des_pos + self.controller.obs()[-2*self.num_dof:-self.num_dof]
+        trajectory = des_pos #+ self.controller.obs()[-2*self.num_dof:-self.num_dof]
         velocity = des_vel
         obses = []
         target = []
