@@ -1,0 +1,25 @@
+algo_params:
+  batch_size: 200
+  learning_rate: 0.0001
+  n_steps: 20000
+  num_timesteps: 1000040
+  policy: MlpPolicy
+  policy_kwargs:
+    activation_fn: tanh
+    pi: 256
+    qf: 256
+  policy_type: off_policy
+  total_timesteps: 1000000.0
+  train_freq: 115
+algorithm: sac
+env_params:
+  env_name: alr_envs:FetchReacher-v0
+  num_envs: 1
+  wrapper: None
+eval_env:
+  eval_freq: 1000
+  n_eval_episode: 10
+path: logs/sac/FetchReacher-v0_10
+path_in: logs/sac/FetchReacher-v0_10/SAC_1
+path_out: logs/sac/FetchReacher-v0_10/data.csv
+seed: null

@@ -7,6 +7,8 @@ from . import det_promp
 import torch as th
 from mp_env_api.utils.policies import BaseController
 from stable_baselines3.common.noise import NormalActionNoise
+from scipy.spatial.transform import Rotation as R
+import pytorch3d as th3d
 
 
 class PosVelStepController(BaseController):
@@ -18,13 +20,24 @@ class PosVelStepController(BaseController):
         super(PosVelStepController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):
-        #cur_pos = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
-        des_pos = des_pos #- cur_pos
+        cur_pos = self.obs()[:3].reshape(-1)#[0:3]
+        #cur_quat = self.obs()[-self.num_dof:].reshape(self.num_dof)
+        ##r = R.from_quat(cur_quat)
+        #des_pos = r.apply(des_pos).reshape(-1)
+        des_pos = des_pos - cur_pos #+0.5 *(self.obs()[-14:-11]+self.obs()[-11:-8])#np.array(a[-1], -a[1], a[0])
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):
-        cur_pos = observation[:, -2 * self.num_dof:-self.num_dof].reshape(-1, self.num_dof)
-        des_pos = des_pos #- cur_pos
+        cur_pos = observation[:, :3].reshape(-1,self.num_dof)
+        #cur_quat = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
+        #des_poses = []
+        #for i in range(cur_quat.shape[0]):
+            #r = R.from_quat(cur_quat[i])
+        #    des_poses.append(th3d.quaternion_apply(des_pos[i], cur_quat).reshape(-1))
+        #des_poses = #th.Tensor(des_poses).reshape(cur_quat.shape[0], -1).to(device='cuda')
+
+        #des_pos = th.Tensor(np.array(a[-1], -a[1], a[0]))
+        des_pos = des_pos - cur_pos #+0.5 *(observation[:,-14:-11]+observation[:,-11:-8])#- cur_pos
         return des_pos
 
     def obs(self):
@@ -91,7 +104,7 @@ class DetPMPWrapper(ABC):
     def update(self):
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
-        #self.trajectory += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof]).to(device='cuda')
+        self.trajectory += th.Tensor(self.controller.obs()[:3]).to(device='cuda')
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 
@@ -136,6 +149,7 @@ class DetPMPWrapper(ABC):
         weights = a#.cpu().detach().numpy() #+ noise().reshape(self.mp.weights.shape[0], self.mp.weights.shape[1])
         des_pos = np.dot(pos_feature, weights)
         des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale
+        print('des+pos', des_pos)
 
         trajectory = des_pos #+ self.controller.obs()[-2*self.num_dof:-self.num_dof]
         velocity = des_vel
@@ -149,6 +163,7 @@ class DetPMPWrapper(ABC):
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             # ac = np.tanh(ac)
             # print("ac", ac)
+            obses.append(np.array(self.env.sim.data.mocap_pos.copy()).reshape(-1) + 0.05*np.array(ac).reshape(-1))
             obs, rewards, done, info = env.step(ac)
             #obses.append(env.get_body_com("fingertip")[0:2])
             #target.append(env.get_body_com("target")[0:2])

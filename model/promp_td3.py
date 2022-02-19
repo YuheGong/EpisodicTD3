@@ -33,7 +33,7 @@ class ProMPTD3(BaseAlgorithm):
         policy: Union[str, Type[TD3Policy]],
         env: Union[GymEnv, str],
         learning_rate: Union[float, Schedule] = 1e-3,
-        buffer_size: int = int(1e6),
+        buffer_size: int = int(1e5),
         tau: float = 0.005,
         gamma: float = 0.99,
         action_noise: Optional[ActionNoise] = None,
@@ -93,7 +93,7 @@ class ProMPTD3(BaseAlgorithm):
 
         self.basis_num = 10
         self.dof = env.action_space.shape[0]
-        self.noise_sigma = 0.2
+        self.noise_sigma = 0.1
         self.actor_lr = 0.00001
 
         self.mean = 0.01 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
@@ -102,7 +102,7 @@ class ProMPTD3(BaseAlgorithm):
         self.data_path = data_path
         self.best_model = -9000000
 
-        self.ls_number = 2000
+        self.ls_number = 1000
         self.action_noise = action_noise
         self.eval_freq = 1000
 
@@ -164,15 +164,18 @@ class ProMPTD3(BaseAlgorithm):
         self.reward_with_noise = self.env.rewards_no_ip
 
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
-        #if self.eval_reward > -8 and self.eval_reward <= -5:
-        #    self.noise_sigma = 0.05
+        #if self.eval_reward > -2: #and self.eval_reward <= -5:
+        #    self.noise_sigma = 0.02
         #    self.actor.noise_sigma = self.noise_sigma
+        #    self.actor_lr = 0.000001
+        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
         #elif self.eval_reward > -5:
         #    self.noise_sigma = 0.01
         #    self.actor.noise_sigma = self.noise_sigma
         #else:
-        #    self.noise_sigma = 0.1
-        #   self.actor.noise_sigma = self.noise_sigma
+        #    self.actor_lr = 0.00001
+        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
+
         #if self.eval_reward > -4:
         #    self.actor_lr = 0.000001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
@@ -241,6 +244,7 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_optimizer.zero_grad()
                 actor_loss.backward()
                 self.actor_optimizer.step()
+
 
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")

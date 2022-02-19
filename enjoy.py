@@ -18,7 +18,7 @@ algo = "promp_td3"
 
 env_id = "FetchReacher-v"
 env = env_id + '0'
-path = "logs/promp_td3/" + env + "_53"
+path = "logs/promp_td3/" + env + "_213"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"

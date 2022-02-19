@@ -148,7 +148,7 @@ FetchReacher-v:
   algo_params:
     learning_rate: 0.0001
     n_steps:  20000
-    total_timesteps: 5.e+6
+    total_timesteps: 1.e+6
     train_freq: 1
     policy: MlpPolicy
     policy_type: off_policy
