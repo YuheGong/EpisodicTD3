@@ -93,7 +93,7 @@ class ProMPTD3(BaseAlgorithm):
 
         self.basis_num = 10
         self.dof = env.action_space.shape[0]
-        self.noise_sigma = 0.1
+        self.noise_sigma = 0.5
         self.actor_lr = 0.0001
 
         self.mean = 0.01 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
@@ -164,15 +164,15 @@ class ProMPTD3(BaseAlgorithm):
         self.reward_with_noise = self.env.rewards_no_ip
 
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
-        #if self.eval_reward > -2: #and self.eval_reward <= -5:
-        #    self.noise_sigma = 0.02
-        #    self.actor.noise_sigma = self.noise_sigma
-        #    self.actor_lr = 0.000001
-        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
-        #elif self.eval_reward > -5:
-        #    self.noise_sigma = 0.01
-        #    self.actor.noise_sigma = self.noise_sigma
-        #else:
+        if self.eval_reward > -2 and self.eval_reward <= -1:
+            self.noise_sigma = 0.3
+            self.actor.noise_sigma = self.noise_sigma
+        elif self.eval_reward > -1:
+            self.noise_sigma = 0.1
+            self.actor.noise_sigma = self.noise_sigma
+        else:
+            self.noise_sigma = 0.5
+            self.actor.noise_sigma = self.noise_sigma
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 

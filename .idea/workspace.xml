@@ -5,14 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/algo_mean.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/algo_mean.npy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/best_model.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/best_model.npy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/pos_features.npy" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/pos_features.npy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/run_1/events.out.tfevents.1645265185.yre-Legion-5-Pro-16ACH6H.9302.0" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/FetchReacher-v0_221/run_1/events.out.tfevents.1645265185.yre-Legion-5-Pro-16ACH6H.9302.0" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/promp_policy.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_policy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_td3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/simple.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,7 +118,7 @@
       <workItem from="1644657373647" duration="29892000" />
       <workItem from="1644744685013" duration="19534000" />
       <workItem from="1644824350349" duration="41626000" />
-      <workItem from="1645464982799" duration="1606000" />
+      <workItem from="1645464982799" duration="2227000" />
     </task>
     <servers />
   </component>
