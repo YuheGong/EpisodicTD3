@@ -10,6 +10,7 @@ from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckA
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--e", type=str, help="the environment")
+parser.add_argument("--seed", type=str, help="the seed")
 args = parser.parse_args()
 
 
@@ -43,7 +44,7 @@ n_actions = 5#env.action_space.shape[-1]
 action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0 * np.ones(n_actions))
 env.reset()
 #print("env", env)
-model = ALGO(policy, env, policy_kwargs=policy_kwargs, verbose=1,
+model = ALGO(policy, env, seed=int(args.seed), policy_kwargs=policy_kwargs, verbose=1,
                  tensorboard_log=data['path'], action_noise=action_noise,
                  learning_rate=data["algo_params"]['learning_rate'],
                  policy_delay=2, data_path=data["path"], gamma=0.99)#, tau=0.9)

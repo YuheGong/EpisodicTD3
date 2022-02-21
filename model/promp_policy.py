@@ -8,7 +8,6 @@ import torch as th
 from mp_env_api.utils.policies import BaseController
 from stable_baselines3.common.noise import NormalActionNoise
 from scipy.spatial.transform import Rotation as R
-import pytorch3d as th3d
 
 
 class PosVelStepController(BaseController):

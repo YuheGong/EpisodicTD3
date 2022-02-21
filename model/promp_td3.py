@@ -94,7 +94,7 @@ class ProMPTD3(BaseAlgorithm):
         self.basis_num = 10
         self.dof = env.action_space.shape[0]
         self.noise_sigma = 0.1
-        self.actor_lr = 0.00001
+        self.actor_lr = 0.0001
 
         self.mean = 0.01 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
