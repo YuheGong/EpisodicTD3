@@ -77,9 +77,9 @@ class DetPMPWrapper(ABC):
                  weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None,
                  **mp_kwargs):
 
-        #self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
-        #                               d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
-        self.controller = PosVelStepController(env, num_dof=num_dof)
+        self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
+                                       d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
+        #self.controller = PosVelStepController(env, num_dof=num_dof)
 
         self.weights_scale = torch.Tensor(weights_scale)
         self.trajectory = None
@@ -103,7 +103,7 @@ class DetPMPWrapper(ABC):
     def update(self):
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
-        self.trajectory += th.Tensor(self.controller.obs()[:3]).to(device='cuda')
+        self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(device='cuda')#elf.controller.obs()[:3]).to(device='cuda')
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 

@@ -21,7 +21,7 @@ def make_env(env_name, path, rank, seed=0):
     return _init
 
 algo = "promp_td3"
-env_id = "FetchReacher-v"
+env_id = "ALRReacherBalanceIP-v"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]

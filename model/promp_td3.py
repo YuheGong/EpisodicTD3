@@ -93,10 +93,10 @@ class ProMPTD3(BaseAlgorithm):
 
         self.basis_num = 10
         self.dof = env.action_space.shape[0]
-        self.noise_sigma = 0.5
-        self.actor_lr = 0.0001
+        self.noise_sigma = 0.3
+        self.actor_lr = 0.00005
 
-        self.mean = 0.01 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
+        self.mean = 1 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
         self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
 
         self.data_path = data_path
@@ -135,11 +135,11 @@ class ProMPTD3(BaseAlgorithm):
     def _create_aliases(self) -> None:
         actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
 
-        self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.01,
+        self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.25,
                                           policy_type="motor", weights_scale=[1], zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, noise_sigma=self.noise_sigma)
 
-        self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.01,
+        self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.25,
                                           policy_type="motor", weights_scale=[1], zero_start=False, step_length=self.max_episode_steps,
                                           policy_kwargs=actor_kwargs, oise_sigma=self.noise_sigma)
 
@@ -164,15 +164,15 @@ class ProMPTD3(BaseAlgorithm):
         self.reward_with_noise = self.env.rewards_no_ip
 
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
-        if self.eval_reward > -2 and self.eval_reward <= -1:
-            self.noise_sigma = 0.3
-            self.actor.noise_sigma = self.noise_sigma
-        elif self.eval_reward > -1:
-            self.noise_sigma = 0.1
-            self.actor.noise_sigma = self.noise_sigma
-        else:
-            self.noise_sigma = 0.5
-            self.actor.noise_sigma = self.noise_sigma
+        #if self.eval_reward > -2 and self.eval_reward <= -1:
+        #    self.noise_sigma = 0.3
+        #    self.actor.noise_sigma = self.noise_sigma
+        #elif self.eval_reward > -1:
+        #    self.noise_sigma = 0.1
+        #    self.actor.noise_sigma = self.noise_sigma
+        #else:
+        #    self.noise_sigma = 0.5
+        #    self.actor.noise_sigma = self.noise_sigma
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 
