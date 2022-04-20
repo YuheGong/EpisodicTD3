@@ -143,7 +143,12 @@ class ProMPTD3(BaseAlgorithm):
         # The initial reward of the best model
         self.best_model = -9000000
 
+        self._setup_model()
+
+    def _setup_model(self):
+        self._setup_lr_schedule()
         self._setup_critic_model()
+        self._convert_train_freq()
 
         self.actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
         self.width = 0.01
@@ -151,7 +156,6 @@ class ProMPTD3(BaseAlgorithm):
         self.policy_type = "motor"
         self.zero_start = True
         self._setup_promp_model()
-
 
     def _setup_promp_params(self, initial_promp_params):
         """
@@ -308,8 +312,6 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor.update()
                 self.actor_target.update()
 
-
-        #if self.num_timesteps % 800 == 0:
         print("weights", self.actor.mp.weights[0])
         print("trajectory", self.actor.trajectory_np[0])
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
@@ -317,13 +319,11 @@ class ProMPTD3(BaseAlgorithm):
             logger.record("train/actor_loss", np.mean(actor_losses))
         logger.record("train/critic_loss", np.mean(critic_losses))
         logger.record("eval/noise_reward", self.reward_with_noise)
-        logger.record("train/actor_learning_rate", self.actor_lr)
+        logger.record("train/actor_learning_rate", self.actor_learning_rate)
         logger.record("train/gradient_steps", gradient_steps)
-        logger.record("train/noise_sigma", self.noise_sigma)
+        logger.record("train/noise_sigma", self.trajectory_noise_sigma)
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
-        #print("logger", logger)
-        #assert 1==123
 
     def learn(
             self,
@@ -453,8 +453,6 @@ class ProMPTD3(BaseAlgorithm):
             self.plot_vel_with_noise = np.zeros((200, 5))
             self.plot_pos_with_noise = np.zeros((200, 5))
             self.actor.update()
-            if self.weights_noise:
-                self.actor.update_tra_with_noise((action_noise))
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
                 self.ls_number < self.learning_starts:
@@ -502,15 +500,11 @@ class ProMPTD3(BaseAlgorithm):
                 total_timesteps.append(self.episode_timesteps)
                 self.episode_timesteps = 0
 
-                if action_noise is not None:
-                    action_noise.reset()
-
                 # Log training infos
                 if log_interval is not None and self._episode_num % log_interval == 0:
                     print("")
                     self._dump_logs()
-                if self.weights_noise:
-                    self.actor.update_tra_with_noise((action_noise))
+
                 env.reset()
 
                 # self.actor.update()
