@@ -16,9 +16,10 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "promp_td3"
 
-env_id = "FetchReacher-v"
-env = env_id + '0'
-path = "logs/promp_td3/" + env + "_213"
+#env_id = "FetchReacher-v"
+env_id = "ALRReacherBalanceIP-v"
+env = env_id + '3'
+path = "logs/promp_td3/" + env + "_1"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -42,7 +43,7 @@ a = path + "/pos_features.npy"
 algorithm = np.load(algo_path)
 pos_feature = np.load(a)
 vel_feature = np.load(path + "/vel_features.npy")
-#algo_path = path + "/best_model.npy"
+algo_path = path + "/best_model.npy"
 
 algorithm = np.load(algo_path)
 #"alr_envs:" + env

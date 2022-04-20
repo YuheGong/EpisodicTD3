@@ -76,10 +76,11 @@ class DetPMPWrapper(ABC):
     def __init__(self, env: gym.Wrapper, num_dof: int, num_basis: int, width: int, step_length=None,
                  weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None,
                  **mp_kwargs):
-
-        self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
-                                       d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
-        #self.controller = PosVelStepController(env, num_dof=num_dof)
+        if "Fetch" not in str(env):
+            self.controller = PDStepController(env, p_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['p_gains'],
+                                     d_gains=mp_kwargs['policy_kwargs']['policy_kwargs']['d_gains'], num_dof=num_dof)
+        else:
+            self.controller = PosVelStepController(env, num_dof=num_dof)
 
         self.weights_scale = torch.Tensor(weights_scale)
         self.trajectory = None
@@ -104,6 +105,7 @@ class DetPMPWrapper(ABC):
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
         self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(device='cuda')#elf.controller.obs()[:3]).to(device='cuda')
+        #self.trajectory += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')#elf.controller.obs()[:3]).to(device='cuda')
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 
@@ -144,13 +146,16 @@ class DetPMPWrapper(ABC):
     def render_rollout(self, action, env, noise,  pos_feature, vel_feature):
         import time
         env.reset()
+
         a = action
         weights = a#.cpu().detach().numpy() #+ noise().reshape(self.mp.weights.shape[0], self.mp.weights.shape[1])
-        des_pos = np.dot(pos_feature, weights)
-        des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale
-        print('des+pos', des_pos)
-
-        trajectory = des_pos #+ self.controller.obs()[-2*self.num_dof:-self.num_dof]
+        des_pos = np.dot(pos_feature, weights)#self.trajectory_np#
+        des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale#self.velocity_np
+        #print('des+pos', des_pos)
+        if "Fetch" in str(env):
+            trajectory = des_pos +self.controller.obs()[:3].reshape(-1)
+        else:
+            trajectory = des_pos + self.controller.obs()[-2*self.num_dof:-self.num_dof]
         velocity = des_vel
         obses = []
         target = []
@@ -162,12 +167,21 @@ class DetPMPWrapper(ABC):
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             # ac = np.tanh(ac)
             # print("ac", ac)
-            obses.append(np.array(self.env.sim.data.mocap_pos.copy()).reshape(-1) + 0.05*np.array(ac).reshape(-1))
+            #obses.append(np.array(self.env.sim.data.mocap_pos.copy()).reshape(-1) + 0.05*np.array(ac).reshape(-1))
             obs, rewards, done, info = env.step(ac)
             #obses.append(env.get_body_com("fingertip")[0:2])
             #target.append(env.get_body_com("target")[0:2])
             env.render()
-
+        #print("reward", env.rewards_no_ip)
+        target = np.array(env.goal)
+        #print("traget", target)
+        import matplotlib.pyplot as plt
+        plt.plot(target[1:, 0], target[1:, 1])
+        plt.xlabel("x axis")
+        plt.ylabel("y axis")
+        plt.title("2 dimensional trajectory")
+        #plt.show()
+        '''
         finger = np.array(env.finger)
         target = np.array(env.goal)
         import matplotlib.pyplot as plt
@@ -193,3 +207,4 @@ class DetPMPWrapper(ABC):
             plt.savefig(f'velocity_joint_{i}')
             plt.cla()
         a = 1
+        '''

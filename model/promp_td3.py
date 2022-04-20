@@ -28,91 +28,159 @@ import gym
 
 class ProMPTD3(BaseAlgorithm):
 
+    """
+    This class is the interface for the users using ProMPTD3 algorithm.
+
+    :param critic: the critic network in ProMPTD3  (MlpPolicy, CnnPolicy, ...).
+    :param env: for any regular OpenAI Gym environment.
+    :param initial_promp_params: the initial value of ProMP parameters, it can be int, float or tensor
+    :param basis_num: the number of Gaussian Basis Functions.
+    :param learning_start_episodes: how many episodes of the model to collect transitions for before learning starts.
+    :param critic_learning_rate: the learning rate of the critic network.
+    :param actor_lraning_rate: the learning rate of the ProMP actor.
+    :param buffer_size: size of the replay buffer.
+    :param tau: the soft update coefficient ("Polyak update", between 0 and 1)
+    :param gamma: the discount factor
+    :param policy_delay: Policy and target networks will only be updated once every policy_delay steps
+        per training steps. The Q values will be updated policy_delay more often (update every training step).
+    :param trajectory_noise_sigma: the standard deviation value of exploration noise added on ProMP trajectory
+    :param target_policy_noise: Standard deviation of Gaussian noise added to target policy
+        (smoothing noise)
+    :param target_noise_clip: Limit for absolute value of target policy smoothing noise.
+    :param critic_network_kwargs: additional arguments to be passed to the critic network on creation
+    :param verbose: the verbosity level: 0 no output, 1 info, 2 debug
+    :param seed: Seed for the pseudo random generators
+    :param device: Device (cpu, cuda, ...) on which the code should be run.
+        Setting it to auto, the code will be run on the GPU if possible.
+    :param data_path: the path to save model and tensorboard data.
+
+
+    """
+
     def __init__(
         self,
-        policy: Union[str, Type[TD3Policy]],
+        critic: Union[str, Type[TD3Policy]],
         env: Union[GymEnv, str],
-        learning_rate: Union[float, Schedule] = 1e-3,
+        initial_promp_params: th.Tensor = None,
+        basis_num: int = 10,
+        learning_start_episodes: int = 10,
+        critic_learning_rate: Union[float, Schedule] = 1e-3,
+        actor_learning_rate:  Union[float, Schedule] = 1e-3,
         buffer_size: int = int(1e5),
         tau: float = 0.005,
         gamma: float = 0.99,
-        action_noise: Optional[ActionNoise] = None,
-        optimize_memory_usage: bool = False,
         policy_delay: int = 2,
+        trajectory_noise_sigma: float = 0.1,
         target_policy_noise: float = 0.2,
         target_noise_clip: float = 0.5,
-        tensorboard_log: Optional[str] = None,
-        policy_kwargs: Dict[str, Any] = None,
+        critic_network_kwargs: Dict[str, Any] = None,
         verbose: int = 0,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         data_path: str = None,
     ):
 
+
+        # Initialize TD3 critic network, for details please check OpenAI Stable baselines3
         super(ProMPTD3, self).__init__(
-            policy=policy,
+            policy=critic,
             env=env,
             policy_base=TD3Policy,
-            learning_rate=learning_rate,
-            policy_kwargs=policy_kwargs,
-            tensorboard_log=tensorboard_log,
+            learning_rate=critic_learning_rate,
+            policy_kwargs=critic_network_kwargs,
+            tensorboard_log=data_path,
             verbose=verbose,
             device=device,
             seed=seed,
             supported_action_spaces=None,
         )
-        self.buffer_size = buffer_size
 
-        self.tau = tau
-        self.gamma = gamma
 
-        self.action_noise = action_noise
-        self.optimize_memory_usage = optimize_memory_usage
-
-        # Remove terminations (dones) that are due to time limit
+        # Setup the default setting of stable baselines3, for details please check OpenAI Stable baselines3
         self.remove_time_limit_termination = False
-
-        # Save train freq parameter, will be converted later to TrainFreq object
-        self.max_episode_steps = self.env.max_episode_steps #200 + self.env.envs[0].init_phase
-        self.train_freq = self.max_episode_steps
-        self.gradient_steps = self.max_episode_steps
-        self.batch_size = self.max_episode_steps
-        self.learning_starts = self.max_episode_steps * 10
-
-        self.actor = None  # type: Optional[th.nn.Module]
-        self.replay_buffer = None  # type: Optional[ReplayBuffer]
-        # Update policy keyword arguments
-
-        # For gSDE only
+        self.actor = None
+        self.replay_buffer = None
         self.use_sde_at_warmup = False
         self.episode_timesteps = 0
+        self.optimize_memory_usage = False
 
+        # Path for saving the model
+        self.data_path = data_path
+
+        self.buffer_size = buffer_size
+        self.tau = tau
         self.policy_delay = policy_delay
+        self.gamma = gamma
+
+        # Noise for target policy smoothing regularization
         self.target_noise_clip = target_noise_clip
         self.target_policy_noise = target_policy_noise
 
-        self.basis_num = 10
+        # Environment episode length
+        self.max_episode_steps = self.env.max_episode_steps
+
+        # Save train freq parameter, will be converted later to TrainFreq object
+        # Set the batch size, training frequency and gradient steps equal to the length of one episode
+        self.train_freq = self.max_episode_steps  # How many gradient steps to do after each rollout
+        self.gradient_steps = self.max_episode_steps  # Update the model every ``train_freq`` timesteps.
+        self.batch_size = self.max_episode_steps  # How many data to use in training
+
+        # How many timesteps of the model to collect transitions for before learning starts.
+        self.learning_starts = self.max_episode_steps * learning_start_episodes
+        self.ls_number = 0 # Counting the sample timesteps from the start
+
+        # Setup the learning rate of the optimizer which updates the ProMP weights of Gaussian Basis Function
+        self.actor_learning_rate = actor_learning_rate
+
+        # Set the parameters of ProMP wrapper
+        self.basis_num = basis_num
         self.dof = env.action_space.shape[0]
-        self.noise_sigma = 0.3
-        self.actor_lr = 0.00005
+        self.trajectory_noise_sigma = trajectory_noise_sigma
 
-        self.mean = 1 * th.ones(self.basis_num * self.dof)#torch.randn(25,)
-        self.promp_params = ((self.mean).reshape(self.basis_num, self.dof)).to(device="cuda")
+        # Setup initial ProMP parameters
+        self.promp_params = self._setup_promp_params(initial_promp_params)
 
-        self.data_path = data_path
+        # The initial reward of the best model
         self.best_model = -9000000
 
-        self.ls_number = 1000
-        self.action_noise = action_noise
-        self.eval_freq = 1000
+        self._setup_critic_model()
+
+        self.actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
+        self.width = 0.01
+        self.weight_scale = 1
+        self.policy_type = "motor"
+        self.zero_start = True
+        self._setup_promp_model()
 
 
-        self._setup_model()
+    def _setup_promp_params(self, initial_promp_params):
+        """
+        The function to setup ProMP initial parameters.
+        If the input is int or float, ProMP parameters will be initialized
+            by extending its size to self.basis_num * self.dof,
+        and if the input is already a tensor, it will be checked whether its shape
+            is same as self.basis_num * self.dof
 
-    def _setup_model(self) -> None:
-        self._setup_lr_schedule()
+        input: the initial value of ProMP parameters from users
+        output: the well-shaped ProMP parameters which can be use in ProMP wrapper.
+        """
+        if initial_promp_params is None:
+            initial_promp_params = 1 * th.ones(self.basis_num * self.dof)
+        elif isinstance(initial_promp_params, float):
+            initial_promp_params = initial_promp_params * th.ones(self.basis_num * self.dof)
+        elif isinstance(initial_promp_params, int):
+            initial_promp_params = initial_promp_params * th.ones(self.basis_num * self.dof)
+        else:
+            initial_promp_params = th.Tensor(initial_promp_params)
+            if initial_promp_params.shape != (self.basis_num * self.dof):
+                raise AssertionError(f'The shape of ProMP parameters should be {self.basis_num} * {self.dof}, '
+                                     f'now it is {initial_promp_params.shape[0]}')
+        return (initial_promp_params.reshape(self.basis_num, self.dof)).to(device="cuda")
+
+
+    def _setup_critic_model(self) -> None:
+        """Initialize the critic model"""
         self.set_random_seed(self.seed)
-
         self.replay_buffer = ReplayBufferStep(
             self.buffer_size,
             self.observation_space,
@@ -127,36 +195,35 @@ class ProMPTD3(BaseAlgorithm):
             **self.policy_kwargs,  # pytype:disable=not-instantiable
         )
         self.policy = self.policy.to(self.device)
-
-        # Convert train freq parameter to TrainFreq object
-        self._convert_train_freq()
-        self._create_aliases()
-
-    def _create_aliases(self) -> None:
-        actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
-
-        self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.25,
-                                          policy_type="motor", weights_scale=[1], zero_start=False, step_length=self.max_episode_steps,
-                                          policy_kwargs=actor_kwargs, noise_sigma=self.noise_sigma)
-
-        self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=0.25,
-                                          policy_type="motor", weights_scale=[1], zero_start=False, step_length=self.max_episode_steps,
-                                          policy_kwargs=actor_kwargs, oise_sigma=self.noise_sigma)
-
-        self.actor.mp.weights = self.promp_params
-        (self.actor.mp.weights).requires_grad = True
-        self.actor_target.mp.weights = (self.promp_params * self.tau) # + (1 - self.tau) * self.actor_target.mp.weights)
-        self.actor.update()
-        self.actor_target.update()
-
         self.critic = self.policy.critic
         self.critic_target = self.policy.critic_target
 
-        self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_lr)
-        self.pos_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_lr)
-        self.vel_optimizer = th.optim.Adam([self.actor.mp.vel_features], lr=self.actor_lr)
+    def _setup_promp_model(self) -> None:
+        """Initialize the ProMP model"""
+        self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
+                                   policy_type=self.policy_type, weights_scale=self.weight_scale,
+                                   zero_start=self.zero_start, step_length=self.max_episode_steps,
+                                   policy_kwargs=self.actor_kwargs, noise_sigma=self.trajectory_noise_sigma)
 
-        self.weights_noise = False
+
+        self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
+                                          policy_type=self.policy_type, weights_scale=self.weight_scale,
+                                          zero_start=self.zero_start, step_length=self.max_episode_steps,
+                                          policy_kwargs=self.actor_kwargs, oise_sigma=self.trajectory_noise_sigma)
+
+        # Pass the promp parameters value to ProMP weights
+        self.actor.mp.weights = self.promp_params
+        (self.actor.mp.weights).requires_grad = True  # Enable the gradient of ProMP weights
+
+        # Set the ProMP weights optimizer
+        self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
+
+        # Set target ProMP weights by target delay
+        self.actor_target.mp.weights = (self.promp_params * self.tau)
+
+        # Update the reference trajectory according to weights
+        self.actor.update()
+        self.actor_target.update()
 
 
     def train(self, gradient_steps: int, batch_size: int = 100) -> None:
@@ -176,12 +243,7 @@ class ProMPTD3(BaseAlgorithm):
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 
-        #if self.eval_reward > -4:
-        #    self.actor_lr = 0.000001
-        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
-        #else:
-        #    self.actor_lr = 0.00001
-        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
+
         self.env.reset()
         if self.best_model < self.env.rewards_no_ip:
             self.best_model = self.env.rewards_no_ip
@@ -191,11 +253,6 @@ class ProMPTD3(BaseAlgorithm):
         np.save(self.data_path + "/vel_features.npy", self.actor.mp.vel_features.cpu().detach().numpy())
 
         self._update_learning_rate([self.critic.optimizer])
-
-        #if self.num_timesteps == 2200 or self.num_timesteps == 2001:
-        #    self.polt_trajectory()
-        #elif self.num_timesteps % 2.e4 == 0:
-        #    self.polt_trajectory()
 
         actor_losses, critic_losses = [], []
 
@@ -251,25 +308,6 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor.update()
                 self.actor_target.update()
 
-            if self._n_updates % self.policy_delay == 1:
-                # Compute actor loss
-                act = self.actor.predict_action(replay_data.steps, replay_data.observations)
-                actor_loss = -self.critic.q1_forward(replay_data.observations, act,  (replay_data.steps+1)/self.max_episode_steps).mean()
-                actor_losses.append(actor_loss.item())
-
-                # Optimize the actor
-                self.pos_optimizer.zero_grad()
-                self.vel_optimizer.zero_grad()
-                actor_loss.backward()
-                self.pos_optimizer.step()
-                self.vel_optimizer.step()
-
-                polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
-                self.actor_target.mp.pos_features = self.actor.mp.pos_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
-                self.actor_target.mp.vel_features = self.actor.mp.vel_features#.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
-                self.actor.update()
-                self.actor_target.update()
-
 
         #if self.num_timesteps % 800 == 0:
         print("weights", self.actor.mp.weights[0])
@@ -311,7 +349,7 @@ class ProMPTD3(BaseAlgorithm):
             rollout = self.collect_rollouts(
                 self.env,
                 train_freq=self.train_freq,
-                action_noise=self.action_noise,
+                action_noise=self.trajectory_noise_sigma,
                 callback=callback,
                 learning_starts=self.learning_starts,
                 replay_buffer=self.replay_buffer,
@@ -428,9 +466,10 @@ class ProMPTD3(BaseAlgorithm):
 
                 # Select action randomly or according to policy
                 ### TODO: only use one WEIGHT in the beginning
+                #print("self.episode_timesteps", self.episode_timesteps)
                 action, buffer_action = self._sample_action(self.episode_timesteps, action_noise)
 
-                # Rescale and perform actionp
+                # Rescale and perform action
                 action = action.reshape(action.shape[0], -1)
                 new_obs, reward, done, infos = env.step(action)
 

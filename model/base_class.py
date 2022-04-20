@@ -203,7 +203,7 @@ class BaseAlgorithm(ABC):
                 print("Wrapping the env in a VecTransposeImage.")
             env = VecTransposeImage(env)
 
-        # check if wrapper for dict support is needed when using HER
+        # check if wrapper for dict support is needed when using HERALRReacherBalanceIP
         if isinstance(env.observation_space, gym.spaces.dict.Dict):
             env = ObsDictWrapper(env)
         return env
