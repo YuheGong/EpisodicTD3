@@ -13,7 +13,6 @@ class BaseController:
         raise NotImplementedError
 
 class PosController(BaseController):
-
     def __init__(self,
                  env: None,
                  num_dof: None):
@@ -34,6 +33,22 @@ class PosController(BaseController):
         return self.env.obs_for_promp()
 
 
+class VelController(BaseController):
+    def __init__(self,
+                 env: None,
+                 num_dof: None):
+        self.num_dof = int(num_dof)
+        super(VelController, self).__init__(env)
+
+    def get_action(self, des_pos, des_vel):
+        return des_vel, des_pos, des_vel
+
+    def predict_actions(self, des_pos, des_vel, observation):
+        return des_vel
+
+    def obs(self):
+        return self.env.obs_for_promp()
+
 class PDController(BaseController):
 
     def __init__(self,
@@ -46,12 +61,20 @@ class PDController(BaseController):
         self.p_g = p_gains
         self.d_g = d_gains
         self.num_dof = num_dof
+        self.trq = []
+        self.pos = []
+        self.vel = []
         super(PDController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):#, action_noise=None):
         cur_pos = self.obs()[-2*self.num_dof:-self.num_dof].reshape(self.num_dof)
         cur_vel = self.obs()[-self.num_dof:].reshape(self.num_dof)
+        #print("(des_pos - cur_pos", des_pos - cur_pos)
+        #print("des_vel - cur_vel", des_vel - cur_vel)
         trq = self.p_g * (des_pos - cur_pos) + self.d_g * (des_vel - cur_vel)
+        self.trq.append(trq)
+        self.pos.append(cur_pos)
+        self.vel.append(cur_vel)
         return trq, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):

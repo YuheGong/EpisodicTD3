@@ -61,7 +61,7 @@ class ProMPTD3(BaseAlgorithm):
         env: Union[GymEnv, str],
         initial_promp_params: th.Tensor = None,
         basis_num: int = 10,
-        learning_start_episodes: int = 0,
+        learning_start_episodes: int = 10,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
         buffer_size: int = int(1e5),
@@ -154,7 +154,10 @@ class ProMPTD3(BaseAlgorithm):
         self._convert_train_freq()
 
         # ProMP hyperparameters
-        self.actor_kwargs = self.promp_policy_kwargs['policy_kwargs']
+        if 'policy_kwargs' in self.promp_policy_kwargs.keys():
+            self.actor_kwargs = self.promp_policy_kwargs['policy_kwargs']
+        else:
+            self.actor_kwargs = None
         self.width = self.promp_policy_kwargs['width']
         self.weight_scale = self.promp_policy_kwargs['weight_scale']
         self.policy_type = self.promp_policy_kwargs['policy_type']
@@ -240,6 +243,7 @@ class ProMPTD3(BaseAlgorithm):
         self.reward_with_noise = self.env.rewards_no_ip
 
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
+        self.env.reset()
         #if self.eval_reward > -2 and self.eval_reward <= -1:
         #    self.noise_sigma = 0.3
         #    self.actor.noise_sigma = self.noise_sigma
@@ -315,7 +319,7 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.update()
 
         print("weights", self.actor.mp.weights[0])
-        print("trajectory", self.actor.trajectory_np[0])
+        print("trajectory", self.actor.velocity_np[-1])
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
@@ -452,7 +456,6 @@ class ProMPTD3(BaseAlgorithm):
         callback.on_rollout_start()
         continue_training = True
         if self.episode_timesteps == 0:
-            env.reset()
             self.plot_vel_with_noise = np.zeros((200, 5))
             self.plot_pos_with_noise = np.zeros((200, 5))
             self.actor.update()
@@ -462,6 +465,7 @@ class ProMPTD3(BaseAlgorithm):
             # loop for episode
             done = False
             episode_reward = 0.0
+            self.obs = []
 
             while not done:  # loop for steps during one episode (timesteps plus one)
 
@@ -471,6 +475,9 @@ class ProMPTD3(BaseAlgorithm):
                 # Rescale and perform action
                 action = action.reshape(action.shape[0], -1)
                 new_obs, reward, done, infos = env.step(action)
+                self.obs.append(self.env.obs_for_promp())
+
+
 
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
@@ -500,6 +507,7 @@ class ProMPTD3(BaseAlgorithm):
                 episode_rewards.append(episode_reward)
                 total_timesteps.append(self.episode_timesteps)
                 self.episode_timesteps = 0
+                env.reset()
 
                 # Log training infos
                 if log_interval is not None and self._episode_num % log_interval == 0:

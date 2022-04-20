@@ -17,9 +17,11 @@ def make_env(env_name, path, rank, seed=0):
 algo = "promp_td3"
 
 #env_id = "FetchReacher-v"
-env_id = "ALRReacherBalanceIP-v"
-env = env_id + '3'
-path = "logs/promp_td3/" + env + "_1"
+#env_id = "ALRReacherBalanceIP-v"
+#env = env_id + '3'
+env = "Ant-v0"
+env_id = env
+path = "logs/promp_td3/" + env + "_87"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -59,17 +61,19 @@ ALGOS = {
         'promp_td3': ProMPTD3
 }
 ALGO = ALGOS[algo]
-policy = data['algo_params']['policy']
+critic = data['algo_params']['policy']
+promp_policy_kwargs = data['promp_params']
 print(env)
 #assert 1==123
 #nv, eval_env = env_continue_load(data)
 #model_path = os.path.join(data['continue_path'], 'model')
 #model = ProMPTD3.continue_load(model_path, tensorboard_log=data['path'], env=env)
 
-model = ALGO(policy, env, verbose=1,
-                 tensorboard_log=data['path'],
-                 learning_rate=data["algo_params"]['learning_rate'],
-                 policy_delay=2, data_path=data["path"])
+model = ALGO(critic, env, seed=1,  initial_promp_params=0.1,  verbose=1,
+             trajectory_noise_sigma=0.3, promp_policy_kwargs=promp_policy_kwargs,
+             critic_learning_rate=data["algo_params"]['critic_learning_rate'],
+             actor_learning_rate=data["algo_params"]['actor_learning_rate'],
+             policy_delay=2, data_path=data["path"], gamma=0.99)
 
 if data['algorithm'] == "td3":
     print("td3")

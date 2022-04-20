@@ -5,7 +5,7 @@ import numpy as np
 from .detpmp_model import DeterministicProMP
 import torch as th
 from stable_baselines3.common.noise import NormalActionNoise
-from .controller import PosController, PDController
+from .controller import PosController, PDController, VelController
 
 
 class DetPMPWrapper(ABC):
@@ -18,7 +18,7 @@ class DetPMPWrapper(ABC):
         self.zero_start = zero_start
         self.controller_setup(env=env, policy_kwargs=mp_kwargs, num_dof=num_dof)
 
-        self.weights_scale = torch.Tensor(weights_scale)
+        self.weights_scale = weights_scale
         self.trajectory = None
         self.velocity = None
 
@@ -42,6 +42,8 @@ class DetPMPWrapper(ABC):
                                            d_gains=policy_kwargs['policy_kwargs']['d_gains'], num_dof=num_dof)
         elif self.policy_type == 'position':
             self.controller = PosController(env, num_dof=num_dof)
+        elif self.policy_type == 'velocity':
+            self.controller = VelController(env, num_dof=num_dof)
         else:
             raise AssertionError("controller not exist")
 
@@ -52,7 +54,7 @@ class DetPMPWrapper(ABC):
         return actions
 
     def update(self):
-        weights = self.mp.weights
+        weights = self.mp.weights * self.weights_scale
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
 
         if self.zero_start:
@@ -80,7 +82,6 @@ class DetPMPWrapper(ABC):
 
 
     def eval_rollout(self, env, a):
-        env.reset()
         rewards = 0
         for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
             des_pos = pos_vel[0]
@@ -107,7 +108,7 @@ class DetPMPWrapper(ABC):
         a = action
         weights = a#.cpu().detach().numpy() #+ noise().reshape(self.mp.weights.shape[0], self.mp.weights.shape[1])
         des_pos = np.dot(pos_feature, weights)#self.trajectory_np#
-        des_vel = np.dot(vel_feature, weights) / self.mp.corrected_scale#self.velocity_np
+        des_vel = np.dot(vel_feature, weights) / self.mp.cr_scale.cpu()#self.velocity_np
         #print('des+pos', des_pos)
         if "Fetch" in str(env):
             trajectory = des_pos +self.controller.obs()[:3].reshape(-1)
@@ -119,8 +120,9 @@ class DetPMPWrapper(ABC):
 
         for t, pos_vel in enumerate(zip(trajectory, velocity)):
             time.sleep(0.1)
-            des_pos = (trajectory)[t]
-            des_vel = (velocity)[t]
+            des_pos = self.trajectory_np[t]
+            des_vel = self.velocity_np[t]
+            print(des_pos, des_vel)
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             # ac = np.tanh(ac)
             # print("ac", ac)
