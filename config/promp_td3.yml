@@ -69,6 +69,14 @@ Ant-v0:
       activation_fn: ReLU
       pi: 256
       qf: 256
+  promp_params:
+    policy_kwargs:
+      p_gains: 1
+      d_gains: 0.1
+    width: 0.01
+    weight_scale: 1
+    policy_type: motor
+    zero_start: True
   env_params:
     env_name: alr_envs:Ant-v0
     num_envs: 1

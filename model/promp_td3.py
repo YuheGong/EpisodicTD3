@@ -1,9 +1,6 @@
-import torch.distributions
 from torch.nn import functional as F
 from stable_baselines3.common.utils import polyak_update
-from .td3_policy import TD3Policy
 import matplotlib.pyplot as plt
-from model.promp_policy import DetPMPWrapper
 
 import io
 import pathlib
@@ -14,16 +11,17 @@ import numpy as np
 import torch as th
 
 from stable_baselines3.common import logger
-from .base_class import BaseAlgorithm
-from .base_policy import BasePolicy
+from .base_algorithm import BaseAlgorithm
 from .td3_policy import TD3Policy
+from .detpmp_wrapper import DetPMPWrapper
+
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.noise import ActionNoise
 from stable_baselines3.common.save_util import load_from_pkl, save_to_pkl
 from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, RolloutReturn, Schedule, TrainFreq, TrainFrequencyUnit
 from stable_baselines3.common.utils import safe_mean, should_collect_more_steps
 from stable_baselines3.common.vec_env import VecEnv
-from .Replay_buffer_with_step import ReplayBufferStep
+from .replay_buffer import ReplayBufferStep
 import gym
 
 class ProMPTD3(BaseAlgorithm):
@@ -63,7 +61,7 @@ class ProMPTD3(BaseAlgorithm):
         env: Union[GymEnv, str],
         initial_promp_params: th.Tensor = None,
         basis_num: int = 10,
-        learning_start_episodes: int = 10,
+        learning_start_episodes: int = 0,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
         buffer_size: int = int(1e5),
@@ -74,6 +72,7 @@ class ProMPTD3(BaseAlgorithm):
         target_policy_noise: float = 0.2,
         target_noise_clip: float = 0.5,
         critic_network_kwargs: Dict[str, Any] = None,
+        promp_policy_kwargs: Dict[str, Any] = None,
         verbose: int = 0,
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
@@ -139,6 +138,7 @@ class ProMPTD3(BaseAlgorithm):
 
         # Setup initial ProMP parameters
         self.promp_params = self._setup_promp_params(initial_promp_params)
+        self.promp_policy_kwargs = promp_policy_kwargs
 
         # The initial reward of the best model
         self.best_model = -9000000
@@ -146,16 +146,21 @@ class ProMPTD3(BaseAlgorithm):
         self._setup_model()
 
     def _setup_model(self):
-        self._setup_lr_schedule()
-        self._setup_critic_model()
+        """
+        The function to initialize ProMP and critic network.
+        """
+        self._setup_lr_schedule() # learning rate schedule
+        self._setup_critic_model() # initializing critic network
         self._convert_train_freq()
 
-        self.actor_kwargs = {"policy_kwargs": {"p_gains": 1, "d_gains": 0.1}}
-        self.width = 0.01
-        self.weight_scale = 1
-        self.policy_type = "motor"
-        self.zero_start = True
-        self._setup_promp_model()
+        # ProMP hyperparameters
+        self.actor_kwargs = self.promp_policy_kwargs['policy_kwargs']
+        self.width = self.promp_policy_kwargs['width']
+        self.weight_scale = self.promp_policy_kwargs['weight_scale']
+        self.policy_type = self.promp_policy_kwargs['policy_type']
+        self.zero_start = self.promp_policy_kwargs['zero_start']
+
+        self._setup_promp_model() # initializing ProMP
 
     def _setup_promp_params(self, initial_promp_params):
         """
@@ -213,7 +218,7 @@ class ProMPTD3(BaseAlgorithm):
         self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
                                           policy_type=self.policy_type, weights_scale=self.weight_scale,
                                           zero_start=self.zero_start, step_length=self.max_episode_steps,
-                                          policy_kwargs=self.actor_kwargs, oise_sigma=self.trajectory_noise_sigma)
+                                          policy_kwargs=self.actor_kwargs, noise_sigma=self.trajectory_noise_sigma)
 
         # Pass the promp parameters value to ProMP weights
         self.actor.mp.weights = self.promp_params
@@ -247,8 +252,6 @@ class ProMPTD3(BaseAlgorithm):
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 
-
-        self.env.reset()
         if self.best_model < self.env.rewards_no_ip:
             self.best_model = self.env.rewards_no_ip
             np.save(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
@@ -305,7 +308,6 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_optimizer.zero_grad()
                 actor_loss.backward()
                 self.actor_optimizer.step()
-
 
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
@@ -450,6 +452,7 @@ class ProMPTD3(BaseAlgorithm):
         callback.on_rollout_start()
         continue_training = True
         if self.episode_timesteps == 0:
+            env.reset()
             self.plot_vel_with_noise = np.zeros((200, 5))
             self.plot_pos_with_noise = np.zeros((200, 5))
             self.actor.update()
@@ -462,9 +465,7 @@ class ProMPTD3(BaseAlgorithm):
 
             while not done:  # loop for steps during one episode (timesteps plus one)
 
-                # Select action randomly or according to policy
-                ### TODO: only use one WEIGHT in the beginning
-                #print("self.episode_timesteps", self.episode_timesteps)
+                # Select action according to policy
                 action, buffer_action = self._sample_action(self.episode_timesteps, action_noise)
 
                 # Rescale and perform action
@@ -505,7 +506,7 @@ class ProMPTD3(BaseAlgorithm):
                     print("")
                     self._dump_logs()
 
-                env.reset()
+
 
                 # self.actor.update()
 
@@ -580,24 +581,6 @@ class ProMPTD3(BaseAlgorithm):
         return super()._setup_learn(
             total_timesteps, eval_env, callback, eval_freq, n_eval_episodes, log_path, reset_num_timesteps, tb_log_name
         )
-
-    def polt_trajectory(self):
-        print("save pos and vel pics")
-        for i in range(5):
-            plt.plot(self.actor.plot_pos[:, i], label='without noise + reward:' + str(self.eval_reward))
-            plt.plot(self.plot_pos_with_noise[:, i],
-                     label='with noise + reward:' + str(self.reward_with_noise)) # label_name(name))
-            plt.legend()
-            plt.title('timestep: ' + str(self.num_timesteps) + f', position_joint_{i}')
-            plt.savefig(f'plots_actionnoise_3/timestep: ' + str(self.num_timesteps) + f'_position_joint_{i}')
-            plt.cla()
-
-            plt.plot(self.actor.plot_vel[:, i], label='without noise + reward:' + str(self.eval_reward))
-            plt.plot(self.plot_vel_with_noise[:, i], label='with noise + reward:' + str(self.reward_with_noise))  # label_name(name))
-            plt.legend()
-            plt.title('timestep: ' + str(self.num_timesteps) + f', velocity_joint_{i}')
-            plt.savefig('plots_actionnoise_3/timestep: ' + str(self.num_timesteps) + f'_velocity_joint_{i}')
-            plt.cla()
 
 
 

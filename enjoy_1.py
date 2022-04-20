@@ -19,8 +19,6 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "promp_td3"
 env_id = "Ant-v0"
-#env = env_id + '0'
-# = gym.make("alr_envs:" + env)
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -29,6 +27,7 @@ data['env_params']['env_name'] = data['env_params']['env_name']
 # create log folder
 path = logging(data['env_params']['env_name'], data['algorithm'])
 data['path'] = path
+promp_policy_kwargs = data['promp_params']
 
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
@@ -36,15 +35,14 @@ eval_env = gym.make(data["env_params"]['env_name'])
 
 # make the model and save the model
 ALGO = ProMPTD3
-policy_kwargs = policy_kwargs_building(data)
-policy = data['algo_params']['policy']
+critic_kwargs = policy_kwargs_building(data)
+critic = data['algo_params']['policy']
 env.reset()
 
-#print("env", env)
-
-model = ALGO(policy, env, seed=1,  initial_promp_params=1, critic_network_kwargs=policy_kwargs, verbose=1, trajectory_noise_sigma=0.3,
-                 critic_learning_rate=data["algo_params"]['learning_rate'],
-                 policy_delay=2, data_path=data["path"], gamma=0.99)
+model = ALGO(critic, env, seed=1,  initial_promp_params=1, critic_network_kwargs=critic_kwargs, verbose=1,
+             trajectory_noise_sigma=0.3, promp_policy_kwargs=promp_policy_kwargs,
+             critic_learning_rate=data["algo_params"]['learning_rate'],
+             policy_delay=2, data_path=data["path"], gamma=0.99)
 
 # csv file path
 data["path_in"] = data["path"] + '/' + data['algorithm'].upper() + '_1'
@@ -52,10 +50,6 @@ data["path_out"] = data["path"] + '/data.csv'
 
 try:
     eval_env_path = data['path'] + "/eval/"
-    #eval_callback = EvalCallback(eval_env, best_model_save_path=eval_env_path,
-    #                             n_eval_episodes=data['eval_env']['n_eval_episode'],
-    #                             log_path=eval_env_path, eval_freq=data['eval_env']['eval_freq'],
-    #                             deterministic=False, render=False)
     model.learn(total_timesteps=int(data['algo_params']['total_timesteps']))
 except KeyboardInterrupt:
     write_yaml(data)
