@@ -14,6 +14,8 @@ class DetPMPWrapper(ABC):
                  weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None,
                  **mp_kwargs):
 
+        self.policy_type = mp_kwargs['policy_type']
+        self.zero_start = zero_start
         self.controller_setup(env=env, policy_kwargs=mp_kwargs, num_dof=num_dof)
 
         self.weights_scale = torch.Tensor(weights_scale)
@@ -35,10 +37,10 @@ class DetPMPWrapper(ABC):
                                      step_length=self.step_length, dt=dt)
 
     def controller_setup(self, env, policy_kwargs, num_dof):
-        if policy_kwargs['policy_type'] == 'motor':
+        if self.policy_type == 'motor':
             self.controller = PDController(env, p_gains=policy_kwargs['policy_kwargs']['p_gains'],
                                            d_gains=policy_kwargs['policy_kwargs']['d_gains'], num_dof=num_dof)
-        elif policy_kwargs['policy_type'] == 'position':
+        elif self.policy_type == 'position':
             self.controller = PosController(env, num_dof=num_dof)
         else:
             raise AssertionError("controller not exist")
@@ -52,8 +54,14 @@ class DetPMPWrapper(ABC):
     def update(self):
         weights = self.mp.weights
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
-        self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(device='cuda')#elf.controller.obs()[:3]).to(device='cuda')
-        #self.trajectory += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')#elf.controller.obs()[:3]).to(device='cuda')
+
+        if self.zero_start:
+            if self.policy_type == 'motor':
+                self.trajectory += th.Tensor(
+                    self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
+            elif self.policy_type == 'position':
+                self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(device='cuda')
+
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 
