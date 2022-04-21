@@ -250,10 +250,7 @@ class ProMPTD3(BaseAlgorithm):
         # Update learning rate according to lr schedule
         self.reward_with_noise = self.env.rewards_no_ip
 
-        print("weighst", self.actor.mp.weights)
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
-        print("evalreward", self.eval_reward)
-        np.savez(self.data_path + "/algo_mean", self.actor.mp.weights.cpu().detach().numpy())
         self.env.reset()
         #if self.eval_reward > -2 and self.eval_reward <= -1:
         #    self.noise_sigma = 0.3

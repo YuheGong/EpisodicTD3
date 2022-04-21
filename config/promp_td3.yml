@@ -72,7 +72,7 @@ Ant-v0:
       qf: 256
   promp_params:
     width: 0.01
-    weight_scale: 10
+    weight_scale: 1
     policy_type: velocity
     zero_start: False
   env_params:
