@@ -18,7 +18,6 @@ class DetPMPWrapper(ABC):
         self.zero_start = zero_start
         self.controller_setup(env=env, policy_kwargs=mp_kwargs, num_dof=num_dof)
 
-        self.weights_scale = weights_scale
         self.trajectory = None
         self.velocity = None
 
@@ -34,7 +33,7 @@ class DetPMPWrapper(ABC):
         self.num_dof = num_dof
         self.mp = DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width,
                                      zero_start=zero_start, n_zero_bases=2,
-                                     step_length=self.step_length, dt=dt)
+                                     step_length=self.step_length, dt=dt, weight_scale=weights_scale)
 
     def controller_setup(self, env, policy_kwargs, num_dof):
         if self.policy_type == 'motor':
@@ -54,8 +53,8 @@ class DetPMPWrapper(ABC):
         return actions
 
     def update(self):
-        weights = self.mp.weights * self.weights_scale
-        _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory(weights)
+        #weights = self.mp.weights * self.weights_scale
+        _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
 
         if self.zero_start:
             if self.policy_type == 'motor':
@@ -104,8 +103,10 @@ class DetPMPWrapper(ABC):
     def render_rollout(self, action, env, noise,  pos_feature, vel_feature):
         import time
         env.reset()
+        self.mp.weight_scale = 1
+        self.mp.initial_weights(th.Tensor(action).to(device='cuda'))
 
-        _, self.trajectory, self.velocity, __ = self.mp.compute_trajectory(th.Tensor(action).to(device='cuda'))
+        _, self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
 
         #if self.zero_start:
         #    if self.policy_type == 'motor':
@@ -119,20 +120,13 @@ class DetPMPWrapper(ABC):
         self.velocity_np = self.velocity.cpu().detach().numpy()
         obses = []
         target = []
-
+        print("weighst", action)
         for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
-            time.sleep(0.1)
-            des_pos = self.trajectory_np[t]
-            des_vel = self.velocity_np[t]
-            #print(des_pos, des_vel)
-            #print("controller", self.controller)
+            des_pos = pos_vel[0]
+            des_vel = pos_vel[1]
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
-            # ac = np.tanh(ac)
-            # print("ac", ac)
-            #obses.append(np.array(self.env.sim.data.mocap_pos.copy()).reshape(-1) + 0.05*np.array(ac).reshape(-1))
-            obs, rewards, done, info = env.step(ac)
-            #obses.append(env.get_body_com("fingertip")[0:2])
-            #target.append(env.get_body_com("target")[0:2])
+            ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+            obs, reward, done, info = env.step(ac)
             env.render()
         #print("reward", env.rewards_no_ip)
         target = np.array(env.goal)

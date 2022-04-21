@@ -3,10 +3,11 @@ import torch as th
 
 class DeterministicProMP:
 
-    def __init__(self, n_basis, n_dof, width=None, off=0.1, zero_start=False, n_zero_bases=0, step_length=None, dt=0.02):
+    def __init__(self, n_basis, n_dof, width=None, off=0.1, zero_start=False, n_zero_bases=0, step_length=None, dt=0.02, weight_scale=1):
         self.n_basis = n_basis
         self.n_dof = n_dof
-        self.weights = np.zeros(shape=(self.n_basis, self.n_dof))
+        self.weights = th.zeros(size=(self.n_basis, self.n_dof))
+        self.weight_scale = weight_scale
         if zero_start:
             self.n_zero_bases = n_zero_bases
         else:
@@ -31,6 +32,9 @@ class DeterministicProMP:
         self.pos_features.requires_grad = True
         self.vel_features.requires_grad = True
 
+    def initial_weights(self, initial_weights):
+        self.weights = initial_weights * self.weight_scale
+
 
     def _exponential_kernel(self, z):
         z_ext = z[:, None]
@@ -46,9 +50,9 @@ class DeterministicProMP:
                ((w_der2 * sum_w - sum_w_der2 * w) * sum_w - 2 * sum_w_der * tmp) / np.power(sum_w, 3)
 
 
-    def compute_trajectory(self, weights):
+    def compute_trajectory(self):
         if self.weights.requires_grad == False:
             self.weights.requires_grad = True
-        return self.t * self.cr_scale, th.matmul(self.pos_features, weights), \
-               th.matmul(self.vel_features, weights) / self.cr_scale, \
-               th.matmul(self.acc_features, weights) / th.square(self.cr_scale)
+        return self.t * self.cr_scale, th.matmul(self.pos_features, self.weights), \
+               th.matmul(self.vel_features, self.weights) / self.cr_scale, \
+               th.matmul(self.acc_features, self.weights) / th.square(self.cr_scale)

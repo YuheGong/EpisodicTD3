@@ -191,7 +191,9 @@ class ProMPTD3(BaseAlgorithm):
 
 
     def _setup_critic_model(self) -> None:
-        """Initialize the critic model"""
+        """
+        Initialize the critic model
+        """
         self.set_random_seed(self.seed)
         self.replay_buffer = ReplayBufferStep(
             self.buffer_size,
@@ -211,7 +213,9 @@ class ProMPTD3(BaseAlgorithm):
         self.critic_target = self.policy.critic_target
 
     def _setup_promp_model(self) -> None:
-        """Initialize the ProMP model"""
+        """
+        Initialize the ProMP model
+        """
         self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
                                    policy_type=self.policy_type, weights_scale=self.weight_scale,
                                    zero_start=self.zero_start, step_length=self.max_episode_steps,
@@ -224,14 +228,14 @@ class ProMPTD3(BaseAlgorithm):
                                           policy_kwargs=self.actor_kwargs, noise_sigma=self.trajectory_noise_sigma)
 
         # Pass the promp parameters value to ProMP weights
-        self.actor.mp.weights = self.promp_params
+        self.actor.mp.initial_weights(self.promp_params)
         (self.actor.mp.weights).requires_grad = True  # Enable the gradient of ProMP weights
 
         # Set the ProMP weights optimizer
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
 
         # Set target ProMP weights by target delay
-        self.actor_target.mp.weights = (self.promp_params * self.tau)
+        self.actor_target.mp.initial_weights(self.promp_params * self.tau)
 
         # Update the reference trajectory according to weights
         self.actor.update()
@@ -239,10 +243,17 @@ class ProMPTD3(BaseAlgorithm):
 
 
     def train(self, gradient_steps: int, batch_size: int = 100) -> None:
+        """
+        The function updates the parameters of critic network and ProMP weights.
+        """
+
         # Update learning rate according to lr schedule
         self.reward_with_noise = self.env.rewards_no_ip
 
+        print("weighst", self.actor.mp.weights)
         self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
+        print("evalreward", self.eval_reward)
+        np.savez(self.data_path + "/algo_mean", self.actor.mp.weights.cpu().detach().numpy())
         self.env.reset()
         #if self.eval_reward > -2 and self.eval_reward <= -1:
         #    self.noise_sigma = 0.3
@@ -318,8 +329,11 @@ class ProMPTD3(BaseAlgorithm):
                 actor_loss.backward()
                 self.actor_optimizer.step()
 
+                # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
+
+                # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
 
@@ -336,23 +350,17 @@ class ProMPTD3(BaseAlgorithm):
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
 
-    def learn(
-            self,
-            total_timesteps: int,
-            callback: MaybeCallback = None,
-            log_interval: int = 4,
-            eval_env: Optional[GymEnv] = None,
-            eval_freq: int = -1,
-            n_eval_episodes: int = 5,
-            tb_log_name: str = "run",
-            eval_log_path: Optional[str] = None,
-            reset_num_timesteps: bool = True,
-    ) -> "OffPolicy":
+    def learn(self, total_timesteps: int, callback: MaybeCallback = None, log_interval: int = 4,
+              eval_env: Optional[GymEnv] = None, eval_freq: int = -1, n_eval_episodes: int = 5,
+              tb_log_name: str = "run", eval_log_path: Optional[str] = None, reset_num_timesteps: bool = True,
+              ) -> "OffPolicy":
+        """
+        This function begins the data from the environment.
+        """
 
-        total_timesteps, callback = self._setup_learn(
-            total_timesteps, eval_env, callback, eval_freq, n_eval_episodes, eval_log_path, reset_num_timesteps,
-            tb_log_name
-        )
+        total_timesteps, callback = self._setup_learn(total_timesteps, eval_env, callback, eval_freq,
+                                                      n_eval_episodes, eval_log_path, reset_num_timesteps,
+                                                      tb_log_name)
 
         callback.on_training_start(locals(), globals())
 
@@ -381,8 +389,11 @@ class ProMPTD3(BaseAlgorithm):
         return self
 
 
-    def _sample_action(
-        self, episode_timesteps: int, action_noise: Optional[ActionNoise] = None) -> Tuple[np.ndarray, np.ndarray]:
+    def _sample_action(self, episode_timesteps: int,
+                       action_noise: Optional[ActionNoise] = None) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        This function begins the data from the environment.
+        """
 
         unscaled_action = self.actor.get_action(episode_timesteps)
 
@@ -418,18 +429,12 @@ class ProMPTD3(BaseAlgorithm):
         # Pass the number of timesteps for tensorboard
         logger.dump(step=self.num_timesteps)
 
-    def _store_transition(
-            self,
-            replay_buffer: ReplayBufferStep,
-            buffer_action: np.ndarray,
-            new_obs: np.ndarray,
-            reward: np.ndarray,
-            done: np.ndarray,
-            infos: List[Dict[str, Any]],
-            steps: np.ndarray,
-            next_steps: np.ndarray
-    ) -> None:
-
+    def _store_transition(self, replay_buffer: ReplayBufferStep, buffer_action: np.ndarray,
+                          new_obs: np.ndarray, reward: np.ndarray, done: np.ndarray,
+                          infos: List[Dict[str, Any]], steps: np.ndarray, next_steps: np.ndarray) -> None:
+        """
+        Store the transitions into Replay Buffer.
+        """
         self._last_original_obs, new_obs_, reward_ = self._last_obs, new_obs, reward
         next_obs = new_obs_
 
@@ -482,8 +487,6 @@ class ProMPTD3(BaseAlgorithm):
                 new_obs, reward, done, infos = env.step(action)
                 self.obs.append(self.env.obs_for_promp())
 
-
-
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
                 self.ls_number += 1
@@ -506,13 +509,14 @@ class ProMPTD3(BaseAlgorithm):
                     break
 
             if done:
+                env.reset()
                 num_collected_episodes += 1
                 self._episode_num += 1
                 # print("")
                 episode_rewards.append(episode_reward)
                 total_timesteps.append(self.episode_timesteps)
                 self.episode_timesteps = 0
-                env.reset()
+
 
                 # Log training infos
                 if log_interval is not None and self._episode_num % log_interval == 0:
