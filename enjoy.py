@@ -21,7 +21,7 @@ algo = "promp_td3"
 #env = env_id + '3'
 env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_23"
+path = "logs/promp_td3/" + env + "_18"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -43,7 +43,7 @@ env = gym.make("alr_envs:" + env)
 algo_path = path + "/best_model.npz"
 a = path + "/pos_features.npz"
 print("path",algo_path)
-algorithm = np.load("logs/promp_td3/Ant-v0_23/algo_mean.npz")#"logs/promp_td3/Ant-v0_1/best_model.npy", allow_pickle=True)
+algorithm = np.load("logs/promp_td3/Ant-v0_18/algo_mean.npz")#"logs/promp_td3/Ant-v0_1/best_model.npy", allow_pickle=True)
 pos_feature = np.load(a)
 vel_feature = np.load(path + "/vel_features.npz")
 algo_path = path + "/algo_mean.npz"
