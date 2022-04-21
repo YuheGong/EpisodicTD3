@@ -74,8 +74,8 @@ class DetPMPWrapper(ABC):
             according to the reference trajectory and reference velocity.
         """
 
-        trajectory = self.trajectory_np[timesteps] + self.noise_traj()
-        velocity = self.velocity_np[timesteps]
+        trajectory = self.trajectory_np[timesteps]
+        velocity = self.velocity_np[timesteps] + self.noise_traj()
 
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
         return action
@@ -105,24 +105,27 @@ class DetPMPWrapper(ABC):
         import time
         env.reset()
 
-        a = action
-        weights = a#.cpu().detach().numpy() #+ noise().reshape(self.mp.weights.shape[0], self.mp.weights.shape[1])
-        des_pos = np.dot(pos_feature, weights)#self.trajectory_np#
-        des_vel = np.dot(vel_feature, weights) / self.mp.cr_scale.cpu()#self.velocity_np
-        #print('des+pos', des_pos)
-        if "Fetch" in str(env):
-            trajectory = des_pos +self.controller.obs()[:3].reshape(-1)
-        else:
-            trajectory = des_pos + self.controller.obs()[-2*self.num_dof:-self.num_dof]
-        velocity = des_vel
+        _, self.trajectory, self.velocity, __ = self.mp.compute_trajectory(th.Tensor(action).to(device='cuda'))
+
+        #if self.zero_start:
+        #    if self.policy_type == 'motor':
+        #        self.trajectory += th.Tensor(
+        #            self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
+        #    elif self.policy_type == 'position':
+        #        self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
+        #            device='cuda')
+
+        self.trajectory_np = self.trajectory.cpu().detach().numpy()
+        self.velocity_np = self.velocity.cpu().detach().numpy()
         obses = []
         target = []
 
-        for t, pos_vel in enumerate(zip(trajectory, velocity)):
+        for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
             time.sleep(0.1)
             des_pos = self.trajectory_np[t]
             des_vel = self.velocity_np[t]
-            print(des_pos, des_vel)
+            #print(des_pos, des_vel)
+            #print("controller", self.controller)
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             # ac = np.tanh(ac)
             # print("ac", ac)
