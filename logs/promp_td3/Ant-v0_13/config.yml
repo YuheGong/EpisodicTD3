@@ -1,5 +1,5 @@
 algo_params:
-  actor_learning_rate: 1.0e-06
+  actor_learning_rate: 1.0e-05
   critic_learning_rate: 0.0001
   n_steps: 20000
   policy: MlpPolicy
@@ -17,10 +17,7 @@ path: logs/promp_td3/Ant-v0_13
 path_in: logs/promp_td3/Ant-v0_13/PROMP_TD3_1
 path_out: logs/promp_td3/Ant-v0_13/data.csv
 promp_params:
-  policy_kwargs:
-    d_gains: 0.1
-    p_gains: 1
-  policy_type: motor
-  weight_scale: 1
+  policy_type: velocity
+  weight_scale: 10
   width: 0.01
-  zero_start: true
+  zero_start: false

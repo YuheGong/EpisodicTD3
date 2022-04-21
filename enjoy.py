@@ -21,7 +21,7 @@ algo = "promp_td3"
 #env = env_id + '3'
 env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_87"
+path = "logs/promp_td3/" + env + "_16"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -40,14 +40,23 @@ data['path'] = path
 stats_file = 'env_normalize.pkl'
 stats_path = os.path.join(path, stats_file)
 env = gym.make("alr_envs:" + env)
-algo_path = path + "/algo_mean.npy"
-a = path + "/pos_features.npy"
-algorithm = np.load(algo_path)
+algo_path = path + "/best_model.npz"
+a = path + "/pos_features.npz"
+print("path",algo_path)
+algorithm = np.load("logs/promp_td3/Ant-v0_16/algo_mean.npz")#"logs/promp_td3/Ant-v0_1/best_model.npy", allow_pickle=True)
 pos_feature = np.load(a)
-vel_feature = np.load(path + "/vel_features.npy")
-algo_path = path + "/best_model.npy"
+vel_feature = np.load(path + "/vel_features.npz")
+algo_path = path + "/algo_mean.npz"
 
 algorithm = np.load(algo_path)
+for i in algorithm:
+    algorithm = np.array(algorithm[i])
+
+for i in pos_feature:
+    pos_feature = np.array(pos_feature[i])
+
+for i in vel_feature:
+    vel_feature = np.array(vel_feature[i])
 #"alr_envs:" + env
 # make the model and save the model
 ALGOS = {
