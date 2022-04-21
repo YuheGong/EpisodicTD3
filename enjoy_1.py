@@ -18,7 +18,7 @@ def make_env(env_name, path, rank, seed=0):
     return _init
 
 algo = "promp_td3"
-env_id = "Ant-v0"
+env_id = "Hopper-v0"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]

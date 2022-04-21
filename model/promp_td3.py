@@ -463,13 +463,19 @@ class ProMPTD3(BaseAlgorithm):
         callback.on_rollout_start()
         continue_training = True
         if self.episode_timesteps == 0:
+            done = False
             self.plot_vel_with_noise = np.zeros((200, 5))
             self.plot_pos_with_noise = np.zeros((200, 5))
             self.actor.update()
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
                 self.ls_number < self.learning_starts:
+        #print("sample")
+        #while (not done) or \
+        #               self.ls_number < self.learning_starts:
+
             # loop for episode
+
             done = False
             episode_reward = 0.0
             self.obs = []
@@ -506,6 +512,7 @@ class ProMPTD3(BaseAlgorithm):
                     break
 
             if done:
+                #print("finish sample")
                 env.reset()
                 num_collected_episodes += 1
                 self._episode_num += 1

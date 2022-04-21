@@ -9,9 +9,144 @@
       <change beforePath="$PROJECT_DIR$/config/promp_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/promp_td3.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/detpmp_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/detpmp_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_wrapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_1/algo_mean.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_1/algo_mean.npz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_1/best_model.npy.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_1/best_model.npy.npz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_1/run_1/events.out.tfevents.1650542251.bernhard.18142.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_10/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_10/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_10/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_10/run_1/events.out.tfevents.1650546489.yre-Legion-5-Pro-16ACH6H.33371.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_11/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_11/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_11/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_11/run_1/events.out.tfevents.1650547959.yre-Legion-5-Pro-16ACH6H.34725.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_12/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_12/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_12/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_12/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_12/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_12/run_1/events.out.tfevents.1650551143.yre-Legion-5-Pro-16ACH6H.36000.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_12/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_13/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_13/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_13/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_13/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_13/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_13/run_1/events.out.tfevents.1650551719.yre-Legion-5-Pro-16ACH6H.36465.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_13/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_14/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_14/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_14/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_14/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_14/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_14/run_1/events.out.tfevents.1650551835.yre-Legion-5-Pro-16ACH6H.36607.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_14/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_15/run_1/events.out.tfevents.1650552344.yre-Legion-5-Pro-16ACH6H.36980.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_16/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_16/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_16/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_16/run_1/events.out.tfevents.1650552362.yre-Legion-5-Pro-16ACH6H.37083.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_16/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_17/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_17/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_17/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_17/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_17/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_17/run_1/events.out.tfevents.1650552384.yre-Legion-5-Pro-16ACH6H.37154.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_17/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_18/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_18/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_18/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_18/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_18/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_18/run_1/events.out.tfevents.1650552470.yre-Legion-5-Pro-16ACH6H.37271.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_18/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_19/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_19/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_19/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_19/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_19/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_19/run_1/events.out.tfevents.1650552686.yre-Legion-5-Pro-16ACH6H.37495.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_19/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_2/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_2/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_2/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_2/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_2/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_2/run_1/events.out.tfevents.1650544707.yre-Legion-5-Pro-16ACH6H.30844.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_2/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_20/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_20/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_20/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_20/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_20/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_20/run_1/events.out.tfevents.1650553175.yre-Legion-5-Pro-16ACH6H.37832.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_20/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_21/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_21/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_21/run_1/events.out.tfevents.1650553722.yre-Legion-5-Pro-16ACH6H.38660.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_22/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_22/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_22/run_1/events.out.tfevents.1650553812.yre-Legion-5-Pro-16ACH6H.38744.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_23/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_23/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_23/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_23/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_23/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_23/run_1/events.out.tfevents.1650553880.yre-Legion-5-Pro-16ACH6H.38918.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_23/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_24/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_24/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_24/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_24/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_24/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_24/run_1/events.out.tfevents.1650553954.yre-Legion-5-Pro-16ACH6H.39040.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_24/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_3/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_3/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_3/run_1/events.out.tfevents.1650544838.yre-Legion-5-Pro-16ACH6H.31038.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_4/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_4/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_4/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_4/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_4/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_4/run_1/events.out.tfevents.1650544916.yre-Legion-5-Pro-16ACH6H.31134.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_4/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_5/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_5/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_5/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_5/run_1/events.out.tfevents.1650545049.yre-Legion-5-Pro-16ACH6H.31398.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/run_1/events.out.tfevents.1650545403.yre-Legion-5-Pro-16ACH6H.31875.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/run_1/events.out.tfevents.1650545827.yre-Legion-5-Pro-16ACH6H.32491.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_8/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_8/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_8/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_8/run_1/events.out.tfevents.1650546216.yre-Legion-5-Pro-16ACH6H.32934.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/run_1/events.out.tfevents.1650546327.yre-Legion-5-Pro-16ACH6H.33094.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_1/run_1/events.out.tfevents.1650554514.yre-Legion-5-Pro-16ACH6H.39623.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_2/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_2/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_2/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_2/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_2/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_2/run_1/events.out.tfevents.1650554676.yre-Legion-5-Pro-16ACH6H.39868.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_2/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_3/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_3/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_3/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_3/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_3/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_3/run_1/events.out.tfevents.1650554819.yre-Legion-5-Pro-16ACH6H.40008.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Hopper-v0_3/vel_features.npz" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_td3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -157,7 +292,7 @@
       <workItem from="1646898184695" duration="7000" />
       <workItem from="1646996223080" duration="32000" />
       <workItem from="1650440410094" duration="9249000" />
-      <workItem from="1650523855514" duration="22774000" />
+      <workItem from="1650523855514" duration="33302000" />
     </task>
     <servers />
   </component>
@@ -184,7 +319,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/promp_td3.py</url>
-          <line>501</line>
+          <line>507</line>
           <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
