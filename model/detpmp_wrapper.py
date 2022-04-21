@@ -73,7 +73,7 @@ class DetPMPWrapper(ABC):
             according to the reference trajectory and reference velocity.
         """
 
-        trajectory = self.trajectory_np[timesteps]
+        trajectory = self.trajectory_np[timesteps] + self.noise_traj()
         velocity = self.velocity_np[timesteps] + self.noise_traj()
 
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
@@ -90,7 +90,6 @@ class DetPMPWrapper(ABC):
             obs, reward, done, info = env.step(ac)
             rewards += reward
         return env.rewards_no_ip
-
 
     def load(self, action):
         action = torch.FloatTensor(action)

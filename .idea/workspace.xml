@@ -6,27 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/promp_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/promp_td3.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/algo_mean.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/algo_mean.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/best_model.npy.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/model.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/pos_features.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/run_1/events.out.tfevents.1650533051.bernhard.16824.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_6/vel_features.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/algo_mean.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/algo_mean.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/best_model.npy.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/pos_features.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/run_1/.events.out.tfevents.1650533600.bernhard.16959.0.qtkPDh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_7/vel_features.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_8/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_8/model.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_8/run_1/events.out.tfevents.1650541288.yre-Legion-5-Pro-16ACH6H.25869.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/algo_mean.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/algo_mean.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/best_model.npy.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/model.zip" beforeDir="false" afterPath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/model.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/pos_features.npz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/run_1/events.out.tfevents.1650541308.yre-Legion-5-Pro-16ACH6H.25953.0" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/promp_td3/Ant-v0_9/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/detpmp_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/detpmp_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_wrapper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/promp_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/promp_td3.py" afterDir="false" />
@@ -174,7 +157,7 @@
       <workItem from="1646898184695" duration="7000" />
       <workItem from="1646996223080" duration="32000" />
       <workItem from="1650440410094" duration="9249000" />
-      <workItem from="1650523855514" duration="17024000" />
+      <workItem from="1650523855514" duration="22774000" />
     </task>
     <servers />
   </component>
@@ -201,20 +184,20 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/promp_td3.py</url>
-          <line>504</line>
+          <line>501</line>
           <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/promp_td3.py</url>
-          <line>269</line>
-          <option name="timeStamp" value="38" />
+          <line>336</line>
+          <option name="timeStamp" value="39" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1650546476344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1650551648146" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1646044840453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1646861640081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1643017231862" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

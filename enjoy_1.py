@@ -18,7 +18,7 @@ def make_env(env_name, path, rank, seed=0):
     return _init
 
 algo = "promp_td3"
-env_id = "Ant-v0"
+env_id = "Hopper-v0"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -39,7 +39,7 @@ critic_kwargs = policy_kwargs_building(data)
 critic = data['algo_params']['policy']
 env.reset()
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=10, critic_network_kwargs=critic_kwargs, verbose=1,
+model = ALGO(critic, env, seed=1,  initial_promp_params=0.1, critic_network_kwargs=critic_kwargs, verbose=1,
              trajectory_noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'],

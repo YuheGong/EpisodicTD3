@@ -19,7 +19,6 @@ class DeterministicProMP:
         else:
             self.widths = np.ones(self.n_basis + self.n_zero_bases) * width
 
-
         N = step_length
         t = np.linspace(0, 1, N)
         self.cr_scale = th.Tensor([step_length * dt]).to(device="cuda")
@@ -34,7 +33,6 @@ class DeterministicProMP:
 
     def initial_weights(self, initial_weights):
         self.weights = initial_weights * self.weight_scale
-
 
     def _exponential_kernel(self, z):
         z_ext = z[:, None]

@@ -19,9 +19,10 @@ algo = "promp_td3"
 #env_id = "FetchReacher-v"
 #env_id = "ALRReacherBalanceIP-v"
 #env = env_id + '3'
+#env = "Hopper-v0"
 env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_11"
+path = "logs/promp_td3/" + env + "_24"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"

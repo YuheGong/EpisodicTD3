@@ -335,7 +335,7 @@ class ProMPTD3(BaseAlgorithm):
                 self.actor_target.update()
 
         print("weights", self.actor.mp.weights[0])
-        print("trajectory", self.actor.velocity_np[-1])
+        print("trajectory", self.actor.trajectory_np[-1])
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
