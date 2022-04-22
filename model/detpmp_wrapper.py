@@ -89,7 +89,9 @@ class DetPMPWrapper(ABC):
             ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
             obs, reward, done, info = env.step(ac)
             rewards += reward
-        return env.rewards_no_ip
+            if done:
+                break
+        return env.rewards_no_ip, t + 1
 
     def load(self, action):
         action = torch.FloatTensor(action)
@@ -120,13 +122,17 @@ class DetPMPWrapper(ABC):
         obses = []
         target = []
         print("weighst", action)
+        import time
         for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
+            time.sleep(0.1)
             des_pos = pos_vel[0]
             des_vel = pos_vel[1]
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
             obs, reward, done, info = env.step(ac)
             env.render()
+            if done:
+                break
         #print("reward", env.rewards_no_ip)
         target = np.array(env.goal)
         #print("traget", target)

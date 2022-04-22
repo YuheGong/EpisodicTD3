@@ -1,0 +1,26 @@
+algo_params:
+  actor_learning_rate: 1.0e-06
+  critic_learning_rate: 0.0001
+  n_steps: 20000
+  policy: MlpPolicy
+  policy_kwargs:
+    activation_fn: ReLU
+    pi: 256
+    qf: 256
+  policy_type: off_policy
+  total_timesteps: 10000000.0
+algorithm: promp_td3
+env_params:
+  env_name: alr_envs:Hopper-v0
+  num_envs: 1
+path: logs/promp_td3/Hopper-v0_15
+path_in: logs/promp_td3/Hopper-v0_15/PROMP_TD3_1
+path_out: logs/promp_td3/Hopper-v0_15/data.csv
+promp_params:
+  policy_kwargs:
+    d_gains: 0.1
+    p_gains: 1
+  policy_type: motor
+  weight_scale: 1
+  width: 0.01
+  zero_start: false

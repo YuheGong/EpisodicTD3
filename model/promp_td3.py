@@ -250,7 +250,7 @@ class ProMPTD3(BaseAlgorithm):
         # Update learning rate according to lr schedule
         self.reward_with_noise = self.env.rewards_no_ip
 
-        self.eval_reward = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
+        self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
         self.env.reset()
         #if self.eval_reward > -2 and self.eval_reward <= -1:
         #    self.noise_sigma = 0.3
@@ -346,6 +346,7 @@ class ProMPTD3(BaseAlgorithm):
         logger.record("train/noise_sigma", self.trajectory_noise_sigma)
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
+        logger.record("eval/episode_length", eval_epi_length)
 
     def learn(self, total_timesteps: int, callback: MaybeCallback = None, log_interval: int = 4,
               eval_env: Optional[GymEnv] = None, eval_freq: int = -1, n_eval_episodes: int = 5,
@@ -509,6 +510,8 @@ class ProMPTD3(BaseAlgorithm):
                 self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
 
                 if not should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes):
+                    env.reset()
+                    self.episode_timesteps = 0
                     break
 
             if done:

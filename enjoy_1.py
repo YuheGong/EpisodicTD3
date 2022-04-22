@@ -39,10 +39,10 @@ critic_kwargs = policy_kwargs_building(data)
 critic = data['algo_params']['policy']
 env.reset()
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.1, critic_network_kwargs=critic_kwargs, verbose=1,
+model = ALGO(critic, env, seed=1,  initial_promp_params=0.00001, critic_network_kwargs=critic_kwargs, verbose=1,
              trajectory_noise_sigma=0.3, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
-             actor_learning_rate=data["algo_params"]['actor_learning_rate'],
+             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=10,
              policy_delay=2, data_path=data["path"], gamma=0.99)
 
 # csv file path

@@ -22,7 +22,7 @@ algo = "promp_td3"
 env = "Hopper-v0"
 #env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_10"
+path = "logs/promp_td3/" + env + "_39"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -79,10 +79,10 @@ critic = data['algo_params']['policy']
 promp_policy_kwargs = data['promp_params']
 print(env)
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.1,  verbose=1,
+model = ALGO(critic, env, seed=1,  initial_promp_params=0.0001,  verbose=1,
              trajectory_noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
-             actor_learning_rate=data["algo_params"]['actor_learning_rate'],
+             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=10,
              policy_delay=2, data_path=data["path"], gamma=0.99)
 
 if data['algorithm'] == "td3":
