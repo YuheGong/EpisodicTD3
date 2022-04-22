@@ -183,10 +183,11 @@ class ProMPTD3(BaseAlgorithm):
         elif isinstance(initial_promp_params, int):
             initial_promp_params = initial_promp_params * th.ones(self.basis_num * self.dof)
         else:
-            initial_promp_params = th.Tensor(initial_promp_params)
-            if initial_promp_params.shape != (self.basis_num * self.dof):
+            if initial_promp_params.shape != (self.basis_num, self.dof):
                 raise AssertionError(f'The shape of ProMP parameters should be {self.basis_num} * {self.dof}, '
-                                     f'now it is {initial_promp_params.shape[0]}')
+                                     f'now it is {initial_promp_params.shape}')
+            initial_promp_params = th.Tensor(initial_promp_params)
+
         return (initial_promp_params.reshape(self.basis_num, self.dof)).to(device="cuda")
 
 
