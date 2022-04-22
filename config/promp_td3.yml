@@ -73,11 +73,11 @@ Ant-v0:
   promp_params:
     policy_kwargs:
       p_gains: 1
-      d_gains: 0
+      d_gains: 0.1
     width: 0.01
     weight_scale: 1
     policy_type: position
-    zero_start: False
+    zero_start: True
   env_params:
     env_name: alr_envs:Ant-v0
     num_envs: 1
@@ -97,7 +97,7 @@ Hopper-v0:
       pi: 256
       qf: 256
   promp_params:
-    zero_start: True
+    zero_start: False
     policy_kwargs:
       p_gains: 1
       d_gains: 1
