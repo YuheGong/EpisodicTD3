@@ -509,7 +509,8 @@ class ProMPTD3(BaseAlgorithm):
 
                 self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
 
-                if not should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes):
+                if not (should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or
+                        self.ls_number < self.learning_starts):
                     env.reset()
                     self.episode_timesteps = 0
                     break
