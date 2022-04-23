@@ -41,12 +41,12 @@ critic = data['algo_params']['policy']
 
 env.reset()
 basis_num = 10
-algorithm = -0.01 * np.ones((basis_num, env.action_space.shape[0]))
-algorithm[:, 2] = 0.006 * np.ones(algorithm[:, 2].shape)
-algorithm[:, 1] = 0.00125 * np.ones(algorithm[:, 1].shape)
+algorithm = 0.00001 * np.ones((basis_num, env.action_space.shape[0]))
+algorithm[:, 2] = 0.00006 * np.ones(algorithm[:, 2].shape)
+algorithm[:, 1] = 0.0000125 * np.ones(algorithm[:, 1].shape)
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=algorithm, critic_network_kwargs=critic_kwargs, verbose=1,
-             trajectory_noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
+model = ALGO(critic, env, seed=1,  initial_promp_params=-0.51, critic_network_kwargs=critic_kwargs, verbose=1,
+             trajectory_noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=basis_num,
              policy_delay=2, data_path=data["path"], gamma=0.99)

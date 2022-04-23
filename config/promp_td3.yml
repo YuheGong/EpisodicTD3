@@ -100,7 +100,7 @@ Hopper-v0:
     zero_start: False
     policy_kwargs:
       p_gains: 1
-      d_gains: 1
+      d_gains: 0.1
     width: 0.01
     weight_scale: 1
     policy_type: motor

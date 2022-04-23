@@ -9,6 +9,7 @@
       <change beforePath="$PROJECT_DIR$/config/promp_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/promp_td3.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/detpmp_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_wrapper.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +156,7 @@
       <workItem from="1650440410094" duration="9249000" />
       <workItem from="1650523855514" duration="41084000" />
       <workItem from="1650609340583" duration="15740000" />
-      <workItem from="1650643088561" duration="4166000" />
+      <workItem from="1650643088561" duration="13154000" />
     </task>
     <servers />
   </component>

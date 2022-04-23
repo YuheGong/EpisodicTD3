@@ -22,7 +22,7 @@ algo = "promp_td3"
 env = "Hopper-v0"
 #env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_12"
+path = "logs/promp_td3/" + env + "_14"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -99,5 +99,19 @@ elif data['algorithm'] == "promp_td3":
     noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0 * np.ones(n_actions))
 
     print("algo", algorithm)
+    basis_num = 10
+    #algorithm = -1 * np.ones((basis_num, env.action_space.shape[0]))
+    #algorithm[:, 0] = 10 * np.ones(algorithm[:, 1].shape)
+    #algorithm[:, 2] = -0.01 #* np.ones(algorithm[:, 2].shape)
+    #algorithm[10:, 2] = 1 #* np.ones(algorithm[:, 2].shape)
+    #algorithm[30:, 2] = -1
+    #algorithm[50:, 2] = 1
+    #algorithm[70:, 2] = -1
+    #algorithm[70:, 2] = -1
+    #algorithm[110:, 2] = -1
+    #algorithm[90:, 2] = 1
+    #algorithm[150:, 2] = -1
+    #algorithm[170:, 2] = -1
+    #algorithm[190:, 2] = -1
 
     model.load(algorithm, env, noise, pos_feature=algorithm, vel_feature=algorithm)
