@@ -19,10 +19,10 @@ algo = "promp_td3"
 #env_id = "FetchReacher-v"
 #env_id = "ALRReacherBalanceIP-v"
 #env = env_id + '3'
-env = "Hopper-v0"
+env = "Ant-v0"
 #env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_14"
+path = "logs/promp_td3/" + env + "_12"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -113,5 +113,15 @@ elif data['algorithm'] == "promp_td3":
     #algorithm[150:, 2] = -1
     #algorithm[170:, 2] = -1
     #algorithm[190:, 2] = -1
+    basis_num = 10
+    #algorithm = -1.22 * np.ones((basis_num, env.action_space.shape[0]))
+    #algorithm[:, 1] = -0.53 * np.ones(algorithm[:, 1].shape)
+    #algorithm[:, 2] = -1.22 * np.ones(algorithm[:, 2].shape)
+    #algorithm[:, 3] = -0.53 * np.ones(algorithm[:, 2].shape)
+    #algorithm[:, 4] = 1.22 * np.ones(algorithm[:, 2].shape)
+    #algorithm[:, 5] = 0.53 * np.ones(algorithm[:, 2].shape)
+    #algorithm[:, 6] = 1.22 * np.ones(algorithm[:, 2].shape)
+    #algorithm[:, 7] = 0.53 * np.ones(algorithm[:, 2].shape)
+    algorithm = np.random.rand(basis_num, env.action_space.shape[0])
 
     model.load(algorithm, env, noise, pos_feature=algorithm, vel_feature=algorithm)

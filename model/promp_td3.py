@@ -488,6 +488,7 @@ class ProMPTD3(BaseAlgorithm):
                 action, buffer_action = self._sample_action(self.episode_timesteps, action_noise)
 
                 # Rescale and perform action
+                action = action + self.actor.noise_traj()
                 action = action.reshape(action.shape[0], -1)
                 new_obs, reward, done, infos = env.step(action)
                 self.obs.append(self.env.obs_for_promp())

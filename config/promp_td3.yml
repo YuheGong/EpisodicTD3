@@ -76,7 +76,7 @@ Ant-v0:
       d_gains: 0.1
     width: 0.01
     weight_scale: 1
-    policy_type: position
+    policy_type: motor
     zero_start: True
   env_params:
     env_name: alr_envs:Ant-v0

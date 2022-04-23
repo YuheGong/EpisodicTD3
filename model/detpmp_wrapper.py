@@ -73,8 +73,8 @@ class DetPMPWrapper(ABC):
             according to the reference trajectory and reference velocity.
         """
 
-        trajectory = self.trajectory_np[timesteps] + self.noise_traj()
-        velocity = self.velocity_np[timesteps] + self.noise_traj()
+        trajectory = self.trajectory_np[timesteps] #+ self.noise_traj()
+        velocity = self.velocity_np[timesteps] #+ self.noise_traj()
 
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
         return action
