@@ -531,7 +531,7 @@ class ProMPTD3(BaseAlgorithm):
                     #    self.episode_timesteps = 0
                     #    break
 
-                env.render()
+                #env.render()
 
             if done:
                 #print("finish sample")
