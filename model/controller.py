@@ -56,8 +56,8 @@ class PDController(BaseController):
                  p_gains: Union[float, Tuple],
                  d_gains: Union[float, Tuple],
                  num_dof: None):
-        self.p_gains = torch.Tensor([p_gains]).to(device='cuda')
-        self.d_gains = torch.Tensor([d_gains]).to(device='cuda')
+        self.p_gains = torch.Tensor([float(p_gains)]).to(device='cuda')
+        self.d_gains = torch.Tensor([float(d_gains)]).to(device='cuda')
         self.p_g = p_gains
         self.d_g = d_gains
         self.num_dof = num_dof

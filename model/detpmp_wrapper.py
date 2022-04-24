@@ -11,17 +11,18 @@ from .controller import PosController, PDController, VelController
 class DetPMPWrapper(ABC):
 
     def __init__(self, env: gym.Wrapper, num_dof: int, num_basis: int, width: int, step_length=None,
-                 weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None,
+                 weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None, before_traj_steps=0,
                  **mp_kwargs):
 
         self.policy_type = mp_kwargs['policy_type']
         self.zero_start = zero_start
         self.controller_setup(env=env, policy_kwargs=mp_kwargs, num_dof=num_dof)
 
+        self.before_traj_steps = before_traj_steps
         self.trajectory = None
         self.velocity = None
 
-        self.step_length = step_length
+        self.step_length = step_length - self.before_traj_steps
         self.env = env
         dt = self.env.dt
 
@@ -55,7 +56,6 @@ class DetPMPWrapper(ABC):
     def update(self):
         #weights = self.mp.weights * self.weights_scale
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
-
         if self.zero_start:
             if self.policy_type == 'motor':
                 self.trajectory += th.Tensor(
@@ -73,8 +73,8 @@ class DetPMPWrapper(ABC):
             according to the reference trajectory and reference velocity.
         """
 
-        trajectory = self.trajectory_np[timesteps] #+ self.noise_traj()
-        velocity = self.velocity_np[timesteps] #+ self.noise_traj()
+        trajectory = self.trajectory_np[timesteps]  # + self.noise_traj()
+        velocity = self.velocity_np[timesteps]  # + self.noise_traj()
 
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
         return action
@@ -82,16 +82,22 @@ class DetPMPWrapper(ABC):
 
     def eval_rollout(self, env, a):
         rewards = 0
-        for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
-            des_pos = pos_vel[0]
-            des_vel = pos_vel[1]
-            ac, _, __ = self.controller.get_action(des_pos, des_vel)
-            ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
-            obs, reward, done, info = env.step(ac)
-            rewards += reward
-            if done:
-                break
-        return env.rewards_no_ip, t + 1
+        step_length = self.step_length + self.before_traj_steps
+        for i in range(step_length):
+            if i < self.before_traj_steps:
+                ac = 0
+                obs, reward, done, info = env.step(ac)
+                rewards += reward
+            else:
+                self.update()
+                ac = self.get_action(i-self.before_traj_steps)
+                ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
+                obs, reward, done, info = env.step(ac)
+                rewards += reward
+                if done:
+                    step_length = i + 1
+                    break
+        return env.rewards_no_ip, step_length
 
     def load(self, action):
         action = torch.FloatTensor(action)
@@ -120,19 +126,47 @@ class DetPMPWrapper(ABC):
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
         obses = []
-        target = []
+        actions = []
         print("weighst", action)
         import time
+        rewards = 0
+        step_length = self.step_length + self.before_traj_steps
+        for i in range(step_length):
+            if i < self.before_traj_steps:
+                ac = 0
+                obs, reward, done, info = env.step(ac)
+                rewards += reward
+            else:
+                self.update()
+                ac = self.get_action(i - self.before_traj_steps)
+                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+                obs, reward, done, info = env.step(ac)
+                rewards += reward
+                if done:
+                    step_length = i + 1
+                    break
+            env.render()
+        """
         for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
+
             time.sleep(0.1)
             des_pos = pos_vel[0]
             des_vel = pos_vel[1]
             ac, _, __ = self.controller.get_action(des_pos, des_vel)
             ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+            ac = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+            if t % 2 == 0:
+                ac = - ac * 1.e-6
+            else:
+                ac = ac * 1.e-6
+
             obs, reward, done, info = env.step(ac)
+            obses.append(obs)
+            actions.append(ac)
             env.render()
             if done:
                 break
+        """
         #print("reward", env.rewards_no_ip)
         target = np.array(env.goal)
         #print("traget", target)

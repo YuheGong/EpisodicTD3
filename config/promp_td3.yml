@@ -60,7 +60,7 @@ ALRReacherBalanceIP-v:
 Ant-v0:
   algorithm: promp_td3
   algo_params:
-    actor_learning_rate: 0.00001
+    actor_learning_rate: 0.000001
     critic_learning_rate: 0.0001
     n_steps:  20000
     total_timesteps: 1.e+6
@@ -76,10 +76,35 @@ Ant-v0:
       d_gains: 0.1
     width: 0.01
     weight_scale: 1
-    policy_type: motor
+    policy_type: velocity
     zero_start: True
   env_params:
     env_name: alr_envs:Ant-v0
+    num_envs: 1
+
+Ant-v1:
+  algorithm: promp_td3
+  algo_params:
+    actor_learning_rate: 0.000001
+    critic_learning_rate: 0.0001
+    n_steps:  20000
+    total_timesteps: 1.e+6
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    policy_kwargs:
+      p_gains: 1
+      d_gains: 0.07
+    width: 0.01
+    weight_scale: 1
+    policy_type: motor
+    zero_start: True
+  env_params:
+    env_name: alr_envs:Ant-v1
     num_envs: 1
 
 

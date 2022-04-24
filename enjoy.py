@@ -19,10 +19,10 @@ algo = "promp_td3"
 #env_id = "FetchReacher-v"
 #env_id = "ALRReacherBalanceIP-v"
 #env = env_id + '3'
-env = "Ant-v0"
+env = "Ant-v1"
 #env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_12"
+path = "logs/promp_td3/" + env + "_35"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -62,6 +62,7 @@ for i in algorithm:
 #for i in vel_feature:
 #    vel_feature = np.array(vel_feature[i])
 #"alr_envs:" + env
+
 # make the model and save the model
 ALGOS = {
         'a2c': A2C,
@@ -122,6 +123,7 @@ elif data['algorithm'] == "promp_td3":
     #algorithm[:, 5] = 0.53 * np.ones(algorithm[:, 2].shape)
     #algorithm[:, 6] = 1.22 * np.ones(algorithm[:, 2].shape)
     #algorithm[:, 7] = 0.53 * np.ones(algorithm[:, 2].shape)
-    algorithm = np.random.rand(basis_num, env.action_space.shape[0])
+    #algorithm = np.random.rand(basis_num, env.action_space.shape[0])
+    #algorithm = 0 * np.ones(shape=algorithm.shape)
 
     model.load(algorithm, env, noise, pos_feature=algorithm, vel_feature=algorithm)
