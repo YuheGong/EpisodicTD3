@@ -253,7 +253,7 @@ class ProMPTD3(BaseAlgorithm):
         """
 
         # Update learning rate according to lr schedule
-        print("noise_reward", self.env.rewards_no_ip)
+        #print("noise_reward", self.env.rewards_no_ip)
         self.reward_with_noise = self.env.rewards_no_ip
 
         self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
