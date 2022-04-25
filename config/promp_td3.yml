@@ -1,7 +1,8 @@
-FetchReacher-v:
+FetchReacher-v1:
   algorithm: promp_td3
   algo_params:
-    learning_rate: 0.0001
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
     n_steps:  20000
     total_timesteps: 1.e+6
     train_freq: 1
@@ -11,8 +12,16 @@ FetchReacher-v:
       activation_fn: ReLU
       pi: 256
       qf: 256
+  promp_params:
+    zero_start: False
+    policy_kwargs:
+      p_gains: 1
+      d_gains: 0.1
+    width: 0.01
+    weight_scale: 1
+    policy_type: position
   env_params:
-    env_name: alr_envs:FetchReacher-v
+    env_name: alr_envs:FetchReacher-v1
     num_envs: 1
     wrapper: None
   eval_env:
@@ -74,9 +83,9 @@ Ant-v0:
     policy_kwargs:
       p_gains: 1
       d_gains: 0.1
-    width: 0.01
+    width: 0.025
     weight_scale: 1
-    policy_type: velocity
+    policy_type: motor
     zero_start: True
   env_params:
     env_name: alr_envs:Ant-v0
@@ -85,7 +94,7 @@ Ant-v0:
 Ant-v1:
   algorithm: promp_td3
   algo_params:
-    actor_learning_rate: 0.000001
+    actor_learning_rate: 0.0000001
     critic_learning_rate: 0.0001
     n_steps:  20000
     total_timesteps: 1.e+6
@@ -97,9 +106,9 @@ Ant-v1:
       qf: 256
   promp_params:
     policy_kwargs:
-      p_gains: 1
-      d_gains: 0.07
-    width: 0.01
+      p_gains: 0.1
+      d_gains: 0.01
+    width: 0.025
     weight_scale: 1
     policy_type: motor
     zero_start: True

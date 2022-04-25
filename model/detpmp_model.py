@@ -3,12 +3,13 @@ import torch as th
 
 class DeterministicProMP:
 
-    def __init__(self, n_basis, n_dof, width=None, off=0.1, zero_start=False, n_zero_bases=0, step_length=None, dt=0.02, weight_scale=1):
+    def __init__(self, n_basis, n_dof, width=None, off=0.1, zero_start=False, n_zero_bases=0, step_length=None,
+                 dt=0.02, weight_scale=1, before_traj_steps = 0):
         self.n_basis = n_basis
         self.n_dof = n_dof
         self.weights = th.zeros(size=(self.n_basis, self.n_dof))
         self.weight_scale = weight_scale
-        if zero_start:
+        if zero_start or before_traj_steps:
             self.n_zero_bases = n_zero_bases
         else:
             self.n_zero_bases = 0

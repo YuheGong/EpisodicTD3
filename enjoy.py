@@ -22,7 +22,7 @@ algo = "promp_td3"
 env = "Ant-v1"
 #env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_35"
+path = "logs/promp_td3/" + env + "_100"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -80,7 +80,7 @@ critic = data['algo_params']['policy']
 promp_policy_kwargs = data['promp_params']
 print(env)
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.0001,  verbose=1,
+model = ALGO(critic, env, seed=1,  initial_promp_params=1.e-7,  verbose=1,
              trajectory_noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=10,

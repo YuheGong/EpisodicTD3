@@ -19,6 +19,7 @@ class DetPMPWrapper(ABC):
         self.controller_setup(env=env, policy_kwargs=mp_kwargs, num_dof=num_dof)
 
         self.before_traj_steps = before_traj_steps
+        self.start_traj = None
         self.trajectory = None
         self.velocity = None
 
@@ -34,7 +35,8 @@ class DetPMPWrapper(ABC):
         self.num_dof = num_dof
         self.mp = DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width,
                                      zero_start=zero_start, n_zero_bases=2,
-                                     step_length=self.step_length, dt=dt, weight_scale=weights_scale)
+                                     step_length=self.step_length, dt=dt, weight_scale=weights_scale,
+                                     before_traj_steps=before_traj_steps)
 
     def controller_setup(self, env, policy_kwargs, num_dof):
         if self.policy_type == 'motor':
@@ -56,15 +58,40 @@ class DetPMPWrapper(ABC):
     def update(self):
         #weights = self.mp.weights * self.weights_scale
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
+
+        if self.before_traj_steps:
+            self.trajectory = th.vstack([th.zeros(size=((self.before_traj_steps, self.num_dof))).to(device='cuda'),
+                                         self.trajectory])
+            self.velocity = th.vstack([th.zeros(size=((self.before_traj_steps, self.num_dof))).to(device='cuda'),
+                                       self.velocity])
+
         if self.zero_start:
             if self.policy_type == 'motor':
                 self.trajectory += th.Tensor(
                     self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
             elif self.policy_type == 'position':
-                self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(device='cuda')
+                self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
+                    device='cuda')
 
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
+
+
+    def add_start_traj(self):
+        if self.policy_type == 'motor':
+            self.trajectory += self.start_traj
+        elif self.policy_type == 'position':
+            self.trajectory += self.start_traj
+        self.trajectory_np = self.trajectory.cpu().detach().numpy()
+        self.velocity_np = self.velocity.cpu().detach().numpy()
+
+    def start_traj_compute(self):
+        if self.policy_type == 'motor':
+            self.start_traj = th.Tensor(
+                self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
+        elif self.policy_type == 'position':
+            self.start_traj = th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
+                device='cuda')
 
 
     def get_action(self, timesteps):
@@ -90,7 +117,7 @@ class DetPMPWrapper(ABC):
                 rewards += reward
             else:
                 self.update()
-                ac = self.get_action(i-self.before_traj_steps)
+                ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward
@@ -127,7 +154,7 @@ class DetPMPWrapper(ABC):
         self.velocity_np = self.velocity.cpu().detach().numpy()
         obses = []
         actions = []
-        print("weighst", action)
+        #print("weighst", action)
         import time
         rewards = 0
         step_length = self.step_length + self.before_traj_steps
@@ -138,7 +165,7 @@ class DetPMPWrapper(ABC):
                 rewards += reward
             else:
                 self.update()
-                ac = self.get_action(i - self.before_traj_steps)
+                ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward

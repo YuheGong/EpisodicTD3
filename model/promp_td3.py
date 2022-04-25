@@ -339,6 +339,9 @@ class ProMPTD3(BaseAlgorithm):
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
+                if self.before_traj_step > 0:
+                    self.actor.add_start_traj()
+                    self.actor_target.add_start_traj()
 
         print("weights", self.actor.mp.weights[0])
         print("trajectory", self.actor.trajectory_np[-1])
@@ -492,17 +495,28 @@ class ProMPTD3(BaseAlgorithm):
 
                 # Select action according to policy
                 if self.episode_timesteps < self.before_traj_step:
+                    import time
+                    time.sleep(0.5)
                     action = np.zeros(shape=(1, self.dof))
                     new_obs, reward, done, infos = env.step(action)
                     self.episode_timesteps += 1
-
+                    self.obs.append(self.env.obs_for_promp())
                 else:
-                    self.actor.update()
-                    action, buffer_action = self._sample_action(self.episode_timesteps-self.before_traj_step, action_noise)
+                    ##import time
+                    #ime.sleep(0.5)
+                    if self.before_traj_step > 0 and self.episode_timesteps == self.before_traj_step:
+                        if self.actor.start_traj == None:
+                            self.actor.start_traj_compute()
+                            self.actor_target.start_traj = self.actor.start_traj
+                        self.actor.add_start_traj()
+
+                    action, buffer_action = self._sample_action(self.episode_timesteps, action_noise)
 
                     # Rescale and perform action
+
                     action = action + self.actor.noise_traj()
                     action = action.reshape(action.shape[0], -1)
+
                     new_obs, reward, done, infos = env.step(action)
                     self.obs.append(self.env.obs_for_promp())
                     self.actions.append(action)
@@ -521,7 +535,7 @@ class ProMPTD3(BaseAlgorithm):
                     if self.episode_timesteps == self.max_episode_steps:
                         next_step = self.max_episode_steps-1
                     self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
-                                           self.episode_timesteps - 1 - self.before_traj_step, next_step - self.before_traj_step)
+                                           self.episode_timesteps - 1, next_step)
 
                     self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
 
