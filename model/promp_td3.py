@@ -497,13 +497,15 @@ class ProMPTD3(BaseAlgorithm):
                 if self.episode_timesteps < self.before_traj_step:
                     import time
                     time.sleep(0.5)
+                    self.obs.append(self.env.obs_for_promp())
                     action = np.zeros(shape=(1, self.dof))
                     new_obs, reward, done, infos = env.step(action)
                     self.episode_timesteps += 1
-                    self.obs.append(self.env.obs_for_promp())
+
                 else:
                     ##import time
                     #ime.sleep(0.5)
+                    self.obs.append(self.env.obs_for_promp())
                     if self.before_traj_step > 0 and self.episode_timesteps == self.before_traj_step:
                         if self.actor.start_traj == None:
                             self.actor.start_traj_compute()
@@ -518,7 +520,7 @@ class ProMPTD3(BaseAlgorithm):
                     action = action.reshape(action.shape[0], -1)
 
                     new_obs, reward, done, infos = env.step(action)
-                    self.obs.append(self.env.obs_for_promp())
+
                     self.actions.append(action)
 
                     self.num_timesteps += 1
