@@ -14,9 +14,11 @@ Autonomous Learning Robots (ALR) Lab: https://alr.anthropomatik.kit.edu/
 The yaml file which stores the parameters. When you want to use our framework, please add an environment configuration into promp_td3.yml
 
 ### Folder utils: 
-Create the environment, model. and the callback.
+Create the environment, algorithm model, and the callback.
 
 Load the policy parameters from yaml file 
+
+Please see train.py. It is an example for using utils.
 
 ### Folder model:
 The main structure of our algorithm.
