@@ -175,13 +175,23 @@ class DetPMPWrapper(ABC):
         self.velocity_np = self.velocity.cpu().detach().numpy()
         rewards = 0
         step_length = self.step_length
-        for i in range(step_length):
-            self.update()
-            ac = self.get_action(i)
-            ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-            obs, reward, done, info = env.step(ac)
-            rewards += reward
-            if done:
-                step_length = i + 1
-                break
-            env.render()
+        if "DeepMind" in str(env):
+            for i in range(int(self.step_length)):
+                # time.sleep(0.1)
+                ac = self.get_action(i)
+                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+                obs, reward, done, info = env.step(ac)
+                env.render(mode="rgb_array")
+                # env.render(mode="human")
+            env.close()
+        else:
+            for i in range(step_length):
+                self.update()
+                ac = self.get_action(i)
+                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+                obs, reward, done, info = env.step(ac)
+                rewards += reward
+                if done:
+                    step_length = i + 1
+                    break
+                env.render()

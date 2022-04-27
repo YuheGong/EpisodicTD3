@@ -20,6 +20,7 @@ algo = "episodic_td3"
 #env_id = "ALRReacherBalanceIP-v"
 #env = env_id + '3'
 env = "Ant-v1"
+env = "DeepMindWalkerDense-v0"
 #env = "Ant-v0"
 env_id = env
 path = "logs/episodic_td3/" + env + "_1"
