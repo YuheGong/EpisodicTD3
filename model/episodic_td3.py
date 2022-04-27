@@ -42,7 +42,7 @@ class EpisodicTD3(BaseAlgorithm):
     :param gamma: the discount factor
     :param policy_delay: Policy and target networks will only be updated once every policy_delay steps
         per training steps. The Q values will be updated policy_delay more often (update every training step).
-    :param trajectory_noise_sigma: the standard deviation value of exploration noise added on ProMP trajectory
+    :param noise_sigma: the standard deviation value of exploration noise added on ProMP trajectory
     :param target_policy_noise: Standard deviation of Gaussian noise added to target policy
         (smoothing noise)
     :param target_noise_clip: Limit for absolute value of target policy smoothing noise.
@@ -156,8 +156,8 @@ class EpisodicTD3(BaseAlgorithm):
         self._convert_train_freq()
 
         # ProMP hyperparameters
-        if 'policy_kwargs' in self.promp_policy_kwargs.keys():
-            self.actor_kwargs = self.promp_policy_kwargs['policy_kwargs']
+        if 'controller_kwargs' in self.promp_policy_kwargs.keys():
+            self.actor_kwargs = self.promp_policy_kwargs['controller_kwargs']
         else:
             self.actor_kwargs = None
         self.width = self.promp_policy_kwargs['width']
@@ -252,8 +252,6 @@ class EpisodicTD3(BaseAlgorithm):
         """
         The function updates the parameters of critic network and ProMP weights.
         """
-        # save the reward of the noisy sampling environment
-        self.reward_with_noise = self.env.rewards_no_ip # the total reward without initial phase
 
         # evaluate the current policy, and save the reward and the episode length
         self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
@@ -275,8 +273,8 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # save the best evaluate reward
-        if self.best_model < self.env.rewards_no_ip:
-            self.best_model = self.env.rewards_no_ip
+        if self.best_model < self.eval_reward:
+            self.best_model = self.eval_reward
             np.savez(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
 
         # save current policy parameters
@@ -494,7 +492,6 @@ class EpisodicTD3(BaseAlgorithm):
                 action, buffer_action = self._sample_action(self.episode_timesteps)
 
                 # Rescale and perform action
-
                 action = action + self.noise()
                 action = action.reshape(action.shape[0], -1)
 
@@ -531,6 +528,11 @@ class EpisodicTD3(BaseAlgorithm):
                 #env.render()
 
             if done:
+                # save the reward of the noisy sampling environment
+                if hasattr(self.env, "reward_no_ip"):
+                    self.reward_with_noise = self.env.rewards_no_ip  # the total reward without initial phase
+                else:
+                    self.reward_with_noise = episode_reward
                 env.reset()
                 num_collected_episodes += 1
                 self._episode_num += 1

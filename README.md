@@ -8,7 +8,7 @@ Stable-baselines3: https://github.com/DLR-RM/stable-baselines3
 
 Autonomous Learning Robots (ALR) Lab: https://alr.anthropomatik.kit.edu/
 
-## Description for the implementation structure
+## Description of the implementation structure
 ### Folder config:
 
 The yaml file which stores the parameters. When you want to use our framework, please add an environment configuration into promp_td3.yml

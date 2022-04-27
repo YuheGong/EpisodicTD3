@@ -138,8 +138,9 @@ class DetPMPWrapper(ABC):
             if done:
                 step_length = i + 1
                 break
-        if env.rewards_no_ip is not None:
-            episode_reward = env.rewards_no_ip
+
+        if hasattr(self.env, "reward_no_ip"):
+            episode_reward = env.rewards_no_ip  # the total reward without initial phase
         else:
             episode_reward = rewards
         return episode_reward, step_length
