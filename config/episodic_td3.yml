@@ -134,8 +134,8 @@ Hopper-v0:
   promp_params:
     zero_start: False
     policy_kwargs:
-      p_gains: 1
-      d_gains: 0.1
+      p_gains: 0.1
+      d_gains: 0.000001
     width: 0.01
     weight_scale: 1
     policy_type: motor
@@ -157,12 +157,12 @@ DeepMindWalkerDense-v0:
       pi: 256
       qf: 256
   promp_params:
-    zero_start: False
-    zero_basis: 2
-    controller_type: motor
+    zero_start: True
+    zero_basis: 5
+    controller_type: velocity
     controller_kwargs:
-      p_gains: 1
-      d_gains: 0.1
+      p_gains: 0.0001
+      d_gains: 1
     width: 0.01
     weight_scale: 1
   env_params:

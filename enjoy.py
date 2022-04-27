@@ -23,7 +23,7 @@ env = "Ant-v1"
 env = "DeepMindWalkerDense-v0"
 #env = "Ant-v0"
 env_id = env
-path = "logs/episodic_td3/" + env + "_1"
+path = "logs/episodic_td3/" + env + "_18"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -83,7 +83,7 @@ print(env)
 model = ALGO(critic, env, seed=1,  initial_promp_params=0.1,  verbose=1,
              noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
-             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=100,
+             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=10,
              policy_delay=2, data_path=data["path"], gamma=0.99)
 
 n_actions = env.action_space.shape[-1]

@@ -50,13 +50,13 @@ class PosController(BaseController):
         super(PosController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):
-        #cur_pos = self.obs()[:3].reshape(-1)
-        des_pos = des_pos #- cur_pos
+        cur_pos = self.obs()[:self.num_dof].reshape(-1)
+        des_pos = des_pos - cur_pos
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):
-        #cur_pos = observation[:, :3].reshape(-1,self.num_dof)
-        des_pos = des_pos #- cur_pos
+        cur_pos = observation[:, :self.num_dof].reshape(-1,self.num_dof)
+        des_pos = des_pos - cur_pos
         return des_pos
 
     def obs(self):
