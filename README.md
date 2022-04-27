@@ -8,36 +8,42 @@ Stable-baselines3: https://github.com/DLR-RM/stable-baselines3
 
 Autonomous Learning Robots (ALR) Lab: https://alr.anthropomatik.kit.edu/
 
-## Folder config:
+## Description for the implementation structure
+### Folder config:
 
 The yaml file which stores the parameters. When you want to use our framework. Please add an environment configuration into promp_td3.yml
 
-## Folder utils: 
+### Folder utils: 
 Create the environment, model. and the callback.
 
 Load the policy parameters from yaml file 
 
-## Folder model:
+### Folder model:
 The main structure of our algorithm.
 
-### Episodic TD3:
+#### Episodic TD3 algorithm part:
 
-promp_td3.py: the main algorithm framework.
+|Name| Description                                      |
+|---|--------------------------------------------------|
+|`promp_td3.py`| The main algorithm framework of Episodic TD3.    |
+|`base_algorithm.py`| The base class of ProMPTD3 class in promp_td3.py |
 
-base_algorithm.py: the base class of Episodic TD3 in promp_td3.py 
 
-#### Actor ProMP:
+##### Actor ProMP part:
 
-detpmp_model.py: build the ProMP model based on Gaussian Basis Functions.
+| Name                | Description                                                                 |
+|---------------------|-----------------------------------------------------------------------------|
+| `detpmp_model.py`   | Build the ProMP model based on Gaussian Basis Functions.                    |
+| `deppmp_wrapper.py` | Wrap the ProMP model to generate reference trajectory based on the weights. |
+| `controller.py`     | The controller of ProMP.                                                    |                                                   |            
 
-deppmp_wrapper.py: wrap the ProMP model to generate reference trajectory based on the weights.
 
-controller.py: the controller used for ProMP
+#### Critic network part:
 
-#### Critic Model :
+| Name                | Description                                                           |
+|---------------------|-----------------------------------------------------------------------|
+| `td3_policy.py`   | Provide the critic networks, without the actor policy neural network. |
+| `base_policy.py` | The base policy of TD3 in td3_policy.py.                              |
+| `replay_buffer.py`     | The Replay Buffer with timestep information                                          |                                                   |            
 
-td3_policy.py: provide the critic networks, without the actor policy neural network
-
-base_policy.py: the base policy of TD3 in td3_policy.py
-
-replay_buffer.py: the Replay Buffer with timestep information
+## How to use
