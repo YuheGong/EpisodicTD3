@@ -11,7 +11,7 @@ Autonomous Learning Robots (ALR) Lab: https://alr.anthropomatik.kit.edu/
 ## Description for the implementation structure
 ### Folder config:
 
-The yaml file which stores the parameters. When you want to use our framework. Please add an environment configuration into promp_td3.yml
+The yaml file which stores the parameters. When you want to use our framework, please add an environment configuration into promp_td3.yml
 
 ### Folder utils: 
 Create the environment, model. and the callback.
