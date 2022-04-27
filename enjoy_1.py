@@ -52,11 +52,11 @@ algorithm[:, 6] = 0.01 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 8] = 0.00006 * np.ones(algorithm[:, 2].shape)
 algorithm = 0.01 * np.random.rand(basis_num, env.action_space.shape[0])
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.01, critic_network_kwargs=critic_kwargs, verbose=1,
-             trajectory_noise_sigma=0.01, promp_policy_kwargs=promp_policy_kwargs,
+model = ALGO(critic, env, seed=1,  initial_promp_params=-1e-7, critic_network_kwargs=critic_kwargs, verbose=1,
+             noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=basis_num,
-             policy_delay=2, data_path=data["path"], gamma=0.99, before_traj_step=0)
+             policy_delay=2, data_path=data["path"], gamma=0.99)
 
 # csv file path
 data["path_in"] = data["path"] + '/' + data['algorithm'].upper() + '_1'

@@ -8,7 +8,6 @@ import numpy as np
 from stable_baselines3.common.vec_env.base_vec_env import VecEnv, VecEnvIndices, VecEnvObs, VecEnvStepReturn
 from stable_baselines3.common.vec_env.util import copy_obs_dict, dict_to_obs, obs_space_info
 
-
 class DummyVec(VecEnv):
     """
     Creates a simple vectorized wrapper for multiple environments, calling each environment in sequence on the current
@@ -43,7 +42,6 @@ class DummyVec(VecEnv):
             obs, self.buf_rews[env_idx], self.buf_dones[env_idx], self.buf_infos[env_idx] = self.envs[env_idx].step(
                 self.actions[env_idx]
             )
-            #print("self.envs[env_idx]",self.envs[env_idx])
             if self.buf_dones[env_idx]:
                 # save final observation where user can get it, then reset
                 self.buf_infos[env_idx]["terminal_observation"] = obs

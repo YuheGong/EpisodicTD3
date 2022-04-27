@@ -9,6 +9,7 @@ class DeterministicProMP:
         self.n_dof = n_dof
         self.weights = th.zeros(size=(self.n_basis, self.n_dof))
         self.weight_scale = weight_scale
+
         if zero_start or before_traj_steps:
             self.n_zero_bases = n_zero_bases
         else:
@@ -25,6 +26,7 @@ class DeterministicProMP:
         self.cr_scale = th.Tensor([step_length * dt]).to(device="cuda")
         self.t = th.Tensor(t).cuda()
 
+        #drop out the featrues for zero_basis
         self.pos_features_np , self.vel_features_np , self.acc_features_np = self._exponential_kernel(t)
         self.pos_features = th.Tensor(self.pos_features_np[:, self.n_zero_bases:]).to(device="cuda")
         self.vel_features = th.Tensor(self.vel_features_np[:, self.n_zero_bases:]).to(device="cuda")
@@ -47,7 +49,6 @@ class DeterministicProMP:
         tmp = w_der * sum_w - w * sum_w_der
         return w / sum_w, tmp / np.square(sum_w), \
                ((w_der2 * sum_w - sum_w_der2 * w) * sum_w - 2 * sum_w_der * tmp) / np.power(sum_w, 3)
-
 
     def compute_trajectory(self):
         if self.weights.requires_grad == False:

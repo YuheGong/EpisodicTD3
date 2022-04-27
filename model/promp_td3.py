@@ -23,6 +23,8 @@ from stable_baselines3.common.utils import safe_mean, should_collect_more_steps
 from stable_baselines3.common.vec_env import VecEnv
 from .replay_buffer import ReplayBufferStep
 import gym
+from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
+
 
 class ProMPTD3(BaseAlgorithm):
 
@@ -51,8 +53,6 @@ class ProMPTD3(BaseAlgorithm):
     :param device: Device (cpu, cuda, ...) on which the code should be run.
         Setting it to auto, the code will be run on the GPU if possible.
     :param data_path: the path to save model and tensorboard data.
-
-
     """
 
     def __init__(
@@ -68,8 +68,7 @@ class ProMPTD3(BaseAlgorithm):
         tau: float = 0.005,
         gamma: float = 0.99,
         policy_delay: int = 2,
-        trajectory_noise_sigma: float = 0.1,
-        before_traj_step: int = 0,
+        noise_sigma: float = 0.1,
         target_policy_noise: float = 0.2,
         target_noise_clip: float = 0.5,
         critic_network_kwargs: Dict[str, Any] = None,
@@ -135,12 +134,14 @@ class ProMPTD3(BaseAlgorithm):
         # Set the parameters of ProMP wrapper
         self.basis_num = basis_num
         self.dof = env.action_space.shape[0]
-        self.trajectory_noise_sigma = trajectory_noise_sigma
+
+        # set the exploration noise
+        self.noise_sigma = noise_sigma
+        self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
 
         # Setup initial ProMP parameters
         self.promp_params = self._setup_promp_params(initial_promp_params)
         self.promp_policy_kwargs = promp_policy_kwargs
-        self.before_traj_step = before_traj_step
 
         # The initial reward of the best model
         self.best_model = -9000000
@@ -162,21 +163,24 @@ class ProMPTD3(BaseAlgorithm):
             self.actor_kwargs = None
         self.width = self.promp_policy_kwargs['width']
         self.weight_scale = self.promp_policy_kwargs['weight_scale']
-        self.policy_type = self.promp_policy_kwargs['policy_type']
+        self.controller_type = self.promp_policy_kwargs['controller_type']
         self.zero_start = self.promp_policy_kwargs['zero_start']
+        self.zero_basis = self.promp_policy_kwargs['zero_basis']
 
         self._setup_promp_model() # initializing ProMP
 
     def _setup_promp_params(self, initial_promp_params):
         """
-        The function to setup ProMP initial parameters.
+        The function to build up ProMP initial weights into Tensor.
         If the input is int or float, ProMP parameters will be initialized
             by extending its size to self.basis_num * self.dof,
         and if the input is already a tensor, it will be checked whether its shape
             is same as self.basis_num * self.dof
 
-        input: the initial value of ProMP parameters from users
-        output: the well-shaped ProMP parameters which can be use in ProMP wrapper.
+        Input:
+            initial_promp_params: the initial value of ProMP weights from users
+        Return:
+            the well-shaped ProMP weights which can be use in ProMP wrapper.
         """
         if initial_promp_params is None:
             initial_promp_params = 1 * th.ones(self.basis_num * self.dof)
@@ -220,17 +224,15 @@ class ProMPTD3(BaseAlgorithm):
         Initialize the ProMP model
         """
         self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
-                                   policy_type=self.policy_type, weights_scale=self.weight_scale,
-                                   zero_start=self.zero_start, step_length=self.max_episode_steps,
-                                   policy_kwargs=self.actor_kwargs, noise_sigma=self.trajectory_noise_sigma,
-                                   before_traj_steps=self.before_traj_step)
+                                   controller_type=self.controller_type, weights_scale=self.weight_scale,
+                                   zero_start=self.zero_start, zero_basis= self.zero_basis,
+                                   step_length=self.max_episode_steps, controller_kwargs=self.actor_kwargs)
 
 
         self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
-                                          policy_type=self.policy_type, weights_scale=self.weight_scale,
-                                          zero_start=self.zero_start, step_length=self.max_episode_steps,
-                                          policy_kwargs=self.actor_kwargs, noise_sigma=self.trajectory_noise_sigma,
-                                          before_traj_steps=self.before_traj_step)
+                                          controller_type=self.controller_type, weights_scale=self.weight_scale,
+                                          zero_start=self.zero_start, zero_basis= self.zero_basis,
+                                          step_length=self.max_episode_steps, controller_kwargs=self.actor_kwargs)
 
         # Pass the promp parameters value to ProMP weights
         self.actor.mp.initial_weights(self.promp_params)
@@ -251,13 +253,15 @@ class ProMPTD3(BaseAlgorithm):
         """
         The function updates the parameters of critic network and ProMP weights.
         """
+        # save the reward of the noisy sampling environment
+        self.reward_with_noise = self.env.rewards_no_ip # the total reward without initial phase
 
-        # Update learning rate according to lr schedule
-        #print("noise_reward", self.env.rewards_no_ip)
-        self.reward_with_noise = self.env.rewards_no_ip
-
+        # evaluate the current policy, and save the reward and the episode length
         self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
         self.env.reset()
+
+        """Not Done, need to change to a learning rate schedule function"""
+        # exploration noise shape in FetchReacher
         #if self.eval_reward > -2 and self.eval_reward <= -1:
         #    self.noise_sigma = 0.3
         #    self.actor.noise_sigma = self.noise_sigma
@@ -270,18 +274,18 @@ class ProMPTD3(BaseAlgorithm):
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 
+
+        # save the best evaluate reward
         if self.best_model < self.env.rewards_no_ip:
             self.best_model = self.env.rewards_no_ip
             np.savez(self.data_path + "/best_model.npy", self.actor.mp.weights.cpu().detach().numpy())
-        '''
-        np.save(self.data_path + "/algo_mean.npy", self.actor.mp.weights.cpu().detach().numpy())
-        np.save(self.data_path + "/pos_features.npy", self.actor.mp.pos_features.cpu().detach().numpy())
-        np.save(self.data_path + "/vel_features.npy", self.actor.mp.vel_features.cpu().detach().numpy())
-        '''
+
+        # save current policy parameters
         np.savez(self.data_path + "/algo_mean", self.actor.mp.weights.cpu().detach().numpy())
         np.savez(self.data_path + "/pos_features", self.actor.mp.pos_features.cpu().detach().numpy())
         np.savez(self.data_path + "/vel_features", self.actor.mp.vel_features.cpu().detach().numpy())
 
+        # critic learning rate schedule
         self._update_learning_rate([self.critic.optimizer])
 
         actor_losses, critic_losses = [], []
@@ -339,12 +343,12 @@ class ProMPTD3(BaseAlgorithm):
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
-                if self.before_traj_step > 0:
-                    self.actor.add_start_traj()
-                    self.actor_target.add_start_traj()
 
+        # supervise the trajectory and weights, should be deleted when finished
         print("weights", self.actor.mp.weights[0])
         print("trajectory", self.actor.trajectory_np[-1])
+
+        # tensorboard logger
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
@@ -352,7 +356,7 @@ class ProMPTD3(BaseAlgorithm):
         logger.record("eval/noise_reward", self.reward_with_noise)
         logger.record("train/actor_learning_rate", self.actor_learning_rate)
         logger.record("train/gradient_steps", gradient_steps)
-        logger.record("train/noise_sigma", self.trajectory_noise_sigma)
+        logger.record("train/noise_sigma", self.noise_sigma)
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
         logger.record("eval/episode_length", eval_epi_length)
@@ -362,20 +366,19 @@ class ProMPTD3(BaseAlgorithm):
               tb_log_name: str = "run", eval_log_path: Optional[str] = None, reset_num_timesteps: bool = True,
               ) -> "OffPolicy":
         """
-        This function begins the data from the environment.
+        This function begins the procedure of the whole learning proces.
         """
-
         total_timesteps, callback = self._setup_learn(total_timesteps, eval_env, callback, eval_freq,
                                                       n_eval_episodes, eval_log_path, reset_num_timesteps,
                                                       tb_log_name)
 
         callback.on_training_start(locals(), globals())
 
+        # start learning process
         while self.num_timesteps < total_timesteps:
             rollout = self.collect_rollouts(
                 self.env,
                 train_freq=self.train_freq,
-                action_noise=self.trajectory_noise_sigma,
                 callback=callback,
                 learning_starts=self.learning_starts,
                 replay_buffer=self.replay_buffer,
@@ -396,12 +399,10 @@ class ProMPTD3(BaseAlgorithm):
         return self
 
 
-    def _sample_action(self, episode_timesteps: int,
-                       action_noise: Optional[ActionNoise] = None) -> Tuple[np.ndarray, np.ndarray]:
+    def _sample_action(self, episode_timesteps: int) -> Tuple[np.ndarray, np.ndarray]:
         """
-        This function begins the data from the environment.
+        This function samples the data from the environment.
         """
-
         unscaled_action = self.actor.get_action(episode_timesteps)
 
         # Rescale the action from [low, high] to [-1, 1]
@@ -412,7 +413,7 @@ class ProMPTD3(BaseAlgorithm):
             action = self.policy.unscale_action(scaled_action)
         else:
             # Discrete case, no need to normalize or clip
-            buffer_action = np.clip(unscaled_action+action_noise(), -1, 1)
+            buffer_action = np.clip(unscaled_action, -1, 1)
             action = buffer_action
         return action, buffer_action
 
@@ -452,16 +453,14 @@ class ProMPTD3(BaseAlgorithm):
         if self._vec_normalize_env is not None:
             self._last_original_obs = new_obs_
 
-    def collect_rollouts(
-            self,
-            env: VecEnv,
-            callback: BaseCallback,
-            train_freq: TrainFreq,
-            replay_buffer: ReplayBufferStep,
-            action_noise: Optional[ActionNoise] = None,
-            learning_starts: int = 0,
-            log_interval: Optional[int] = None,
-    ) -> RolloutReturn:
+    def collect_rollouts(self, env: VecEnv, callback: BaseCallback, train_freq: TrainFreq,
+                         replay_buffer: ReplayBufferStep, learning_starts: int = 0,
+                         log_interval: Optional[int] = None,
+                         ) -> RolloutReturn:
+
+        """
+        Collect the data.
+        """
 
         episode_rewards, total_timesteps = [], []
         num_collected_steps, num_collected_episodes = 0, 0
@@ -472,20 +471,16 @@ class ProMPTD3(BaseAlgorithm):
 
         callback.on_rollout_start()
         continue_training = True
+
+        #  the timestep information in each episode
         if self.episode_timesteps == 0:
             done = False
-            self.plot_vel_with_noise = np.zeros((200, 5))
-            self.plot_pos_with_noise = np.zeros((200, 5))
             self.actor.update()
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
                 self.ls_number < self.learning_starts:
-        #print("sample")
-        #while (not done) or \
-        #               self.ls_number < self.learning_starts:
 
             # loop for episode
-
             done = False
             episode_reward = 0.0
             self.obs = []
@@ -494,80 +489,60 @@ class ProMPTD3(BaseAlgorithm):
             while not done:  # loop for steps during one episode (timesteps plus one)
 
                 # Select action according to policy
-                if self.episode_timesteps < self.before_traj_step:
-                    import time
-                    time.sleep(0.5)
-                    self.obs.append(self.env.obs_for_promp())
-                    action = np.zeros(shape=(1, self.dof))
-                    new_obs, reward, done, infos = env.step(action)
-                    self.episode_timesteps += 1
+                ##import time
+                #ime.sleep(0.5)
+                self.obs.append(self.env.obs_for_promp())
+                action, buffer_action = self._sample_action(self.episode_timesteps)
 
-                else:
-                    ##import time
-                    #ime.sleep(0.5)
-                    self.obs.append(self.env.obs_for_promp())
-                    if self.before_traj_step > 0 and self.episode_timesteps == self.before_traj_step:
-                        if self.actor.start_traj == None:
-                            self.actor.start_traj_compute()
-                            self.actor_target.start_traj = self.actor.start_traj
-                        self.actor.add_start_traj()
+                # Rescale and perform action
 
-                    action, buffer_action = self._sample_action(self.episode_timesteps, action_noise)
+                action = action + self.noise()
+                action = action.reshape(action.shape[0], -1)
 
-                    # Rescale and perform action
+                new_obs, reward, done, infos = env.step(action)
 
-                    action = action + self.actor.noise_traj()
-                    action = action.reshape(action.shape[0], -1)
+                self.actions.append(action)
 
-                    new_obs, reward, done, infos = env.step(action)
+                self.num_timesteps += 1
+                self.episode_timesteps += 1
+                self.ls_number += 1
+                num_collected_steps += 1
 
-                    self.actions.append(action)
+                # Give access to local variables
+                callback.update_locals(locals())
+                episode_reward += reward
 
-                    self.num_timesteps += 1
-                    self.episode_timesteps += 1
-                    self.ls_number += 1
-                    num_collected_steps += 1
+                # Store data in replay buffer (normalized action and unnormalized observation)
+                next_step = self.episode_timesteps
+                if self.episode_timesteps == self.max_episode_steps:
+                    next_step = self.max_episode_steps-1
+                self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
+                                       self.episode_timesteps - 1, next_step)
 
-                    # Give access to local variables
-                    callback.update_locals(locals())
-                    episode_reward += reward
+                self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
 
-                    # Store data in replay buffer (normalized action and unnormalized observation)
-                    next_step = self.episode_timesteps
-                    if self.episode_timesteps == self.max_episode_steps:
-                        next_step = self.max_episode_steps-1
-                    self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
-                                           self.episode_timesteps - 1, next_step)
-
-                    self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
-
-                    #if not (should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) and
-                    #        self.ls_number < self.learning_starts):
-                    #    env.reset()
-                    #    self.episode_timesteps = 0
-                    #    break
+                # should I use this?
+                # if the environment ends before one episode length, restart the environment
+                #if not (should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) and
+                #        self.ls_number < self.learning_starts):
+                #    env.reset()
+                #    self.episode_timesteps = 0
+                #    break
 
                 #env.render()
 
             if done:
-                #print("finish sample")
                 env.reset()
                 num_collected_episodes += 1
                 self._episode_num += 1
-                # print("")
                 episode_rewards.append(episode_reward)
                 total_timesteps.append(self.episode_timesteps)
                 self.episode_timesteps = 0
-
 
                 # Log training infos
                 if log_interval is not None and self._episode_num % log_interval == 0:
                     print("")
                     self._dump_logs()
-
-
-
-                # self.actor.update()
 
         mean_reward = np.mean(episode_rewards) if num_collected_episodes > 0 else 0.0
 
@@ -577,15 +552,15 @@ class ProMPTD3(BaseAlgorithm):
 
 
     def _convert_train_freq(self) -> None:
-
+        """
+        This function builds up the training frequency.
+        """
         if not isinstance(self.train_freq, TrainFreq):
             train_freq = self.train_freq
 
             # The value of the train frequency will be checked later
             if not isinstance(train_freq, tuple):
                 train_freq = (train_freq, "step")
-                #train_freq = (2000, "step")
-
             try:
                 train_freq = (train_freq[0], TrainFrequencyUnit(train_freq[1]))
             except ValueError:
@@ -598,24 +573,26 @@ class ProMPTD3(BaseAlgorithm):
             self.train_freq = TrainFreq(*train_freq)
 
     def save_replay_buffer(self, path: Union[str, pathlib.Path, io.BufferedIOBase]) -> None:
+        """
+        This function saves the replay buffer.
+        """
         assert self.replay_buffer is not None, "The replay buffer is not defined"
         save_to_pkl(path, self.replay_buffer, self.verbose)
 
     def load_replay_buffer(self, path: Union[str, pathlib.Path, io.BufferedIOBase]) -> None:
+        """
+        This function loads the replay buffer.
+        """
         self.replay_buffer = load_from_pkl(path, self.verbose)
         assert isinstance(self.replay_buffer, ReplayBuffer), "The replay buffer must inherit from ReplayBuffer class"
 
-    def _setup_learn(
-        self,
-        total_timesteps: int,
-        eval_env: Optional[GymEnv],
-        callback: MaybeCallback = None,
-        eval_freq: int = 10000,
-        n_eval_episodes: int = 5,
-        log_path: Optional[str] = None,
-        reset_num_timesteps: bool = True,
-        tb_log_name: str = "run",
-    ) -> Tuple[int, BaseCallback]:
+    def _setup_learn(self, total_timesteps: int, eval_env: Optional[GymEnv], callback: MaybeCallback = None,
+                     eval_freq: int = 10000, n_eval_episodes: int = 5, log_path: Optional[str] = None,
+                     reset_num_timesteps: bool = True, tb_log_name: str = "run",
+                     ) -> Tuple[int, BaseCallback]:
+        """
+        This function setups the learning process.
+        """
         # Prevent continuity issue by truncating trajectory
         # when using memory efficient replay buffer
         # see https://github.com/DLR-RM/stable-baselines3/issues/46

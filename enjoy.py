@@ -22,7 +22,7 @@ algo = "promp_td3"
 env = "Ant-v1"
 #env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_35"
+path = "logs/promp_td3/" + env + "_21"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"

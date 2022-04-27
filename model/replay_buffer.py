@@ -29,6 +29,12 @@ MaybeCallback = Union[None, Callable, List[callbacks.BaseCallback], callbacks.Ba
 # and ouputs a scalar (e.g. learning rate, clip range, ...)
 Schedule = Callable[[float], float]
 
+
+"""
+This Replay Buffer is base on the framework of Stable-baselins3. 
+We add a timestep information into Replay Buffer, in order to indicate the timestep for actor ProMP.
+"""
+
 class ReplayBufferStepSamples(NamedTuple):
     observations: th.Tensor
     actions: th.Tensor

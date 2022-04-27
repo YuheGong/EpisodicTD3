@@ -1,131 +1,151 @@
 from abc import ABC
-import torch
 import gym
 import numpy as np
 from .detpmp_model import DeterministicProMP
 import torch as th
-from stable_baselines3.common.noise import NormalActionNoise
 from .controller import PosController, PDController, VelController
 
 
 class DetPMPWrapper(ABC):
+    """
+    This class is the wrapper for Probabilistic Movement Primitives model.
 
-    def __init__(self, env: gym.Wrapper, num_dof: int, num_basis: int, width: int, step_length=None,
-                 weights_scale=1, zero_start=False, zero_goal=False, noise_sigma=None, before_traj_steps=0,
-                 **mp_kwargs):
+    :param env: for any regular OpenAI Gym environment.
+    :param num_dof: the degree of freedom of the robot
+    :param num_basis: the number of Gaussian Basis Functions.
+    :param width: the width of Gaussian Basis Functions.
+    :param step_length: the episode length.
+    :param weights_scale: the scale of the weights
+    :param zero_start: whether start from the initial position or not
+    :param zero_basis: the basis functions when zero_start is True.
+    :param mp_kwargs: the parameter of the controller
+    """
 
-        self.policy_type = mp_kwargs['policy_type']
+    def __init__(
+            self,
+            env: gym.Wrapper,
+            num_dof: int,
+            num_basis: int,
+            width: int,
+            step_length=None,
+            weights_scale=1,
+            zero_start=False,
+            zero_basis=0,
+            **controller_kwargs):
+
+        self.controller_type = controller_kwargs['controller_type']
+        self.controller_setup(env=env, controller_kwargs=controller_kwargs, num_dof=num_dof)
+
         self.zero_start = zero_start
-        self.controller_setup(env=env, policy_kwargs=mp_kwargs, num_dof=num_dof)
-
-        self.before_traj_steps = before_traj_steps
         self.start_traj = None
         self.trajectory = None
         self.velocity = None
 
-        self.step_length = step_length - self.before_traj_steps
+        self.step_length = step_length
         self.env = env
         dt = self.env.dt
 
-        # set the exploration noise for reference trajectory
-        self.noise_sigma = noise_sigma
-        n_actions = (num_dof,)
-        self.noise_traj = NormalActionNoise(mean=np.zeros(n_actions), sigma=self.noise_sigma * np.ones(n_actions))
-
         self.num_dof = num_dof
         self.mp = DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width,
-                                     zero_start=zero_start, n_zero_bases=2,
-                                     step_length=self.step_length, dt=dt, weight_scale=weights_scale,
-                                     before_traj_steps=before_traj_steps)
+                                     zero_start=zero_start, n_zero_bases=zero_basis,
+                                     step_length=self.step_length, dt=dt, weight_scale=weights_scale)
 
-    def controller_setup(self, env, policy_kwargs, num_dof):
-        if self.policy_type == 'motor':
-            self.controller = PDController(env, p_gains=policy_kwargs['policy_kwargs']['p_gains'],
-                                           d_gains=policy_kwargs['policy_kwargs']['d_gains'], num_dof=num_dof)
-        elif self.policy_type == 'position':
+    def controller_setup(self, env, controller_kwargs, num_dof):
+        """
+        This function builds up the controller of ProMP.
+        """
+        if self.controller_type == 'motor':
+            self.controller = PDController(env, p_gains=controller_kwargs['controller_kwargs']['p_gains'],
+                                           d_gains=controller_kwargs['controller_kwargs']['d_gains'], num_dof=num_dof)
+        elif self.controller_type == 'position':
             self.controller = PosController(env, num_dof=num_dof)
-        elif self.policy_type == 'velocity':
+        elif self.controller_type == 'velocity':
             self.controller = VelController(env, num_dof=num_dof)
         else:
             raise AssertionError("controller not exist")
 
-    def predict_action(self, step, observation):
-        self.calculate_traj = self.trajectory[step].reshape(-1, self.num_dof)
-        self.calculate_vel = self.velocity[step].reshape(-1, self.num_dof)
-        actions = self.controller.predict_actions(self.calculate_traj, self.calculate_vel, observation)
-        return actions
-
     def update(self):
-        #weights = self.mp.weights * self.weights_scale
+        """
+        This function build up the reference trajectory of ProMP
+        according to the current weights in each iteration.
+        """
+        # torch version of the reference trajectory
         _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
 
-        if self.before_traj_steps:
-            self.trajectory = th.vstack([th.zeros(size=((self.before_traj_steps, self.num_dof))).to(device='cuda'),
-                                         self.trajectory])
-            self.velocity = th.vstack([th.zeros(size=((self.before_traj_steps, self.num_dof))).to(device='cuda'),
-                                       self.velocity])
-
+        # add initial position
         if self.zero_start:
-            if self.policy_type == 'motor':
+            if self.controller_type == 'motor':
                 self.trajectory += th.Tensor(
                     self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
-            elif self.policy_type == 'position':
+            elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
                     device='cuda')
 
+        # numpy version of the reference trajectory
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
 
+    def predict_action(self, step, observation):
+        """
+        This function predicts the actions according to the Replay Buffer observations.
+        It is used for critic network and actor policy updating.
 
-    def add_start_traj(self):
-        if self.policy_type == 'motor':
-            self.trajectory += self.start_traj
-        elif self.policy_type == 'position':
-            self.trajectory += self.start_traj
-        self.trajectory_np = self.trajectory.cpu().detach().numpy()
-        self.velocity_np = self.velocity.cpu().detach().numpy()
-
-    def start_traj_compute(self):
-        if self.policy_type == 'motor':
-            self.start_traj = th.Tensor(
-                self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
-        elif self.policy_type == 'position':
-            self.start_traj = th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
-                device='cuda')
-
+        Input:
+            step: the timestep information stored in Replay Buffer.
+            observation: the observation stored in Replay Buffer.
+        Return:
+            action: the action based on current ProMP parameters.
+        """
+        self.positions = self.trajectory[step].reshape(-1, self.num_dof)
+        self.velocities = self.velocity[step].reshape(-1, self.num_dof)
+        actions = self.controller.predict_actions(self.positions, self.velocities, observation)
+        return actions
 
     def get_action(self, timesteps):
         """
-        This function generates the actions through the controller
-            according to the reference trajectory and reference velocity.
+        This function generates the actions according to the observation of the environment.
+        It is used for interacting with the environment.
+
+        Input:
+            step: the timestep information.
+        Return:
+            action: the action used for indicating the movements of the robot.
         """
-
-        trajectory = self.trajectory_np[timesteps]  # + self.noise_traj()
-        velocity = self.velocity_np[timesteps]  # + self.noise_traj()
-
+        trajectory = self.trajectory_np[timesteps]
+        velocity = self.velocity_np[timesteps]
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
         return action
 
-
     def eval_rollout(self, env, a):
-        rewards = 0
-        step_length = self.step_length + self.before_traj_steps
-        for i in range(step_length):
-            if i < self.before_traj_steps:
-                ac = 0
-                obs, reward, done, info = env.step(ac)
-                rewards += reward
-            else:
-                self.update()
-                ac = self.get_action(i)
-                ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
-                obs, reward, done, info = env.step(ac)
-                rewards += reward
-                if done:
-                    step_length = i + 1
-                    break
-        return env.rewards_no_ip, step_length
+        """
+        This function evaluate the current ProMP.
 
+        Input:
+            step: the environment without normalization.
+            (We don't use normalization for the environment in our implementation,
+            so this environment is same as the environment we used for sampling data.)
+        Return:
+            episode_reward: the reward of one episode based on current ProMP model.
+            step_length: the step length of one episode based on current ProMP model.
+        """
+        rewards = 0
+        step_length = self.step_length
+        for i in range(step_length):
+            ac = self.get_action(i)
+            ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
+            obs, reward, done, info = env.step(ac)
+            rewards += reward
+            if done:
+                step_length = i + 1
+                break
+        if env.rewards_no_ip is not None:
+            episode_reward = env.rewards_no_ip
+        else:
+            episode_reward = rewards
+        return episode_reward, step_length
+
+    # should be deleted when finished, use render_rollout to render the environment
+    '''
     def load(self, action):
         action = torch.FloatTensor(action)
         params = action.reshape(self.mp.n_basis, self.mp.n_dof) * self.weights_scale
@@ -133,100 +153,33 @@ class DetPMPWrapper(ABC):
         _, des_pos, des_vel, __ = self.mp.compute_trajectory(self.mp.weights)
         des_pos += th.Tensor(self.controller.obs()[-2*self.num_dof:-self.num_dof]).to(device='cuda')
         return des_pos, des_vel
+    '''
 
-    def render_rollout(self, action, env, noise,  pos_feature, vel_feature):
+    def render_rollout(self, weights, env):
+        """
+        This function render the environment.
+
+        Input:
+            weights: the learned weights.
+            env: the environment we want to render.
+        """
         import time
         env.reset()
-        self.mp.weight_scale = 1
-        self.mp.initial_weights(th.Tensor(action).to(device='cuda'))
+        self.mp.initial_weights(th.Tensor(weights).to(device='cuda'))
 
         _, self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
 
-        #if self.zero_start:
-        #    if self.policy_type == 'motor':
-        #        self.trajectory += th.Tensor(
-        #            self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
-        #    elif self.policy_type == 'position':
-        #        self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
-        #            device='cuda')
-
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
-        obses = []
-        actions = []
-        #print("weighst", action)
-        import time
         rewards = 0
-        step_length = self.step_length + self.before_traj_steps
+        step_length = self.step_length
         for i in range(step_length):
-            if i < self.before_traj_steps:
-                ac = 0
-                obs, reward, done, info = env.step(ac)
-                rewards += reward
-            else:
-                self.update()
-                ac = self.get_action(i)
-                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-                obs, reward, done, info = env.step(ac)
-                rewards += reward
-                if done:
-                    step_length = i + 1
-                    break
-            env.render()
-        """
-        for t, pos_vel in enumerate(zip(self.trajectory_np, self.velocity_np)):
-
-            time.sleep(0.1)
-            des_pos = pos_vel[0]
-            des_vel = pos_vel[1]
-            ac, _, __ = self.controller.get_action(des_pos, des_vel)
+            self.update()
+            ac = self.get_action(i)
             ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-            ac = np.array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
-            if t % 2 == 0:
-                ac = - ac * 1.e-6
-            else:
-                ac = ac * 1.e-6
-
             obs, reward, done, info = env.step(ac)
-            obses.append(obs)
-            actions.append(ac)
-            env.render()
+            rewards += reward
             if done:
+                step_length = i + 1
                 break
-        """
-        #print("reward", env.rewards_no_ip)
-        target = np.array(env.goal)
-        #print("traget", target)
-        import matplotlib.pyplot as plt
-        plt.plot(target[1:, 0], target[1:, 1])
-        plt.xlabel("x axis")
-        plt.ylabel("y axis")
-        plt.title("2 dimensional trajectory")
-        #plt.show()
-        '''
-        finger = np.array(env.finger)
-        target = np.array(env.goal)
-        import matplotlib.pyplot as plt
-        position_obses = obses[:, -10:-5]
-        velocity_obses = obses[:, -5:]
-        #position_obses_noise = # obses_noise[:, -10:-5]
-        #velocity_obses_noise = # obses_noise[:, -5:]
-
-        for i in range(5):
-            plt.plot(position_obses_noise[:, i], label='without noise')
-            plt.plot(position_obses[:, i],
-                     label='with noise') # label_name(name))
-            plt.legend()
-            plt.title(f'position_joint_{i}')
-            plt.savefig(f'position_joint_{i}')
-            plt.cla()
-
-            plt.plot(velocity_obses[:, i], label='without noise')
-            plt.plot(velocity_obses_noise[:, i],
-                     label='with noise')  # label_name(name))
-            plt.legend()
-            plt.title(f'velocity_joint_{i}')
-            plt.savefig(f'velocity_joint_{i}')
-            plt.cla()
-        a = 1
-        '''
+            env.render()

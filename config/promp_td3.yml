@@ -105,13 +105,14 @@ Ant-v1:
       pi: 256
       qf: 256
   promp_params:
-    policy_kwargs:
-      p_gains: 0.05
-      d_gains: 0.05
+    controller_type: velocity
+    controller_kwargs:
+      p_gains: 0.1
+      d_gains: 0.01
     width: 0.025
     weight_scale: 1
-    policy_type: velocity
     zero_start: False
+    zero_basis: 0
   env_params:
     env_name: alr_envs:Ant-v1
     num_envs: 1

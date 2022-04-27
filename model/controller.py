@@ -2,7 +2,37 @@ import torch
 from typing import Tuple, Union
 from gym import Env
 
+"""
+The controllers.
 
+:function get_action:
+    Datatype: 
+        Numpy
+    Input: 
+        des_pos: desired reference position
+        des_vel: desired reference velocity
+    Return:
+        the action used for indicating the movements of the robot
+        desired reference position
+        esired reference velocity
+
+:function predict_action:
+    Datatype: 
+        Tensor
+    Input: 
+        des_pos: desired reference position
+        des_vel: desired reference velocity
+        observation: the observations stored in Replay Buffer
+    Return:
+        the action used for updating the critic network and ProMP weights
+        
+:function obs:
+    Datatype: 
+        Numpy
+    Return:
+        current observations in the environment
+        
+"""
 
 
 class BaseController:
