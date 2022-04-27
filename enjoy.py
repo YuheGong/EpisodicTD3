@@ -5,7 +5,7 @@ import gym
 import numpy as np
 from stable_baselines3 import PPO, A2C, DQN, HER, SAC, TD3, DDPG
 from stable_baselines3.common.noise import NormalActionNoise
-from model.promp_td3 import ProMPTD3
+from model.episodic_td3 import EpisodicTD3
 from utils.env import env_maker, env_save, env_continue_load
 
 def make_env(env_name, path, rank, seed=0):
@@ -14,7 +14,7 @@ def make_env(env_name, path, rank, seed=0):
         return env
     return _init
 
-algo = "promp_td3"
+algo = "episodic_td3"
 
 #env_id = "FetchReacher-v"
 #env_id = "ALRReacherBalanceIP-v"
@@ -22,7 +22,7 @@ algo = "promp_td3"
 env = "Ant-v1"
 #env = "Ant-v0"
 env_id = env
-path = "logs/promp_td3/" + env + "_21"
+path = "logs/episodic_td3/" + env + "_1"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -38,8 +38,7 @@ data['path'] = path
 #data['continue_path'] = "logs/promp_td3/" + env + "_13"
 
 # make the environment
-#stats_file = 'env_normalize.pkl'
-#stats_path = os.path.join(path, stats_file)
+
 env = gym.make("alr_envs:" + env)
 algo_path = path + "/best_model.npz"
 a = path + "/pos_features.npz"
@@ -72,7 +71,7 @@ ALGOS = {
         'sac': SAC,
         'ppo': PPO,
         'td3': TD3,
-        'promp_td3': ProMPTD3
+        'episodic_td3': EpisodicTD3
 }
 ALGO = ALGOS[algo]
 #print("critic", data['algo_params'])
@@ -81,49 +80,39 @@ promp_policy_kwargs = data['promp_params']
 print(env)
 
 model = ALGO(critic, env, seed=1,  initial_promp_params=0.1,  verbose=1,
-             trajectory_noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
+             noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=100,
              policy_delay=2, data_path=data["path"], gamma=0.99)
 
-if data['algorithm'] == "td3":
-    print("td3")
-    for i in range(int(200)):
-        time.sleep(0.01)
-        action, _states = model.load(obs, deterministic=True)
-        obs, rewards, dones, info = env.step(action)
-        env.render()
-    env.close()
-elif data['algorithm'] == "promp_td3":
+n_actions = env.action_space.shape[-1]
+noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0 * np.ones(n_actions))
 
-    n_actions = env.action_space.shape[-1]
-    noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0 * np.ones(n_actions))
+print("algo", algorithm)
+basis_num = 10
+#algorithm = -1 * np.ones((basis_num, env.action_space.shape[0]))
+#algorithm[:, 0] = 10 * np.ones(algorithm[:, 1].shape)
+#algorithm[:, 2] = -0.01 #* np.ones(algorithm[:, 2].shape)
+#algorithm[10:, 2] = 1 #* np.ones(algorithm[:, 2].shape)
+#algorithm[30:, 2] = -1
+#algorithm[50:, 2] = 1
+#algorithm[70:, 2] = -1
+#algorithm[70:, 2] = -1
+#algorithm[110:, 2] = -1
+#algorithm[90:, 2] = 1
+#algorithm[150:, 2] = -1
+#algorithm[170:, 2] = -1
+#algorithm[190:, 2] = -1
+basis_num = 100
+#algorithm = -1.22 * np.ones((basis_num, env.action_space.shape[0]))
+#algorithm[:, 1] = -0.53 * np.ones(algorithm[:, 1].shape)
+#algorithm[:, 2] = -1.22 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 3] = -0.53 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 4] = 1.22 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 5] = 0.53 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 6] = 1.22 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 7] = 0.53 * np.ones(algorithm[:, 2].shape)
+#algorithm = np.random.rand(basis_num, env.action_space.shape[0])
+#algorithm = 0 * np.ones(shape=algorithm.shape)
 
-    print("algo", algorithm)
-    basis_num = 10
-    #algorithm = -1 * np.ones((basis_num, env.action_space.shape[0]))
-    #algorithm[:, 0] = 10 * np.ones(algorithm[:, 1].shape)
-    #algorithm[:, 2] = -0.01 #* np.ones(algorithm[:, 2].shape)
-    #algorithm[10:, 2] = 1 #* np.ones(algorithm[:, 2].shape)
-    #algorithm[30:, 2] = -1
-    #algorithm[50:, 2] = 1
-    #algorithm[70:, 2] = -1
-    #algorithm[70:, 2] = -1
-    #algorithm[110:, 2] = -1
-    #algorithm[90:, 2] = 1
-    #algorithm[150:, 2] = -1
-    #algorithm[170:, 2] = -1
-    #algorithm[190:, 2] = -1
-    basis_num = 100
-    #algorithm = -1.22 * np.ones((basis_num, env.action_space.shape[0]))
-    #algorithm[:, 1] = -0.53 * np.ones(algorithm[:, 1].shape)
-    #algorithm[:, 2] = -1.22 * np.ones(algorithm[:, 2].shape)
-    #algorithm[:, 3] = -0.53 * np.ones(algorithm[:, 2].shape)
-    #algorithm[:, 4] = 1.22 * np.ones(algorithm[:, 2].shape)
-    #algorithm[:, 5] = 0.53 * np.ones(algorithm[:, 2].shape)
-    #algorithm[:, 6] = 1.22 * np.ones(algorithm[:, 2].shape)
-    #algorithm[:, 7] = 0.53 * np.ones(algorithm[:, 2].shape)
-    #algorithm = np.random.rand(basis_num, env.action_space.shape[0])
-    #algorithm = 0 * np.ones(shape=algorithm.shape)
-
-    model.load(algorithm, env, noise, pos_feature=algorithm, vel_feature=algorithm)
+model.load(algorithm, env)

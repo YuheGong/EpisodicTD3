@@ -80,7 +80,7 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # Initialize TD3 critic network, for details please check OpenAI Stable baselines3
-        super(ProMPTD3, self).__init__(
+        super(EpisodicTD3, self).__init__(
             policy=critic,
             env=env,
             policy_base=TD3Policy,

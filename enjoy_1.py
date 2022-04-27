@@ -18,7 +18,7 @@ def make_env(env_name, path, rank, seed=0):
         return env
     return _init
 
-algo = "promp_td3"
+algo = "episodic_td3"
 env_id = "Ant-v1"
 
 file_name = algo +".yml"

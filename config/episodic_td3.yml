@@ -1,5 +1,5 @@
 FetchReacher-v1:
-  algorithm: promp_td3
+  algorithm: episodic_td3
   algo_params:
     actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
@@ -30,7 +30,7 @@ FetchReacher-v1:
 
 ### ALR Reacher ENV with different goal
 ALRReacherBalance-v:
-  algorithm: promp_td3
+  algorithm: episodic_td3
   algo_params:
     learning_rate: 0.0001
     n_steps:  20000
@@ -46,7 +46,7 @@ ALRReacherBalance-v:
     num_envs: 1
 
 ALRReacherBalanceIP-v:
-  algorithm: promp_td3
+  algorithm: episodic_td3
   algo_params:
     learning_rate: 0.0001
     n_steps:  20000
@@ -67,7 +67,7 @@ ALRReacherBalanceIP-v:
     eval_freq: 1000
 
 Ant-v0:
-  algorithm: promp_td3
+  algorithm: episodic_td3
   algo_params:
     actor_learning_rate: 0.000001
     critic_learning_rate: 0.0001
@@ -92,7 +92,7 @@ Ant-v0:
     num_envs: 1
 
 Ant-v1:
-  algorithm: promp_td3
+  algorithm: episodic_td3
   algo_params:
     actor_learning_rate: 0.000001
     critic_learning_rate: 0.0001
@@ -119,7 +119,7 @@ Ant-v1:
 
 
 Hopper-v0:
-  algorithm: promp_td3
+  algorithm: episodic_td3
   algo_params:
     actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001

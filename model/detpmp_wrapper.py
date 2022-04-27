@@ -164,6 +164,7 @@ class DetPMPWrapper(ABC):
             env: the environment we want to render.
         """
         import time
+        print("render")
         env.reset()
         self.mp.initial_weights(th.Tensor(weights).to(device='cuda'))
 

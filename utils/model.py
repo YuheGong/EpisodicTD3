@@ -1,6 +1,5 @@
 import numpy as np
 from utils.callback import ALRBallInACupCallback,DMbicCallback
-from utils.custom import CustomActorCriticPolicy
 from stable_baselines3 import PPO, A2C, DQN, HER, SAC, TD3, DDPG
 import torch as th
 
@@ -15,10 +14,6 @@ def model_building(data, env, seed=None):
         'td3': TD3
     }
     ALGO = ALGOS[data['algorithm']]
-
-    POLICY = {
-        'CustomActorCriticPolicy': CustomActorCriticPolicy
-    }
 
     if "policy_kwargs" in data["algo_params"]:
         policy_kwargs = policy_kwargs_building(data)
