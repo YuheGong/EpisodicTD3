@@ -16,7 +16,6 @@ from .td3_policy import TD3Policy
 from .detpmp_wrapper import DetPMPWrapper
 
 from stable_baselines3.common.callbacks import BaseCallback
-from stable_baselines3.common.noise import ActionNoise
 from stable_baselines3.common.save_util import load_from_pkl, save_to_pkl
 from stable_baselines3.common.type_aliases import GymEnv, MaybeCallback, RolloutReturn, Schedule, TrainFreq, TrainFrequencyUnit
 from stable_baselines3.common.utils import safe_mean, should_collect_more_steps
@@ -26,7 +25,7 @@ import gym
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
 
-class ProMPTD3(BaseAlgorithm):
+class EpisodicTD3(BaseAlgorithm):
 
     """
     This class is the interface for the users using ProMPTD3 algorithm.

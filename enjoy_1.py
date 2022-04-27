@@ -3,7 +3,7 @@ from utils.yaml import write_yaml, read_yaml
 import gym
 import argparse
 from utils.model import policy_kwargs_building
-from model.promp_td3 import ProMPTD3
+from model.episodic_td3 import EpisodicTD3
 import numpy as np
 
 parser = argparse.ArgumentParser()
@@ -35,7 +35,7 @@ env = gym.make(data["env_params"]['env_name'])
 eval_env = gym.make(data["env_params"]['env_name'])
 
 # make the model and save the model
-ALGO = ProMPTD3
+ALGO = EpisodicTD3
 critic_kwargs = policy_kwargs_building(data)
 critic = data['algo_params']['policy']
 

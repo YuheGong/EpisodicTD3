@@ -16,7 +16,7 @@ The yaml file which stores the parameters. When you want to use our framework, p
 ### Folder utils: 
 Create the environment, algorithm model, and the callback.
 
-Load the policy parameters from yaml file 
+Load the policy parameters from yaml file.
 
 Please see train.py. It is an example for using utils.
 
@@ -25,10 +25,10 @@ The main structure of our algorithm.
 
 #### Episodic TD3 algorithm part:
 
-|Name| Description                                      |
-|---|--------------------------------------------------|
-|`promp_td3.py`| The main algorithm framework of Episodic TD3.    |
-|`base_algorithm.py`| The base class of ProMPTD3 class in promp_td3.py |
+| Name                | Description                                            |
+|---------------------|--------------------------------------------------------|
+| `episodic_td3.py`   | The main algorithm framework of Episodic TD3.          |
+| `base_algorithm.py` | The base class of EpisodicTD3 class in episodic_td3.py |
 
 
 ##### Actor ProMP part:

@@ -5,7 +5,7 @@ import numpy as np
 import argparse
 from stable_baselines3.common.callbacks import EvalCallback
 from utils.model import policy_kwargs_building
-from model.promp_td3 import ProMPTD3
+from model.episodic_td3 import EpisodicTD3
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
 parser = argparse.ArgumentParser()
@@ -36,7 +36,7 @@ env = gym.make(data["env_params"]['env_name'])
 eval_env = gym.make(data["env_params"]['env_name'])
 
 # make the model and save the model
-ALGO = ProMPTD3
+ALGO = EpisodicTD3
 policy_kwargs = policy_kwargs_building(data)
 policy = data['algo_params']['policy']
 env.reset()
