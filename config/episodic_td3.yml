@@ -186,7 +186,7 @@ DeepMindWalkerDense-v0:
 DeepMindCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
-    actor_learning_rate: 0.0001
+    actor_learning_rate: 0.000001
     critic_learning_rate: 0.0001
     n_steps: 20000
     total_timesteps: 1.e+7
@@ -197,9 +197,9 @@ DeepMindCheetahDense-v0:
       pi: 256
       qf: 256
   promp_params:
-    num_basis: 100
-    zero_start: False
-    zero_basis:
+    num_basis: 10
+    zero_start: True
+    zero_basis: 2
     controller_type: velocity
     controller_kwargs:
       p_gains: 0.01

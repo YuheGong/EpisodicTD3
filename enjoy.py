@@ -21,9 +21,10 @@ algo = "episodic_td3"
 #env = env_id + '3'
 env = "Ant-v1"
 env = "DeepMindWalkerDense-v0"
+env = "DeepMindCheetahDense-v0"
 #env = "Ant-v0"
 env_id = env
-path = "logs/episodic_td3/" + env + "_18"
+path = "logs/episodic_td3/" + env + "_30"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -83,13 +84,13 @@ print(env)
 model = ALGO(critic, env, seed=1,  initial_promp_params=0.1,  verbose=1,
              noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
-             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=10,
+             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=data['promp_params']['num_basis'],
              policy_delay=2, data_path=data["path"], gamma=0.99)
 
 n_actions = env.action_space.shape[-1]
 noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0 * np.ones(n_actions))
 
-print("algo", algorithm)
+#print("algo", algorithm)
 basis_num = 10
 #algorithm = -1 * np.ones((basis_num, env.action_space.shape[0]))
 #algorithm[:, 0] = 10 * np.ones(algorithm[:, 1].shape)
@@ -104,16 +105,26 @@ basis_num = 10
 #algorithm[150:, 2] = -1
 #algorithm[170:, 2] = -1
 #algorithm[190:, 2] = -1
-basis_num = 100
-#algorithm = -1.22 * np.ones((basis_num, env.action_space.shape[0]))
-#algorithm[:, 1] = -0.53 * np.ones(algorithm[:, 1].shape)
-#algorithm[:, 2] = -1.22 * np.ones(algorithm[:, 2].shape)
-#algorithm[:, 3] = -0.53 * np.ones(algorithm[:, 2].shape)
-#algorithm[:, 4] = 1.22 * np.ones(algorithm[:, 2].shape)
-#algorithm[:, 5] = 0.53 * np.ones(algorithm[:, 2].shape)
+basis_num = 10
+#
+"""
+algorithm = 1 * np.ones((basis_num, env.action_space.shape[0]))
+
+for i in range(algorithm.shape[0]):
+    if i % 2 == 0:
+        algorithm[i, 1] = -1 * np.ones(algorithm[i,1].shape)
+        algorithm[i, 2] = -0.1 * np.ones(algorithm[i, 1].shape)
+        algorithm[i, 3] = -0.001 * np.ones(algorithm[i, 1].shape)
+        algorithm[i, 4] = -1 * np.ones(algorithm[i, 1].shape)
+        algorithm[i, 5] = -1 * np.ones(algorithm[i, 1].shape)
+"""
+#algorithm[:, :] = -0.01 * np.ones(algorithm[:, :].shape)
+#algorithm[:, 3] = -1 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 4] = 1 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 5] = -1 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 6] = 1.22 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 7] = 0.53 * np.ones(algorithm[:, 2].shape)
 #algorithm = np.random.rand(basis_num, env.action_space.shape[0])
 #algorithm = 0 * np.ones(shape=algorithm.shape)
-
+print("algorithm", algorithm)
 model.load(algorithm, env)
