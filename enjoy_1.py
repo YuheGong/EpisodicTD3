@@ -44,22 +44,21 @@ critic_kwargs = policy_kwargs_building(data)
 critic = data['algo_params']['policy']
 
 env.reset()
-basis_num = 10
-algorithm = -0.01 * np.ones((basis_num, env.action_space.shape[0]))
-algorithm[:, 0] = 0.01 * np.ones(algorithm[:, 1].shape)
-algorithm[:, 2] = 0.01 * np.ones(algorithm[:, 2].shape)
+#algorithm = -0.01 * np.ones((basis_num, env.action_space.shape[0]))
+#algorithm[:, 0] = 0.01 * np.ones(algorithm[:, 1].shape)
+#algorithm[:, 2] = 0.01 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 3] = 0.1 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 4] = 0.01 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 5] = 0.1 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 6] = 0.01 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 7] = 0.6 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 8] = 0.00006 * np.ones(algorithm[:, 2].shape)
-algorithm = 0.01 * np.random.rand(basis_num, env.action_space.shape[0])
+#algorithm = 0.01 * np.random.rand(basis_num, env.action_space.shape[0])
 
 model = ALGO(critic, env, seed=1,  initial_promp_params=1, critic_network_kwargs=critic_kwargs, verbose=1,
              noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
-             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=basis_num,
+             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=data['promp_params']['num_basis'],
              policy_delay=2, data_path=data["path"], gamma=0.99)
 
 # csv file path

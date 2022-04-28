@@ -197,6 +197,7 @@ DeepMindCheetahDense-v0:
       pi: 256
       qf: 256
   promp_params:
+    num_basis: 100
     zero_start: False
     zero_basis:
     controller_type: velocity
