@@ -20,7 +20,10 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "episodic_td3"
 env_id = "DeepMindWalkerDense-v0"
+env_id = "DeepMindCheetahDense-v0"
 #env_id = "Ant-v1"
+#env_id = "FetchReacher-v1"
+#env_id = "ALRReacherBalanceIP-v3"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -46,14 +49,14 @@ algorithm = -0.01 * np.ones((basis_num, env.action_space.shape[0]))
 algorithm[:, 0] = 0.01 * np.ones(algorithm[:, 1].shape)
 algorithm[:, 2] = 0.01 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 3] = 0.1 * np.ones(algorithm[:, 2].shape)
-algorithm[:, 4] = 0.01 * np.ones(algorithm[:, 2].shape)
+#algorithm[:, 4] = 0.01 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 5] = 0.1 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 6] = 0.01 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 7] = 0.6 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 8] = 0.00006 * np.ones(algorithm[:, 2].shape)
 algorithm = 0.01 * np.random.rand(basis_num, env.action_space.shape[0])
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.01, critic_network_kwargs=critic_kwargs, verbose=1,
+model = ALGO(critic, env, seed=1,  initial_promp_params=1, critic_network_kwargs=critic_kwargs, verbose=1,
              noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=basis_num,

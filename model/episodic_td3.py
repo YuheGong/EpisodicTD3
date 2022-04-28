@@ -254,7 +254,7 @@ class EpisodicTD3(BaseAlgorithm):
         """
 
         # evaluate the current policy, and save the reward and the episode length
-        self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env, self.actor.mp.weights.reshape(-1,self.dof))
+        self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
         self.env.reset()
 
         """Not Done, need to change to a learning rate schedule function"""
@@ -404,10 +404,12 @@ class EpisodicTD3(BaseAlgorithm):
 
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
-            scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
-            scaled_action = np.clip(scaled_action, -1, 1)
-            buffer_action = scaled_action
-            action = self.policy.unscale_action(scaled_action)
+            #scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
+            #scaled_action = np.clip(scaled_action, -1, 1)
+            #buffer_action = scaled_action
+            #action = self.policy.unscale_action(scaled_action)
+            action = unscaled_action
+            buffer_action = action
         else:
             # Discrete case, no need to normalize or clip
             buffer_action = np.clip(unscaled_action, -1, 1)
@@ -490,6 +492,7 @@ class EpisodicTD3(BaseAlgorithm):
                 #ime.sleep(0.5)
                 self.obs.append(self.env.obs_for_promp())
                 action, buffer_action = self._sample_action(self.episode_timesteps)
+                # print("obs, sample", self.actor.controller.obs())
 
                 # Rescale and perform action
                 action = action + self.noise()

@@ -116,7 +116,7 @@ class DetPMPWrapper(ABC):
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
         return action
 
-    def eval_rollout(self, env, a):
+    def eval_rollout(self, env):
         """
         This function evaluate the current ProMP.
 
@@ -130,6 +130,7 @@ class DetPMPWrapper(ABC):
         """
         rewards = 0
         step_length = self.step_length
+        env.reset()
         for i in range(step_length):
             ac = self.get_action(i)
             ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
@@ -176,13 +177,18 @@ class DetPMPWrapper(ABC):
         rewards = 0
         step_length = self.step_length
         if "DeepMind" in str(env):
+
+            # export MUJOCO_GL="osmesa"
+
             for i in range(int(self.step_length)):
                 # time.sleep(0.1)
                 ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
                 obs, reward, done, info = env.step(ac)
-                env.render(mode="rgb_array")
-                # env.render(mode="human")
+                rewards += reward
+                #env.render(mode="rgb_array")
+                print(i,reward)
+                env.render(mode="human")
             env.close()
         else:
             for i in range(step_length):
@@ -195,3 +201,5 @@ class DetPMPWrapper(ABC):
                     step_length = i + 1
                     break
                 env.render()
+
+        print("reward", rewards)

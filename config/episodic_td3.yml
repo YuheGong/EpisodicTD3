@@ -13,13 +13,14 @@ FetchReacher-v1:
       pi: 256
       qf: 256
   promp_params:
-    zero_start: False
-    policy_kwargs:
-      p_gains: 1
-      d_gains: 0.1
-    width: 0.01
+    controller_type: position
+    controller_kwargs:
+      p_gains: 0.1
+      d_gains: 0.01
+    width: 0.025
     weight_scale: 1
-    policy_type: position
+    zero_start: True
+    zero_basis: 2
   env_params:
     env_name: alr_envs:FetchReacher-v1
     num_envs: 1
@@ -32,25 +33,10 @@ FetchReacher-v1:
 ALRReacherBalance-v:
   algorithm: episodic_td3
   algo_params:
-    learning_rate: 0.0001
-    n_steps:  20000
-    total_timesteps: 2.e+6
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: ReLU
-      pi: 256
-      qf: 256
-  env_params:
-    env_name: alr_envs:ALRReacherBalance-v
-    num_envs: 1
-
-ALRReacherBalanceIP-v:
-  algorithm: episodic_td3
-  algo_params:
-    learning_rate: 0.0001
-    n_steps:  20000
-    total_timesteps: 2.e+6
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
+    n_steps: 20000
+    total_timesteps: 1.e+6
     train_freq: 1
     policy: MlpPolicy
     policy_type: off_policy
@@ -58,8 +44,36 @@ ALRReacherBalanceIP-v:
       activation_fn: ReLU
       pi: 256
       qf: 256
+      qf: 256
   env_params:
-    env_name: alr_envs:ALRReacherBalanceIP-v
+    env_name: alr_envs:ALRReacherBalance-v
+    num_envs: 1
+
+ALRReacherBalanceIP-v3:
+  algorithm: episodic_td3
+  algo_params:
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
+    n_steps: 20000
+    total_timesteps: 1.e+6
+    train_freq: 1
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    controller_type: motor
+    controller_kwargs:
+      p_gains: 1
+      d_gains: 0.1
+    width: 0.01
+    weight_scale: 1
+    zero_start: True
+    zero_basis: 2
+  env_params:
+    env_name: alr_envs:ALRReacherBalanceIP-v3
     num_envs: 1
     wrapper: None
   eval_env:
@@ -158,13 +172,39 @@ DeepMindWalkerDense-v0:
       qf: 256
   promp_params:
     zero_start: True
-    zero_basis: 5
-    controller_type: velocity
+    zero_basis: 2
+    controller_type: motor
     controller_kwargs:
-      p_gains: 0.0001
-      d_gains: 1
+      p_gains: 0.05
+      d_gains: 0.005
     width: 0.01
     weight_scale: 1
   env_params:
     env_name: alr_envs:DeepMindWalkerDense-v0
+    num_envs: 1
+
+DeepMindCheetahDense-v0:
+  algorithm: episodic_td3
+  algo_params:
+    actor_learning_rate: 0.001
+    critic_learning_rate: 0.0001
+    n_steps: 20000
+    total_timesteps: 1.e+7
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    zero_start: False
+    zero_basis:
+    controller_type: velocity
+    controller_kwargs:
+      p_gains: 0.01
+      d_gains: 0.001
+    width: 0.01
+    weight_scale: 10
+  env_params:
+    env_name: alr_envs:DeepMindCheetahDense-v0
     num_envs: 1
