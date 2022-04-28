@@ -187,7 +187,7 @@ class DetPMPWrapper(ABC):
                 obs, reward, done, info = env.step(ac)
                 rewards += reward
                 #env.render(mode="rgb_array")
-                print(i,reward)
+                print(i, reward)
                 env.render(mode="human")
             env.close()
         else:

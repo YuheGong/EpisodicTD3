@@ -28,21 +28,21 @@ from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckA
 class EpisodicTD3(BaseAlgorithm):
 
     """
-    This class is the interface for the users using ProMPTD3 algorithm.
+    This class is the interface for the users using Episodic TD3 algorithm.
 
-    :param critic: the critic network in ProMPTD3  (MlpPolicy, CnnPolicy, ...).
+    :param critic: the critic network in Episodic TD3  (MlpPolicy, CnnPolicy, ...).
     :param env: for any regular OpenAI Gym environment.
     :param initial_promp_params: the initial value of ProMP parameters, it can be int, float or tensor
     :param basis_num: the number of Gaussian Basis Functions.
-    :param learning_start_episodes: how many episodes of the model to collect transitions for before learning starts.
+    :param learning_start_episodes: how many episodes to collect before learning starts.
     :param critic_learning_rate: the learning rate of the critic network.
     :param actor_lraning_rate: the learning rate of the ProMP actor.
     :param buffer_size: size of the replay buffer.
     :param tau: the soft update coefficient ("Polyak update", between 0 and 1)
     :param gamma: the discount factor
     :param policy_delay: Policy and target networks will only be updated once every policy_delay steps
-        per training steps. The Q values will be updated policy_delay more often (update every training step).
-    :param noise_sigma: the standard deviation value of exploration noise added on ProMP trajectory
+        per iteration. The Q values will be updated policy_delay more often (update every training step).
+    :param noise_sigma: the standard deviation value of exploration noise
     :param target_policy_noise: Standard deviation of Gaussian noise added to target policy
         (smoothing noise)
     :param target_noise_clip: Limit for absolute value of target policy smoothing noise.

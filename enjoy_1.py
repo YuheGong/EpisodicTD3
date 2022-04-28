@@ -54,9 +54,15 @@ env.reset()
 #algorithm[:, 7] = 0.6 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 8] = 0.00006 * np.ones(algorithm[:, 2].shape)
 #algorithm = 0.01 * np.random.rand(basis_num, env.action_space.shape[0])
+algorithm = np.ones((data['promp_params']['num_basis'], env.action_space.shape[0]))
+#lgorithm[1, :] = -10 * np.ones(algorithm[1, :].shape)
+#algorithm[3, :] = -10 * np.ones(algorithm[1, :].shape)
+#algorithm[5, :] = -10 * np.ones(algorithm[1, :].shape)
+algorithm = 1 * np.ones(algorithm.shape)
+algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
 
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.1, critic_network_kwargs=critic_kwargs, verbose=1,
-             noise_sigma=0.3, promp_policy_kwargs=promp_policy_kwargs,
+model = ALGO(critic, env, seed=1,  initial_promp_params=algorithm, critic_network_kwargs=critic_kwargs, verbose=1,
+             noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=data['promp_params']['num_basis'],
              policy_delay=2, data_path=data["path"], gamma=0.99)

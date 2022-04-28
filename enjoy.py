@@ -24,7 +24,7 @@ env = "DeepMindWalkerDense-v0"
 env = "DeepMindCheetahDense-v0"
 #env = "Ant-v0"
 env_id = env
-path = "logs/episodic_td3/" + env + "_30"
+path = "logs/episodic_td3/" + env + "_61"
 
 #env_id = "ALRReacherBalance-v3"
 #path = "logs/promp_td3/ALRReacherBalance-v3_2"
@@ -105,7 +105,7 @@ basis_num = 10
 #algorithm[150:, 2] = -1
 #algorithm[170:, 2] = -1
 #algorithm[190:, 2] = -1
-basis_num = 10
+basis_num = data['promp_params']['num_basis']
 #
 """
 algorithm = 1 * np.ones((basis_num, env.action_space.shape[0]))
@@ -118,13 +118,33 @@ for i in range(algorithm.shape[0]):
         algorithm[i, 4] = -1 * np.ones(algorithm[i, 1].shape)
         algorithm[i, 5] = -1 * np.ones(algorithm[i, 1].shape)
 """
-#algorithm[:, :] = -0.01 * np.ones(algorithm[:, :].shape)
-#algorithm[:, 3] = -1 * np.ones(algorithm[:, 2].shape)
-#algorithm[:, 4] = 1 * np.ones(algorithm[:, 2].shape)
-#algorithm[:, 5] = -1 * np.ones(algorithm[:, 2].shape)
+#for i in range(algorithm.shape[1]):
+#    if i % 2 ==0:
+#        algorithm[:, i] = 10 * np.ones(algorithm[:, 1].shape)
+#    else:
+#        algorithm[:, i] = -10 * np.ones(algorithm[:, 1].shape)
+
+#algorithm[:, :3] = -1 #* np.ones(algorithm[:, :].shape)
+#algorithm[:, 3:] = -1
+
+#algorithm = np.random.rand(basis_num, env.action_space.shape[0])
+#algorithm = 10 * np.ones(algorithm.shape)
+#algorithm[3, :] = -10 * np.ones(algorithm[1, :].shape)
+#algorithm[5, :] = -10 * np.ones(algorithm[1, :].shape)
 #algorithm[:, 6] = 1.22 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 7] = 0.53 * np.ones(algorithm[:, 2].shape)
 #algorithm = np.random.rand(basis_num, env.action_space.shape[0])
 #algorithm = 0 * np.ones(shape=algorithm.shape)
+
+algorithm = 1 * np.ones(algorithm.shape)
+algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
+
+
+#algorithm[:, 2:3] = 0.1 * np.ones(algorithm[:, 2:3].shape)
+#algorithm[:, :2] = 0.1# * np.ones(algorithm[:, :2].shape)
+#algorithm[2:, :2] = 0.1 * np.ones(algorithm[2:, :2].shape)
+#algorithm[4:, :2] = 0.1* np.ones(algorithm[4:, :2].shape)
+
+
 print("algorithm", algorithm)
 model.load(algorithm, env)
