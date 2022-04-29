@@ -132,14 +132,22 @@ class DetPMPWrapper(ABC):
         rewards = 0
         step_length = self.step_length
         env.reset()
-        for i in range(step_length):
-            ac = self.get_action(i)
-            ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
-            obs, reward, done, info = env.step(ac)
-            rewards += reward
-            if done:
-                step_length = i + 1
-                break
+
+        if "Meta" in str(env):
+            for i in range(int(self.step_length)):
+                ac = self.get_action(i)
+                ac = np.clip(ac, -1, 1).reshape(self.num_dof)
+                obs, rewards, dones, info = env.step(ac)
+                env.render(False)
+        else:
+            for i in range(step_length):
+                ac = self.get_action(i)
+                ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
+                obs, reward, done, info = env.step(ac)
+                rewards += reward
+                if done:
+                    step_length = i + 1
+                    break
 
         if hasattr(self.env, "reward_no_ip"):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
