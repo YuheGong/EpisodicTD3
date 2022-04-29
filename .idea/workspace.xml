@@ -6,10 +6,382 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MUJOCO_LOG.TXT" beforeDir="false" afterPath="$PROJECT_DIR$/MUJOCO_LOG.TXT" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/episodic_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/episodic_td3.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_1/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_1/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_1/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_1/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_1/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_1/run_1/events.out.tfevents.1651216259.yre-Legion-5-Pro-16ACH6H.6340.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_1/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_2/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_2/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_2/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_2/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_2/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_2/run_1/events.out.tfevents.1651216823.yre-Legion-5-Pro-16ACH6H.7702.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_2/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_3/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_3/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_3/run_1/events.out.tfevents.1651217061.yre-Legion-5-Pro-16ACH6H.8036.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_4/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_4/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/DeepMindCheetahDense-v0_4/run_1/events.out.tfevents.1651217124.yre-Legion-5-Pro-16ACH6H.8207.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_1/run_1/events.out.tfevents.1651248657.yre-Legion-5-Pro-16ACH6H.56600.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_10/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_10/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_10/run_1/events.out.tfevents.1651249803.yre-Legion-5-Pro-16ACH6H.59107.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_11/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_11/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_11/run_1/events.out.tfevents.1651249836.yre-Legion-5-Pro-16ACH6H.59182.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_12/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_12/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_12/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_12/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_12/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_12/run_1/events.out.tfevents.1651249888.yre-Legion-5-Pro-16ACH6H.59294.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_12/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_13/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_13/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_13/run_1/events.out.tfevents.1651250221.yre-Legion-5-Pro-16ACH6H.59706.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_14/run_1/events.out.tfevents.1651250629.yre-Legion-5-Pro-16ACH6H.60303.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_15/run_1/events.out.tfevents.1651251311.yre-Legion-5-Pro-16ACH6H.61299.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_16/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_16/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_16/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_16/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_16/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_16/run_1/events.out.tfevents.1651251348.yre-Legion-5-Pro-16ACH6H.61379.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_16/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_17/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_17/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_17/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_17/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_17/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_17/run_1/events.out.tfevents.1651251497.yre-Legion-5-Pro-16ACH6H.61697.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_17/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_18/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_18/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_18/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_18/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_18/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_18/run_1/events.out.tfevents.1651251577.yre-Legion-5-Pro-16ACH6H.61783.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_18/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_19/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_19/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_19/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_19/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_19/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_19/run_1/events.out.tfevents.1651251600.yre-Legion-5-Pro-16ACH6H.61849.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_19/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_2/run_1/events.out.tfevents.1651248673.yre-Legion-5-Pro-16ACH6H.56667.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_20/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_20/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_20/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_20/run_1/events.out.tfevents.1651251623.yre-Legion-5-Pro-16ACH6H.61915.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_20/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_3/run_1/events.out.tfevents.1651248698.yre-Legion-5-Pro-16ACH6H.56735.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_4/run_1/events.out.tfevents.1651248723.yre-Legion-5-Pro-16ACH6H.56803.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_5/run_1/events.out.tfevents.1651248772.yre-Legion-5-Pro-16ACH6H.56864.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_6/run_1/events.out.tfevents.1651248864.yre-Legion-5-Pro-16ACH6H.57154.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_7/run_1/events.out.tfevents.1651248946.yre-Legion-5-Pro-16ACH6H.57431.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_8/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_8/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_8/run_1/events.out.tfevents.1651249001.yre-Legion-5-Pro-16ACH6H.57520.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_9/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_9/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_9/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_9/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_9/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_9/run_1/events.out.tfevents.1651249081.yre-Legion-5-Pro-16ACH6H.58117.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_9/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_1/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_1/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_1/run_1/events.out.tfevents.1651218002.yre-Legion-5-Pro-16ACH6H.9102.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_10/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_10/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_10/run_1/events.out.tfevents.1651220421.yre-Legion-5-Pro-16ACH6H.12435.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_11/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_11/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_11/run_1/events.out.tfevents.1651220803.yre-Legion-5-Pro-16ACH6H.13075.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_12/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_12/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_12/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_12/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_12/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_12/run_1/events.out.tfevents.1651220969.yre-Legion-5-Pro-16ACH6H.13474.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_12/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_13/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_13/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_13/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_13/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_13/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_13/run_1/events.out.tfevents.1651221004.yre-Legion-5-Pro-16ACH6H.13545.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_13/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_14/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_14/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_14/run_1/events.out.tfevents.1651221462.yre-Legion-5-Pro-16ACH6H.15238.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_15/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_15/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_15/run_1/events.out.tfevents.1651221493.yre-Legion-5-Pro-16ACH6H.15365.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_16/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_16/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_16/run_1/events.out.tfevents.1651221535.yre-Legion-5-Pro-16ACH6H.15530.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_17/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_17/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_17/run_1/events.out.tfevents.1651221571.yre-Legion-5-Pro-16ACH6H.15653.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_18/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_18/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_18/run_1/events.out.tfevents.1651221616.yre-Legion-5-Pro-16ACH6H.15838.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_19/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_19/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_19/run_1/events.out.tfevents.1651221640.yre-Legion-5-Pro-16ACH6H.15958.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_2/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_2/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_2/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_2/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_2/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_2/run_1/events.out.tfevents.1651218123.yre-Legion-5-Pro-16ACH6H.9339.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_2/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_20/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_20/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_20/run_1/events.out.tfevents.1651221672.yre-Legion-5-Pro-16ACH6H.16087.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_21/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_21/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_21/run_1/events.out.tfevents.1651221706.yre-Legion-5-Pro-16ACH6H.16206.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_22/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_22/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_22/run_1/events.out.tfevents.1651221735.yre-Legion-5-Pro-16ACH6H.16344.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_23/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_23/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_23/run_1/events.out.tfevents.1651221752.yre-Legion-5-Pro-16ACH6H.16457.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_24/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_24/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_24/run_1/events.out.tfevents.1651221775.yre-Legion-5-Pro-16ACH6H.16583.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_25/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_25/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_25/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_25/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_25/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_25/run_1/events.out.tfevents.1651221789.yre-Legion-5-Pro-16ACH6H.16649.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_25/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_26/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_26/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_26/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_26/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_26/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_26/run_1/events.out.tfevents.1651222195.yre-Legion-5-Pro-16ACH6H.17359.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_26/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_27/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_27/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_27/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_27/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_27/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_27/run_1/events.out.tfevents.1651222373.yre-Legion-5-Pro-16ACH6H.17837.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_27/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_28/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_28/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_28/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_28/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_28/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_28/run_1/events.out.tfevents.1651222402.yre-Legion-5-Pro-16ACH6H.17908.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_28/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_29/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_29/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_29/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_29/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_29/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_29/run_1/events.out.tfevents.1651224290.yre-Legion-5-Pro-16ACH6H.21832.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_29/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_3/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_3/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_3/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_3/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_3/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_3/run_1/events.out.tfevents.1651218823.yre-Legion-5-Pro-16ACH6H.10085.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_3/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_30/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_30/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_30/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_30/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_30/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_30/run_1/events.out.tfevents.1651224425.yre-Legion-5-Pro-16ACH6H.21941.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_30/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_31/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_31/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_31/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_31/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_31/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_31/run_1/events.out.tfevents.1651225067.yre-Legion-5-Pro-16ACH6H.22232.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_31/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_32/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_32/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_32/run_1/events.out.tfevents.1651225171.yre-Legion-5-Pro-16ACH6H.22323.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_33/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_33/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_33/run_1/events.out.tfevents.1651227620.yre-Legion-5-Pro-16ACH6H.24613.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_34/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_34/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_34/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_34/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_34/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_34/run_1/events.out.tfevents.1651229152.yre-Legion-5-Pro-16ACH6H.27814.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_34/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_35/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_35/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_35/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_35/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_35/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_35/run_1/events.out.tfevents.1651229234.yre-Legion-5-Pro-16ACH6H.28061.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_35/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_36/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_36/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_36/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_36/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_36/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_36/run_1/events.out.tfevents.1651229373.yre-Legion-5-Pro-16ACH6H.28326.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_36/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_37/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_37/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_37/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_37/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_37/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_37/run_1/events.out.tfevents.1651229417.yre-Legion-5-Pro-16ACH6H.28401.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_37/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_38/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_38/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_38/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_38/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_38/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_38/run_1/events.out.tfevents.1651231048.yre-Legion-5-Pro-16ACH6H.29076.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_38/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_39/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_39/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_39/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_39/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_39/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_39/run_1/events.out.tfevents.1651232708.yre-Legion-5-Pro-16ACH6H.31344.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_39/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_4/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_4/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_4/run_1/events.out.tfevents.1651219007.yre-Legion-5-Pro-16ACH6H.10515.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_40/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_40/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_40/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_40/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_40/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_40/run_1/events.out.tfevents.1651233126.yre-Legion-5-Pro-16ACH6H.31878.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_40/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_41/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_41/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_41/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_41/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_41/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_41/run_1/events.out.tfevents.1651233601.yre-Legion-5-Pro-16ACH6H.32305.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_41/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_42/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_42/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_42/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_42/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_42/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_42/run_1/events.out.tfevents.1651233738.yre-Legion-5-Pro-16ACH6H.32551.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_42/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_43/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_43/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_43/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_43/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_43/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_43/run_1/events.out.tfevents.1651233783.yre-Legion-5-Pro-16ACH6H.32738.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_43/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_44/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_44/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_44/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_44/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_44/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_44/run_1/events.out.tfevents.1651234025.yre-Legion-5-Pro-16ACH6H.33199.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_44/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_45/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_45/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_45/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_45/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_45/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_45/run_1/events.out.tfevents.1651234101.yre-Legion-5-Pro-16ACH6H.33418.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_45/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_46/algo_mean.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_46/best_model.npy.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_46/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_46/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_46/pos_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_46/run_1/events.out.tfevents.1651234142.yre-Legion-5-Pro-16ACH6H.33489.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_46/vel_features.npz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_47/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_47/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_47/run_1/events.out.tfevents.1651234236.yre-Legion-5-Pro-16ACH6H.33671.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_48/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_48/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_48/run_1/events.out.tfevents.1651234411.yre-Legion-5-Pro-16ACH6H.33948.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_49/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_49/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_49/run_1/events.out.tfevents.1651235556.yre-Legion-5-Pro-16ACH6H.36327.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_5/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_5/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_5/run_1/events.out.tfevents.1651219281.yre-Legion-5-Pro-16ACH6H.10953.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_50/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_50/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_50/run_1/events.out.tfevents.1651235792.yre-Legion-5-Pro-16ACH6H.36760.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_51/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_51/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_51/run_1/events.out.tfevents.1651235992.yre-Legion-5-Pro-16ACH6H.37189.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_52/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_52/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_52/run_1/events.out.tfevents.1651236153.yre-Legion-5-Pro-16ACH6H.37562.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_53/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_53/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_53/run_1/events.out.tfevents.1651236691.yre-Legion-5-Pro-16ACH6H.38132.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_54/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_54/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_54/run_1/events.out.tfevents.1651236776.yre-Legion-5-Pro-16ACH6H.38421.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_55/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_55/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_55/run_1/events.out.tfevents.1651237004.yre-Legion-5-Pro-16ACH6H.38835.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_56/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_56/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_56/run_1/events.out.tfevents.1651237173.yre-Legion-5-Pro-16ACH6H.39153.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_57/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_57/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_57/run_1/events.out.tfevents.1651237209.yre-Legion-5-Pro-16ACH6H.39339.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_58/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_58/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_58/run_1/events.out.tfevents.1651237353.yre-Legion-5-Pro-16ACH6H.39663.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_59/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_59/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_59/run_1/events.out.tfevents.1651237562.yre-Legion-5-Pro-16ACH6H.40184.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_6/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_6/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_6/run_1/events.out.tfevents.1651219347.yre-Legion-5-Pro-16ACH6H.11171.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_60/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_60/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_60/run_1/events.out.tfevents.1651237655.yre-Legion-5-Pro-16ACH6H.40438.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_61/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_61/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_61/run_1/events.out.tfevents.1651238409.yre-Legion-5-Pro-16ACH6H.41022.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_62/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_62/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_62/run_1/events.out.tfevents.1651238613.yre-Legion-5-Pro-16ACH6H.41403.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_7/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_7/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_7/run_1/events.out.tfevents.1651219514.yre-Legion-5-Pro-16ACH6H.11474.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_8/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_8/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_8/run_1/events.out.tfevents.1651219568.yre-Legion-5-Pro-16ACH6H.11713.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_9/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_9/model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcCheetahDense-v0_9/run_1/events.out.tfevents.1651219730.yre-Legion-5-Pro-16ACH6H.12048.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sac/DeepMindCheetahDense-v0_1/SAC_1/events.out.tfevents.1651148204.bernhard.16313.0" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sac/DeepMindCheetahDense-v0_1/eval/best_model.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/sac/DeepMindCheetahDense-v0_1/eval/evaluations.npz" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/model/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/detpmp_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_wrapper.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/episodic_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/episodic_td3.py" afterDir="false" />
@@ -166,7 +538,7 @@
       <workItem from="1650898305615" duration="21939000" />
       <workItem from="1650956939064" duration="31814000" />
       <workItem from="1651000354473" duration="74000" />
-      <workItem from="1651216017453" duration="31609000" />
+      <workItem from="1651216017453" duration="52440000" />
     </task>
     <servers />
   </component>
@@ -193,7 +565,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/detpmp_wrapper.py</url>
-          <line>184</line>
+          <line>192</line>
           <option name="timeStamp" value="41" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -212,34 +584,24 @@
           <option name="timeStamp" value="76" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>545</line>
-          <option name="timeStamp" value="77" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>121</line>
-          <option name="timeStamp" value="78" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>509</line>
-          <option name="timeStamp" value="81" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/metaworld/metaworld/envs/mujoco/sawyer_xyz/sawyer_xyz_env.py</url>
-          <line>407</line>
-          <option name="timeStamp" value="82" />
+          <line>378</line>
+          <option name="timeStamp" value="89" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/metaworld/metaworld/envs/mujoco/sawyer_xyz/sawyer_xyz_env.py</url>
-          <line>174</line>
-          <option name="timeStamp" value="83" />
+          <url>file://$PROJECT_DIR$/model/controller.py</url>
+          <line>68</line>
+          <option name="timeStamp" value="92" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/model/replay_buffer.py</url>
-          <line>57</line>
-          <option name="timeStamp" value="86" />
+          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/metaworld/metaworld/envs/mujoco/sawyer_xyz/v2/sawyer_button_press_v2.py</url>
+          <line>133</line>
+          <option name="timeStamp" value="95" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
+          <line>548</line>
+          <option name="timeStamp" value="96" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -248,8 +610,8 @@
     <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1650617243857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1646044840453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1651250928855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1651270064274" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1646861640081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1651216179761" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1651267502168" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

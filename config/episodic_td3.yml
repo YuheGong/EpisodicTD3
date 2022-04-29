@@ -233,8 +233,36 @@ MetaButtonPress-v2:
     controller_kwargs:
       p_gains: 10
       d_gains: 0.001
-    width: 1
+    width: 0.025
     weight_scale: 1
   env_params:
     env_name: alr_envs:MetaButtonPress-v2
+    num_envs: 1
+
+
+InvertedDoublePendulum-v0:
+  algorithm: episodic_td3
+  algo_params:
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
+    n_steps: 20000
+    total_timesteps: 1.e+6
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 10
+    zero_start: True
+    zero_basis: 2
+    controller_type: motor
+    controller_kwargs:
+      p_gains: 0.001
+      d_gains: 0.1
+    width: 0.1
+    weight_scale: 1
+  env_params:
+    env_name: alr_envs:InvertedDoublePendulum-v0
     num_envs: 1

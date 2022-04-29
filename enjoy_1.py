@@ -20,7 +20,7 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "episodic_td3"
 env_id = "DeepMindWalkerDense-v0"
-env_id = "dmcCheetahDense-v0"
+env_id = "InvertedDoublePendulum-v0"
 env_id = "MetaButtonPress-v2"
 #env_id = "Ant-v1"
 #env_id = "FetchReacher-v1"

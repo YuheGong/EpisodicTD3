@@ -137,8 +137,8 @@ class DetPMPWrapper(ABC):
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
-                obs, rewards, dones, info = env.step(ac)
-                env.render(False)
+                obs, reward, dones, info = env.step(ac)
+                rewards += reward
         else:
             for i in range(step_length):
                 ac = self.get_action(i)
@@ -205,7 +205,9 @@ class DetPMPWrapper(ABC):
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
-                obs, rewards, dones, info = env.step(ac)
+                obs, reward, dones, info = env.step(ac)
+                rewards += reward
+                #time.sleep(1)
                 env.render(False)
         else:
             for i in range(step_length):

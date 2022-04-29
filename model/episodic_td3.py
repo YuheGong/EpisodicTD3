@@ -275,7 +275,23 @@ class EpisodicTD3(BaseAlgorithm):
         #    self.actor.noise_sigma = self.noise_sigma
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
-
+        '''
+        if self.eval_reward > 600 :
+            self.actor_learning_rate = 0.00001
+            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+        else:
+            self.actor_learning_rate = 0.0001
+            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+        '''
+        #    self.actor.noise_sigma = self.noise_sigma
+        # elif self.eval_reward > -1:
+        #    self.noise_sigma = 0.1
+        #    self.actor.noise_sigma = self.noise_sigma
+        # else:
+        #    self.noise_sigma = 0.5
+        #    self.actor.noise_sigma = self.noise_sigma
+        #    self.actor_lr = 0.00001
+        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 
         # save the best evaluate reward
         if self.best_model < self.eval_reward:
@@ -506,6 +522,7 @@ class EpisodicTD3(BaseAlgorithm):
                 action = action + self.noise()
                 if 'Meta' in str(env):
                     action = action.reshape(-1)
+                self.obs.append(self.actor.controller.obs())
 
                 new_obs, reward, done, infos = env.step(action)
 
@@ -513,7 +530,9 @@ class EpisodicTD3(BaseAlgorithm):
                 if 'Meta' in str(env):
                     new_obs = np.hstack([new_obs]).reshape(1, -1)
                     action = action.reshape(1,-1)
+                    new_obs = new_obs.reshape(1,-1)
                 self.actions.append(action)
+
 
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
