@@ -115,7 +115,11 @@ class EpisodicTD3(BaseAlgorithm):
         self.target_policy_noise = target_policy_noise
 
         # Environment episode length
-        self.max_episode_steps = self.env.max_episode_steps
+        if "Meta" in str(env):
+            self.env.random_init = False
+            self.max_episode_steps = self.env.max_path_length
+        else:
+            self.max_episode_steps = self.env.max_episode_steps
 
         # Save train freq parameter, will be converted later to TrainFreq object
         # Set the batch size, training frequency and gradient steps equal to the length of one episode
@@ -146,6 +150,7 @@ class EpisodicTD3(BaseAlgorithm):
         self.best_model = -9000000
 
         self._setup_model()
+
 
     def _setup_model(self):
         """
@@ -485,21 +490,29 @@ class EpisodicTD3(BaseAlgorithm):
             self.obs = []
             self.actions = []
 
+
             while not done:  # loop for steps during one episode (timesteps plus one)
 
                 # Select action according to policy
                 ##import time
                 #ime.sleep(0.5)
-                self.obs.append(self.env.obs_for_promp())
+                #self.obs.append(self.env.obs_for_promp())
+
                 action, buffer_action = self._sample_action(self.episode_timesteps)
+                #print("actions", action)
                 # print("obs, sample", self.actor.controller.obs())
 
                 # Rescale and perform action
                 action = action + self.noise()
-                action = action.reshape(action.shape[0], -1)
+                if 'Meta' in str(env):
+                    action = action.reshape(-1)
 
                 new_obs, reward, done, infos = env.step(action)
 
+
+                if 'Meta' in str(env):
+                    new_obs = np.hstack([new_obs]).reshape(1, -1)
+                    action = action.reshape(1,-1)
                 self.actions.append(action)
 
                 self.num_timesteps += 1

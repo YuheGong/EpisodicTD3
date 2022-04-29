@@ -50,6 +50,7 @@ class DetPMPWrapper(ABC):
                                      zero_start=zero_start, n_zero_bases=zero_basis,
                                      step_length=self.step_length, dt=dt, weight_scale=weights_scale)
 
+
     def controller_setup(self, env, controller_kwargs, num_dof):
         """
         This function builds up the controller of ProMP.
@@ -176,13 +177,15 @@ class DetPMPWrapper(ABC):
         self.velocity_np = self.velocity.cpu().detach().numpy()
         rewards = 0
         step_length = self.step_length
-        if "DeepMind" in str(env):
+        print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
+        if "dmc" in str(env):
 
             # export MUJOCO_GL="osmesa"
 
             for i in range(int(self.step_length)):
                 # time.sleep(0.1)
                 ac = self.get_action(i)
+                print("ac", ac)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward
@@ -190,6 +193,12 @@ class DetPMPWrapper(ABC):
                 print(i, reward)
                 env.render(mode="human")
             env.close()
+        elif "Meta" in str(env):
+            for i in range(int(self.step_length)):
+                ac = self.get_action(i)
+                ac = np.clip(ac, -1, 1).reshape(self.num_dof)
+                obs, rewards, dones, info = env.step(ac)
+                env.render(False)
         else:
             for i in range(step_length):
                 self.update()

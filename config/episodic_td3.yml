@@ -183,10 +183,10 @@ DeepMindWalkerDense-v0:
     env_name: alr_envs:DeepMindWalkerDense-v0
     num_envs: 1
 
-DeepMindCheetahDense-v0:
+dmcCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
-    actor_learning_rate: 0.00001
+    actor_learning_rate: 0.01
     critic_learning_rate: 0.0001
     n_steps: 20000
     total_timesteps: 1.e+7
@@ -197,15 +197,44 @@ DeepMindCheetahDense-v0:
       pi: 256
       qf: 256
   promp_params:
-    num_basis: 5
+    num_basis: 10
     zero_start: True
-    zero_basis: 5
-    controller_type: motor
+    zero_basis: 2
+    controller_type: velocity
     controller_kwargs:
-      p_gains: 1
-      d_gains: 0.1
+      p_gains: 10
+      d_gains: 0.001
     width: 1
-    weight_scale: 5
+    weight_scale: 1
   env_params:
-    env_name: alr_envs:DeepMindCheetahDense-v0
+    env_name: alr_envs:dmcCheetahDense-v0
+    num_envs: 1
+
+
+
+MetaButtonPress-v2:
+  algorithm: episodic_td3
+  algo_params:
+    actor_learning_rate: 0.0001
+    critic_learning_rate: 0.0001
+    n_steps: 20000
+    total_timesteps: 1.e+6
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 10
+    zero_start: False
+    zero_basis: 0
+    controller_type: position
+    controller_kwargs:
+      p_gains: 10
+      d_gains: 0.001
+    width: 1
+    weight_scale: 1
+  env_params:
+    env_name: alr_envs:MetaButtonPress-v2
     num_envs: 1

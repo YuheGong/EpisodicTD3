@@ -1,0 +1,28 @@
+algo_params:
+  actor_learning_rate: 0.01
+  critic_learning_rate: 0.0001
+  n_steps: 20000
+  policy: MlpPolicy
+  policy_kwargs:
+    activation_fn: ReLU
+    pi: 256
+    qf: 256
+  policy_type: off_policy
+  total_timesteps: 10000000.0
+algorithm: episodic_td3
+env_params:
+  env_name: alr_envs:dmcCheetahDense-v0
+  num_envs: 1
+path: logs/episodic_td3/dmcCheetahDense-v0_50
+path_in: logs/episodic_td3/dmcCheetahDense-v0_50/EPISODIC_TD3_1
+path_out: logs/episodic_td3/dmcCheetahDense-v0_50/data.csv
+promp_params:
+  controller_kwargs:
+    d_gains: 0.1
+    p_gains: 0.001
+  controller_type: motor
+  num_basis: 10
+  weight_scale: 1
+  width: 1
+  zero_basis: 2
+  zero_start: true

@@ -21,27 +21,22 @@ algo = "episodic_td3"
 #env = env_id + '3'
 env = "Ant-v1"
 env = "DeepMindWalkerDense-v0"
-env = "DeepMindCheetahDense-v0"
+env = "dmcCheetahDense-v0"
+env = "MetaButtonPress-v2"
 #env = "Ant-v0"
 env_id = env
-path = "logs/episodic_td3/" + env + "_61"
-
-#env_id = "ALRReacherBalance-v3"
-#path = "logs/promp_td3/ALRReacherBalance-v3_2"
-
-#env_id = "ALRReacherBalance-v1"
-#path = "logs/promp_td3/ALRReacherBalance-v1_1"
+path = "logs/episodic_td3/" + env + "_9"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
+data['env_params']['env_name'] = data['env_params']['env_name']
 
 # create log folder
 data['path'] = path
 #data['continue_path'] = "logs/promp_td3/" + env + "_13"
 
 # make the environment
-
-env = gym.make("alr_envs:" + env)
+env = gym.make(data["env_params"]['env_name'])
 algo_path = path + "/best_model.npz"
 a = path + "/pos_features.npz"
 algo_path = path + "/algo_mean.npz"
@@ -136,15 +131,15 @@ for i in range(algorithm.shape[0]):
 #algorithm = np.random.rand(basis_num, env.action_space.shape[0])
 #algorithm = 0 * np.ones(shape=algorithm.shape)
 
-algorithm = 1 * np.ones(algorithm.shape)
-algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
-
 
 #algorithm[:, 2:3] = 0.1 * np.ones(algorithm[:, 2:3].shape)
 #algorithm[:, :2] = 0.1# * np.ones(algorithm[:, :2].shape)
 #algorithm[2:, :2] = 0.1 * np.ones(algorithm[2:, :2].shape)
 #algorithm[4:, :2] = 0.1* np.ones(algorithm[4:, :2].shape)
-
-
+#algorithm = 1 * np.ones(algorithm.shape)
+#algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
+#algorithm = 1 * np.ones(algorithm.shape)
+#algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
+#algorithm =  * np.ones(shape=algorithm.shape)
 print("algorithm", algorithm)
 model.load(algorithm, env)

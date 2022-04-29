@@ -10,3 +10,9 @@ ERROR: Invalid text in activation key
 Sat Apr 23 00:21:43 2022
 ERROR: Invalid text in activation key
 
+Fri Apr 29 18:20:59 2022
+ERROR: GLEW initalization error: Missing GL version
+
+Fri Apr 29 18:21:15 2022
+ERROR: GLEW initalization error: Missing GL version
+

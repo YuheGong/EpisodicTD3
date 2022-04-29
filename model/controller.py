@@ -1,6 +1,7 @@
 import torch
 from typing import Tuple, Union
 from gym import Env
+import numpy as np
 
 """
 The controllers.
@@ -38,9 +39,18 @@ The controllers.
 class BaseController:
     def __init__(self, env: Env, **kwargs):
         self.env = env
+        if "Meta" in str(self.env):
+            self.env.obs_for_promp = self.meta_obs
 
     def get_action(self, des_pos, des_vel):
         raise NotImplementedError
+
+    def meta_obs(self):
+        return np.concatenate([
+            np.array(self.env.sim.data.mocap_quat).reshape(-1),
+            np.array(self.env.sim.data.mocap_pos).reshape(-1),
+            np.array([1,]).reshape(-1)
+        ]).reshape(-1)
 
 class PosController(BaseController):
     def __init__(self,
@@ -50,13 +60,13 @@ class PosController(BaseController):
         super(PosController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel):
-        cur_pos = self.obs()[:self.num_dof].reshape(-1)
-        des_pos = des_pos - cur_pos
+        #cur_pos = self.obs()[:self.num_dof].reshape(-1)
+        des_pos = des_pos #- cur_pos
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):
-        cur_pos = observation[:, :self.num_dof].reshape(-1,self.num_dof)
-        des_pos = des_pos - cur_pos
+        #cur_pos = observation[:, :self.num_dof].reshape(-1,self.num_dof)
+        des_pos = des_pos #- cur_pos
         return des_pos
 
     def obs(self):
@@ -78,7 +88,7 @@ class VelController(BaseController):
     def predict_actions(self, des_pos, des_vel, observation):
         cur_vel = observation[:, self.num_dof:2 * self.num_dof].reshape(-1,self.num_dof)
         des_vel = des_vel - cur_vel
-        return des_vel
+        return -des_vel
 
     def obs(self):
         return self.env.obs_for_promp()
