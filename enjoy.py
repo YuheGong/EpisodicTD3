@@ -22,13 +22,13 @@ algo = "episodic_td3"
 env = "Ant-v1"
 env = "DeepMindWalkerDense-v0"
 env = "InvertedDoublePendulum-v0"
-env = "MetaButtonPress-v2"
-env = "ALRHalfCheetahJump-v0"
+#env = "MetaButtonPress-v2"
+#env = "ALRHalfCheetahJump-v0"
 
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_47"
+path = "logs/episodic_td3/" + env + "_17"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]

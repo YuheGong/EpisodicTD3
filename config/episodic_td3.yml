@@ -233,9 +233,9 @@ MetaButtonPress-v2:
     controller_type: position
     controller_kwargs:
       p_gains: 10
-      d_gains: 0.001
-    width: 0.025
-    weight_scale: 1
+      d_gains: 10
+    width: 2
+    weight_scale: 50
   env_params:
     env_name: alr_envs:MetaButtonPress-v2
     num_envs: 1
@@ -256,13 +256,14 @@ InvertedDoublePendulum-v0:
       qf: 256
   promp_params:
     num_basis: 10
-    zero_start: True
-    zero_basis: 2
-    controller_type: motor
+    zero_start: False
+    zero_basis: 0
+    controller_type: velocity
     controller_kwargs:
       p_gains: 1
-      d_gains: 0.0001
-    width: 0.1
+      d_gains: 0
+      i_gains: 0
+    width: 0.01
     weight_scale: 1
   env_params:
     env_name: alr_envs:InvertedDoublePendulum-v0
@@ -288,9 +289,9 @@ ALRHalfCheetahJump-v0:
     zero_basis: 2
     controller_type: pid
     controller_kwargs:
-      p_gains: 0.1
+      p_gains: 1
       d_gains: 0.1
-      i_gains: 0.1
+      i_gains: 0.01
     width: 0.01
     weight_scale: 1
   env_params:

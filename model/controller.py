@@ -42,7 +42,7 @@ class BaseController:
         if "Meta" in str(self.env):
             self.env.obs_for_promp = self.meta_obs
 
-    def get_action(self, des_pos, des_vel):
+    def get_action(self, des_pos, des_vel, des_acc):
         raise NotImplementedError
 
     def meta_obs(self):
@@ -59,12 +59,12 @@ class PosController(BaseController):
         self.num_dof = int(num_dof)
         super(PosController, self).__init__(env)
 
-    def get_action(self, des_pos, des_vel):
+    def get_action(self, des_pos, des_vel, des_acc):
         cur_pos = self.obs()[-self.num_dof:].reshape(-1)
         des_pos = des_pos #- cur_pos
         return des_pos, des_pos, des_vel
 
-    def predict_actions(self, des_pos, des_vel, observation):
+    def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_pos = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
         des_pos = des_pos #- cur_pos
         return des_pos
@@ -80,12 +80,12 @@ class VelController(BaseController):
         self.num_dof = int(num_dof)
         super(VelController, self).__init__(env)
 
-    def get_action(self, des_pos, des_vel):
+    def get_action(self, des_pos, des_vel, des_acc):
         cur_vel = self.obs()[-self.num_dof:].reshape(-1)
         des_vel = des_vel #- cur_vel
         return des_vel, des_pos, des_vel
 
-    def predict_actions(self, des_pos, des_vel, observation):
+    def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_vel = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
         des_vel = des_vel #- cur_vel
         return des_vel
@@ -110,7 +110,7 @@ class PDController(BaseController):
         self.vel = []
         super(PDController, self).__init__(env)
 
-    def get_action(self, des_pos, des_vel):#, action_noise=None):
+    def get_action(self, des_pos, des_vel, des_acc):#, action_noise=None):
         cur_pos = self.obs()[-2*self.num_dof:-self.num_dof].reshape(self.num_dof)
         cur_vel = self.obs()[-self.num_dof:].reshape(self.num_dof)
         #print("(des_pos - cur_pos", des_pos - cur_pos)
@@ -121,7 +121,7 @@ class PDController(BaseController):
         self.vel.append(cur_vel)
         return trq, des_pos, des_vel
 
-    def predict_actions(self, des_pos, des_vel, observation):
+    def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_vel = observation[:, -self.num_dof:].reshape(observation.shape[0], self.num_dof)
         cur_pos = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
         trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel)
@@ -157,8 +157,8 @@ class PIDController(BaseController):
         cur_acc = self.obs()[-self.num_dof:].reshape(self.num_dof)
         #print("(des_pos - cur_pos", des_pos - cur_pos)
         #print("des_vel - cur_vel", des_vel - cur_vel)
-        trq = self.p_g * (des_pos - cur_pos) + self.d_g * (des_vel - cur_vel ) * self.env.dt \
-              + self.i_g * (des_acc - cur_acc) * self.env.dt * self.env.dt
+        trq = self.p_g * (des_pos - cur_pos) + self.d_g * (des_vel - cur_vel ) \
+              + self.i_g * (des_acc - cur_acc)#* self.env.dt \
         self.trq.append(trq)
         self.pos.append(cur_pos)
         self.vel.append(cur_vel)
@@ -168,8 +168,8 @@ class PIDController(BaseController):
         cur_acc = observation[:, -self.num_dof:].reshape(observation.shape[0], self.num_dof)
         cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
         cur_pos = observation[:, -3 * self.num_dof:-2*self.num_dof].reshape(observation.shape[0], self.num_dof)
-        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel) * self.env.dt \
-              + self.i_gains * (des_acc - cur_acc) * self.env.dt * self.env.dt
+        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel) \
+              + self.i_gains * (des_acc - cur_acc) #* self.env.dt * self.env.dt
         return trq
 
     def obs(self):
