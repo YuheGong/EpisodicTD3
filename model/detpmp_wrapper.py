@@ -141,6 +141,7 @@ class DetPMPWrapper(ABC):
         rewards = 0
         step_length = self.step_length
         env.reset()
+        #env.render()
 
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
@@ -185,16 +186,15 @@ class DetPMPWrapper(ABC):
         """
         import time
         print("render")
-        env.reset()
         self.mp.initial_weights(th.Tensor(weights).to(device='cuda'))
 
-        _, self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
+        self.update()
 
-        self.trajectory_np = self.trajectory.cpu().detach().numpy()
-        self.velocity_np = self.velocity.cpu().detach().numpy()
         rewards = 0
         step_length = self.step_length
-        print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
+        env.reset()
+        #print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
+
         if "dmc" in str(env):
 
             # export MUJOCO_GL="osmesa"
@@ -203,7 +203,7 @@ class DetPMPWrapper(ABC):
                 # time.sleep(0.1)
                 ac = self.get_action(i)
                 print("ac", ac)
-                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+                ac = ac.reshape(1, self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward
                 #env.render(mode="rgb_array")
@@ -233,3 +233,4 @@ class DetPMPWrapper(ABC):
                 env.render()
 
         print("reward", rewards)
+
