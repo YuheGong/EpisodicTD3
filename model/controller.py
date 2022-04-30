@@ -82,13 +82,13 @@ class VelController(BaseController):
 
     def get_action(self, des_pos, des_vel):
         cur_vel = self.obs()[-self.num_dof:].reshape(-1)
-        des_vel = des_vel - cur_vel
+        des_vel = des_vel #- cur_vel
         return des_vel, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, observation):
         cur_vel = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
-        des_vel = des_vel - cur_vel
-        return -des_vel
+        des_vel = des_vel #- cur_vel
+        return des_vel
 
     def obs(self):
         return self.env.obs_for_promp()

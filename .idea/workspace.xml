@@ -9,10 +9,7 @@
       <change beforePath="$PROJECT_DIR$/config/episodic_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/episodic_td3.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_71/algo_mean.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_71/algo_mean.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_71/best_model.npy.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_71/best_model.npy.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_71/run_1/events.out.tfevents.1651273586.yre-Legion-5-Pro-16ACH6H.88036.0" beforeDir="false" afterPath="$PROJECT_DIR$/logs/episodic_td3/MetaButtonPress-v2_71/run_1/events.out.tfevents.1651273586.yre-Legion-5-Pro-16ACH6H.88036.0" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/episodic_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/episodic_td3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/controller.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,7 +164,7 @@
       <workItem from="1650956939064" duration="31814000" />
       <workItem from="1651000354473" duration="74000" />
       <workItem from="1651216017453" duration="54749000" />
-      <workItem from="1651297543324" duration="2022000" />
+      <workItem from="1651297543324" duration="6713000" />
     </task>
     <servers />
   </component>
@@ -232,6 +229,11 @@
           <line>568</line>
           <option name="timeStamp" value="96" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/half_cheetah_jump/half_cheetah_jump.py</url>
+          <line>67</line>
+          <option name="timeStamp" value="98" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
@@ -239,7 +241,7 @@
     <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1650617243857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1646044840453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1651298160803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1651302171393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1646861640081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1651267502168" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
