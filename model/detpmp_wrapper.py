@@ -3,7 +3,7 @@ import gym
 import numpy as np
 from .detpmp_model import DeterministicProMP
 import torch as th
-from .controller import PosController, PDController, VelController
+from .controller import PosController, PDController, VelController, PIDController
 
 
 class DetPMPWrapper(ABC):
@@ -62,6 +62,11 @@ class DetPMPWrapper(ABC):
             self.controller = PosController(env, num_dof=num_dof)
         elif self.controller_type == 'velocity':
             self.controller = VelController(env, num_dof=num_dof)
+        elif self.controller_type == 'pid':
+            self.controller = PIDController(env, p_gains=controller_kwargs['controller_kwargs']['p_gains'],
+                                            i_gains=controller_kwargs['controller_kwargs']['i_gains'],
+                                            d_gains=controller_kwargs['controller_kwargs']['d_gains'],
+                                            num_dof=num_dof)
         else:
             raise AssertionError("controller not exist")
 
@@ -71,7 +76,7 @@ class DetPMPWrapper(ABC):
         according to the current weights in each iteration.
         """
         # torch version of the reference trajectory
-        _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
+        _,  self.trajectory, self.velocity, self.acceleration = self.mp.compute_trajectory()
 
         # add initial position
         if self.zero_start:
@@ -85,6 +90,8 @@ class DetPMPWrapper(ABC):
         # numpy version of the reference trajectory
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
+        self.acceleration_np = self.acceleration.cpu().detach().numpy()
+
 
     def predict_action(self, step, observation):
         """
@@ -99,7 +106,8 @@ class DetPMPWrapper(ABC):
         """
         self.positions = self.trajectory[step].reshape(-1, self.num_dof)
         self.velocities = self.velocity[step].reshape(-1, self.num_dof)
-        actions = self.controller.predict_actions(self.positions, self.velocities, observation)
+        self.accelerations = self.acceleration[step].reshape(-1, self.num_dof)
+        actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
         return actions
 
     def get_action(self, timesteps):
@@ -114,7 +122,8 @@ class DetPMPWrapper(ABC):
         """
         trajectory = self.trajectory_np[timesteps]
         velocity = self.velocity_np[timesteps]
-        action, des_pos, des_vel = self.controller.get_action(trajectory, velocity)
+        acceleration = self.acceleration_np[timesteps]
+        action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
         return action
 
     def eval_rollout(self, env):

@@ -28,7 +28,7 @@ env = "ALRHalfCheetahJump-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_11"
+path = "logs/episodic_td3/" + env + "_47"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -142,7 +142,7 @@ for i in range(algorithm.shape[0]):
 #algorithm = 1 * np.ones(algorithm.shape)
 #algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
 #algorithm = 1 * np.ones(algorithm.shape)
-#algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
-#algorithm =  * np.ones(shape=algorithm.shape)
+#algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)#
+
 print("algorithm", algorithm)
 model.load(algorithm, env)
