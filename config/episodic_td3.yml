@@ -68,10 +68,11 @@ ALRReacherBalanceIP-v3:
     controller_kwargs:
       p_gains: 1
       d_gains: 0.1
-    width: 0.01
-    weight_scale: 1
+    num_basis: 10
     zero_start: True
     zero_basis: 2
+    width: 0.1
+    weight_scale: 1
   env_params:
     env_name: alr_envs:ALRReacherBalanceIP-v3
     num_envs: 1
@@ -259,8 +260,8 @@ InvertedDoublePendulum-v0:
     zero_basis: 2
     controller_type: motor
     controller_kwargs:
-      p_gains: 0.001
-      d_gains: 0.1
+      p_gains: 1
+      d_gains: 0.0001
     width: 0.1
     weight_scale: 1
   env_params:

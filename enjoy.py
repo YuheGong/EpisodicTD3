@@ -25,7 +25,7 @@ env = "InvertedDoublePendulum-v0"
 env = "MetaButtonPress-v2"
 #env = "Ant-v0"
 env_id = env
-path = "logs/episodic_td3/" + env + "_69"
+path = "logs/episodic_td3/" + env + "_72"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
