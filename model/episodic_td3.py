@@ -230,13 +230,17 @@ class EpisodicTD3(BaseAlgorithm):
         self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
                                    controller_type=self.controller_type, weights_scale=self.weight_scale,
                                    zero_start=self.zero_start, zero_basis= self.zero_basis,
-                                   step_length=self.max_episode_steps, controller_kwargs=self.actor_kwargs)
+                                   step_length=self.max_episode_steps,
+                                   noise_sigma=self.noise_sigma,
+                                   controller_kwargs=self.actor_kwargs)
 
 
         self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
                                           controller_type=self.controller_type, weights_scale=self.weight_scale,
                                           zero_start=self.zero_start, zero_basis= self.zero_basis,
-                                          step_length=self.max_episode_steps, controller_kwargs=self.actor_kwargs)
+                                          step_length=self.max_episode_steps,
+                                          noise_sigma=self.noise_sigma,
+                                          controller_kwargs=self.actor_kwargs)
 
         # Pass the promp parameters value to ProMP weights
         self.actor.mp.initial_weights(self.promp_params)
@@ -276,16 +280,16 @@ class EpisodicTD3(BaseAlgorithm):
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 
-        #if self.eval_reward > 500 :
-            #self.actor_learning_rate = 0.00001
-            #self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
-        #    self.noise_sigma = 0.05
-        #    self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
-        #else:
-        #    self.noise_sigma = 0.05
-        #    self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
+        #if self.eval_reward > 35:
             #self.actor_learning_rate = 0.0001
             #self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+            #self.noise_sigma = 0.01
+            #self.actor.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
+        # else:
+            #self.actor_learning_rate = 0.0001
+            #self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+            #self.noise_sigma = 0.1
+            #self.actor.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
 
         #    self.actor.noise_sigma = self.noise_sigma
         # elif self.eval_reward > -1:
@@ -523,7 +527,7 @@ class EpisodicTD3(BaseAlgorithm):
                 # print("obs, sample", self.actor.controller.obs())
 
                 # Rescale and perform action
-                action = action + self.noise()
+                action = action + self.noise().reshape(action.shape)
                 if 'Meta' in str(env):
                     action = action.reshape(-1)
                 self.obs.append(self.actor.controller.obs())
@@ -531,10 +535,9 @@ class EpisodicTD3(BaseAlgorithm):
                 new_obs, reward, done, infos = env.step(action)
 
 
-                if 'Meta' in str(env):
-                    new_obs = np.hstack([new_obs]).reshape(1, -1)
-                    action = action.reshape(1,-1)
-                    new_obs = new_obs.reshape(1,-1)
+                new_obs = np.hstack([new_obs]).reshape(1, -1)
+                action = action.reshape(1,-1)
+                new_obs = new_obs.reshape(1,-1)
                 self.actions.append(action)
 
 

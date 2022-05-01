@@ -37,6 +37,7 @@ class DeterministicProMP:
     def initial_weights(self, initial_weights):
         self.weights = initial_weights * self.weight_scale
 
+
     def _exponential_kernel(self, z):
         z_ext = z[:, None]
         diffs = z_ext - self.centers[None, :]

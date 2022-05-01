@@ -4,6 +4,7 @@ import numpy as np
 from .detpmp_model import DeterministicProMP
 import torch as th
 from .controller import PosController, PDController, VelController, PIDController
+from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
 
 class DetPMPWrapper(ABC):
@@ -31,6 +32,7 @@ class DetPMPWrapper(ABC):
             weights_scale=1,
             zero_start=False,
             zero_basis=0,
+            noise_sigma=0,
             **controller_kwargs):
 
         self.controller_type = controller_kwargs['controller_type']
@@ -40,6 +42,7 @@ class DetPMPWrapper(ABC):
         self.start_traj = None
         self.trajectory = None
         self.velocity = None
+        self.noise = NormalActionNoise(mean=np.zeros(num_dof), sigma=noise_sigma * np.ones(num_dof))
 
         self.step_length = step_length
         self.env = env
@@ -120,8 +123,8 @@ class DetPMPWrapper(ABC):
         Return:
             action: the action used for indicating the movements of the robot.
         """
-        trajectory = self.trajectory_np[timesteps]
-        velocity = self.velocity_np[timesteps]
+        trajectory = self.trajectory_np[timesteps] #+ self.noise()
+        velocity = self.velocity_np[timesteps] #+ self.noise()
         acceleration = self.acceleration_np[timesteps]
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
         return action
@@ -159,6 +162,7 @@ class DetPMPWrapper(ABC):
                     step_length = i + 1
                     break
 
+
         if hasattr(self.env, "reward_no_ip"):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
         else:
@@ -186,13 +190,16 @@ class DetPMPWrapper(ABC):
         """
         import time
         print("render")
+        self.mp.weight_scale = 1
         self.mp.initial_weights(th.Tensor(weights).to(device='cuda'))
 
         self.update()
 
         rewards = 0
         step_length = self.step_length
+        self.eval_rollout(env)
         env.reset()
+
         #print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
 
         if "dmc" in str(env):
@@ -203,7 +210,8 @@ class DetPMPWrapper(ABC):
                 # time.sleep(0.1)
                 ac = self.get_action(i)
                 print("ac", ac)
-                ac = ac.reshape(1, self.num_dof)
+                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+                print("ac", ac)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward
                 #env.render(mode="rgb_array")

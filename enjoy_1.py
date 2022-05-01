@@ -53,8 +53,8 @@ algorithm = np.ones((data['promp_params']['num_basis'], env.action_space.shape[0
 algorithm = 0.1 * np.ones(algorithm.shape)
 algorithm = -0.1 * np.ones(shape=algorithm.shape)
 algorithm[:,:3] = 0.5
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.00001, critic_network_kwargs=critic_kwargs, verbose=1,
-             noise_sigma=0.3, promp_policy_kwargs=promp_policy_kwargs,
+model = ALGO(critic, env, seed=1,  initial_promp_params=1, critic_network_kwargs=critic_kwargs, verbose=1,
+             noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=data['promp_params']['num_basis'],
              policy_delay=2, data_path=data["path"], gamma=0.99)
