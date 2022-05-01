@@ -29,7 +29,7 @@ env = "dmcCheetahDense-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_12"
+path = "logs/episodic_td3/" + env + "_125"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -43,6 +43,7 @@ data['path'] = path
 env = gym.make(data["env_params"]['env_name'])
 algo_path = path + "/best_model.npz"
 a = path + "/pos_features.npz"
+algo_path = path + "/best_model.npy.npz"
 algo_path = path + "/algo_mean.npz"
 #a = []
 import pickle
@@ -55,6 +56,8 @@ import pickle
 algorithm = np.load(algo_path, encoding='bytes', allow_pickle=True)
 for i in algorithm:
     algorithm = np.array(algorithm[i])
+
+
 
 #for i in pos_feature:
 #    pos_feature = np.array(pos_feature[i])
@@ -142,7 +145,8 @@ for i in range(algorithm.shape[0]):
 #algorithm[4:, :2] = 0.1* np.ones(algorithm[4:, :2].shape)
 #algorithm = 1 * np.ones(algorithm.shape)
 #algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)
-#algorithm = 1 * np.ones(algorithm.shape)
+#algorithm = 0.1 * np.ones(algorithm.shape)
+#algorithm[:,:2] = 0.1 * np.ones(algorithm[:,:2].shape)
 #algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)#
 
 print("algorithm", algorithm)

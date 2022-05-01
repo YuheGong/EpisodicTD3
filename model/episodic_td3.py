@@ -280,14 +280,17 @@ class EpisodicTD3(BaseAlgorithm):
         #    self.actor_lr = 0.00001
         #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
 
-        #if self.eval_reward > 35:
-            #self.actor_learning_rate = 0.0001
-            #self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+        if self.eval_reward > 100 and self.eval_reward < 110:
+            self.actor_learning_rate = 0.000005
+            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
             #self.noise_sigma = 0.01
-            #self.actor.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
-        # else:
-            #self.actor_learning_rate = 0.0001
-            #self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+            #self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
+        elif self.eval_reward > 110:
+            self.actor_learning_rate = 0.0000005
+            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+        else:
+            self.actor_learning_rate = 0.00005
+            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
             #self.noise_sigma = 0.1
             #self.actor.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
 
