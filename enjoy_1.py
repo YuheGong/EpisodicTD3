@@ -5,6 +5,7 @@ import argparse
 from utils.model import policy_kwargs_building
 from model.episodic_td3 import EpisodicTD3
 import numpy as np
+from model.schedule import dmcCheetahDens_v0_schedule
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--e", type=str, help="the environment")
@@ -19,8 +20,9 @@ def make_env(env_name, path, rank, seed=0):
     return _init
 
 algo = "episodic_td3"
-env_id = "DeepMindWalkerDense-v0"
-env_id = "dmcCheetahDense-v0"
+env_id = "dmcWalkerDense-v0"
+#env_id = "dmcHopperDense-v0"
+#env_id = "dmcCheetahDense-v0"
 #env_id = "dmcSwimmerDense-v0"
 #env_id = "InvertedDoublePendulum-v0"
 #env_id = "MetaButtonPress-v2"
@@ -28,6 +30,8 @@ env_id = "dmcCheetahDense-v0"
 #env_id = "FetchReacher-v1"
 #env_id = "ALRReacherBalanceIP-v3"
 #env_id = "ALRHalfCheetahJump-v0"
+
+#env_id = "Hopper-v0"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -42,6 +46,15 @@ promp_policy_kwargs = data['promp_params']
 env = gym.make(data["env_params"]['env_name'])
 eval_env = gym.make(data["env_params"]['env_name'])
 
+Schedule = {
+        'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
+}
+
+if env_id in Schedule.keys():
+    schedule = Schedule[env_id](env=env)
+else:
+    schedule = None
+
 # make the model and save the model
 ALGO = EpisodicTD3
 critic_kwargs = policy_kwargs_building(data)
@@ -53,11 +66,14 @@ algorithm = np.ones((data['promp_params']['num_basis'], env.action_space.shape[0
 algorithm = 0.1 * np.ones(algorithm.shape)
 algorithm = -0.1 * np.ones(shape=algorithm.shape)
 algorithm[:,:3] = 0.5
-model = ALGO(critic, env, seed=1,  initial_promp_params=1, critic_network_kwargs=critic_kwargs, verbose=1,
-             noise_sigma=0.1, promp_policy_kwargs=promp_policy_kwargs,
+
+model = ALGO(critic, env, seed=1,  initial_promp_params=data["algo_params"]['initial_promp_params'],
+             schedule=schedule,
+             critic_network_kwargs=critic_kwargs, verbose=1,
+             noise_sigma=data["algo_params"]['noise_sigma'], promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=data['promp_params']['num_basis'],
-             policy_delay=2, data_path=data["path"], gamma=0.99)
+             data_path=data["path"])
 
 # csv file path
 data["path_in"] = data["path"] + '/' + data['algorithm'].upper() + '_1'

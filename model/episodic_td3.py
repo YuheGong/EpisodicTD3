@@ -58,6 +58,7 @@ class EpisodicTD3(BaseAlgorithm):
         self,
         critic: Union[str, Type[TD3Policy]],
         env: Union[GymEnv, str],
+        schedule=None,
         initial_promp_params: th.Tensor = None,
         basis_num: int = 10,
         learning_start_episodes: int = 10,
@@ -101,6 +102,13 @@ class EpisodicTD3(BaseAlgorithm):
         self.use_sde_at_warmup = False
         self.episode_timesteps = 0
         self.optimize_memory_usage = False
+
+        # learning rate and noise schedule
+        if schedule is not None:
+            self.need_schedule = True
+            self.schedule = schedule
+        else:
+            self.need_schedule = False
 
         # Path for saving the model
         self.data_path = data_path
@@ -266,43 +274,9 @@ class EpisodicTD3(BaseAlgorithm):
         self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
         self.env.reset()
 
-        """Not Done, need to change to a learning rate schedule function"""
-        # exploration noise shape in FetchReacher
-        #if self.eval_reward > -2 and self.eval_reward <= -1:
-        #    self.noise_sigma = 0.3
-        #    self.actor.noise_sigma = self.noise_sigma
-        #elif self.eval_reward > -1:
-        #    self.noise_sigma = 0.1
-        #    self.actor.noise_sigma = self.noise_sigma
-        #else:
-        #    self.noise_sigma = 0.5
-        #    self.actor.noise_sigma = self.noise_sigma
-        #    self.actor_lr = 0.00001
-        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
-
-        if self.eval_reward > 100 and self.eval_reward < 110:
-            self.actor_learning_rate = 0.000005
-            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
-            #self.noise_sigma = 0.01
-            #self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
-        elif self.eval_reward > 110:
-            self.actor_learning_rate = 0.0000005
-            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
-        else:
-            self.actor_learning_rate = 0.00005
-            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
-            #self.noise_sigma = 0.1
-            #self.actor.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
-
-        #    self.actor.noise_sigma = self.noise_sigma
-        # elif self.eval_reward > -1:
-        #    self.noise_sigma = 0.1
-        #    self.actor.noise_sigma = self.noise_sigma
-        # else:
-        #    self.noise_sigma = 0.5
-        #    self.actor.noise_sigma = self.noise_sigma
-        #    self.actor_lr = 0.00001
-        #    self.actor_optimizer.param_groups[0]['lr'] = self.actor_lr
+        # learning rate and noise schedule
+        if self.need_schedule:
+            self.schedule.schedule(model=self)
 
         # save the best evaluate reward
         if self.best_model < self.eval_reward:

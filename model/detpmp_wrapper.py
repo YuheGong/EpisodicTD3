@@ -199,6 +199,7 @@ class DetPMPWrapper(ABC):
         step_length = self.step_length
         self.eval_rollout(env)
         env.reset()
+        import time
 
         #print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
 
@@ -228,6 +229,7 @@ class DetPMPWrapper(ABC):
                 env.render(False)
         else:
             for i in range(step_length):
+                #time.sleep(0.1)
                 self.update()
                 ac = self.get_action(i)
                 print("ac", ac)

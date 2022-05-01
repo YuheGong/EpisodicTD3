@@ -136,60 +136,11 @@ Ant-v1:
 Hopper-v0:
   algorithm: episodic_td3
   algo_params:
-    actor_learning_rate: 0.00001
+    initial_promp_params: 0.1
+    actor_learning_rate: 0.000005
     critic_learning_rate: 0.0001
+    noise_sigma: 0.1
     n_steps:  20000
-    total_timesteps: 1.e+7
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: ReLU
-      pi: 256
-      qf: 256
-  promp_params:
-    zero_start: False
-    policy_kwargs:
-      p_gains: 0.1
-      d_gains: 0.000001
-    width: 0.01
-    weight_scale: 1
-    policy_type: motor
-  env_params:
-    env_name: alr_envs:Hopper-v0
-    num_envs: 1
-
-DeepMindWalkerDense-v0:
-  algorithm: episodic_td3
-  algo_params:
-    actor_learning_rate: 0.00001
-    critic_learning_rate: 0.0001
-    n_steps: 20000
-    total_timesteps: 1.e+7
-    policy: MlpPolicy
-    policy_type: off_policy
-    policy_kwargs:
-      activation_fn: ReLU
-      pi: 256
-      qf: 256
-  promp_params:
-    zero_start: True
-    zero_basis: 2
-    controller_type: motor
-    controller_kwargs:
-      p_gains: 0.05
-      d_gains: 0.005
-    width: 0.01
-    weight_scale: 1
-  env_params:
-    env_name: alr_envs:DeepMindWalkerDense-v0
-    num_envs: 1
-
-dmcCheetahDense-v0:
-  algorithm: episodic_td3
-  algo_params:
-    actor_learning_rate: 0.00005
-    critic_learning_rate: 0.0001
-    n_steps: 20000
     total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
@@ -203,13 +154,95 @@ dmcCheetahDense-v0:
     zero_basis: 0
     controller_type: velocity
     controller_kwargs:
-      p_gains: 10
-      d_gains: 0.001
-      i_gains: 0
+      p_gains:
+      d_gains:
+    width: 0.01
+    weight_scale: 0.2
+  env_params:
+    env_name: alr_envs:Hopper-v0
+    num_envs: 1
+
+
+dmcWalkerDense-v0:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 0.1
+    actor_learning_rate: 0.00005
+    critic_learning_rate: 0.0001
+    noise_sigma: 0.1
+    total_timesteps: 1.e+7
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 20
+    zero_start: False
+    zero_basis: 0
+    controller_type: velocity
+    width: 0.01
+    weight_scale: 0.2
+  env_params:
+    env_name: alr_envs:dmcWalkerDense-v0
+    num_envs: 1
+
+dmcCheetahDense-v0:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 1
+    actor_learning_rate: 0.00005
+    critic_learning_rate: 0.0001
+    total_timesteps: 1.e+7
+    policy: MlpPolicy
+    policy_type: off_policy
+    noise_sigma: 0.1
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 20
+    zero_start: False
+    zero_basis: 0
+    controller_type: velocity
+    controller_kwargs:
+      p_gains:
+      d_gains:
     width: 0.01
     weight_scale: 0.2
   env_params:
     env_name: alr_envs:dmcCheetahDense-v0
+    num_envs: 1
+
+
+dmcHopperDense-v0:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 0.1
+    actor_learning_rate: 0.00005
+    critic_learning_rate: 0.0001
+    total_timesteps: 1.e+7
+    policy: MlpPolicy
+    policy_type: off_policy
+    noise_sigma: 0.1
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 20
+    zero_start: False
+    zero_basis: 0
+    controller_type: motor
+    controller_kwargs:
+      p_gains: 10
+      d_gains: 0.001
+    width: 0.01
+    weight_scale: 0.2
+  env_params:
+    env_name: alr_envs:dmcHopperDense-v0
     num_envs: 1
 
 dmcSwimmerDense-v0:
