@@ -43,7 +43,7 @@ promp_policy_kwargs = data['promp_params']
 
 
 # make the environment
-env = gym.make(data["env_params"]['env_name'], seed=args.seed)
+env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
 eval_env = gym.make(data["env_params"]['env_name'])
 
 

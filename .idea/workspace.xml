@@ -6,11 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcWalkerDense-v0_20/algo_mean.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/episodic_td3/dmcWalkerDense-v0_20/algo_mean.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcWalkerDense-v0_20/best_model.npy.npz" beforeDir="false" afterPath="$PROJECT_DIR$/logs/episodic_td3/dmcWalkerDense-v0_20/best_model.npy.npz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/episodic_td3/dmcWalkerDense-v0_20/run_1/events.out.tfevents.1651584349.yre-Legion-5-Pro-16ACH6H.24407.0" beforeDir="false" afterPath="$PROJECT_DIR$/logs/episodic_td3/dmcWalkerDense-v0_20/run_1/events.out.tfevents.1651584349.yre-Legion-5-Pro-16ACH6H.24407.0" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,7 +162,7 @@
       <workItem from="1651216017453" duration="54749000" />
       <workItem from="1651297543324" duration="103223000" />
       <workItem from="1651470890772" duration="45990000" />
-      <workItem from="1651557676305" duration="26815000" />
+      <workItem from="1651557676305" duration="27794000" />
     </task>
     <servers />
   </component>
