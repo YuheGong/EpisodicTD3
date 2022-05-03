@@ -44,7 +44,7 @@ class dmcCheetahDens_v0_schedule(Schedule):
             model.actor_learning_rate = 0.0000005
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
         else:
-            model.actor_learning_rate = 0.00005
+            model.actor_learning_rate = 0.00001
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
 
 
