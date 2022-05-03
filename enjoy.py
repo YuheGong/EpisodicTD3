@@ -24,7 +24,7 @@ env = "Ant-v1"
 env = "dmcWalkerDense-v0"
 #env = "dmcSwimmerDense-v0"
 #env = "dmcHopperDense-v0"
-#env = "dmcCheetahDense-v0"
+env = "dmcCheetahDense-v0"
 #env = "MetaButtonPress-v2"
 #env = "ALRHalfCheetahJump-v0"
 #nv = "Hopper-v0"
@@ -32,7 +32,7 @@ env = "dmcWalkerDense-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_18"
+path = "logs/episodic_td3/" + env + "_3"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
