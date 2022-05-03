@@ -81,17 +81,20 @@ class VelController(BaseController):
         super(VelController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel, des_acc):
-        cur_vel = self.obs()[-self.num_dof:].reshape(-1)
+        cur_vel = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
         des_vel = des_vel #- cur_vel
         return des_vel, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
-        cur_vel = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
+        cur_vel =  observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
         des_vel = des_vel #- cur_vel
         return des_vel
 
     def obs(self):
         return self.env.obs_for_promp()
+
+
+
 
 class PDController(BaseController):
 

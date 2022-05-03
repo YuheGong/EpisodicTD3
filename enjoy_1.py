@@ -5,23 +5,13 @@ import argparse
 from utils.model import policy_kwargs_building
 from model.episodic_td3 import EpisodicTD3
 import numpy as np
-from model.schedule import dmcCheetahDens_v0_schedule
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--e", type=str, help="the environment")
-parser.add_argument("--seed", type=str, help="the seed")
-args = parser.parse_args()
+from model.schedule import dmcCheetahDens_v0_schedule, dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule
 
 
-def make_env(env_name, path, rank, seed=0):
-    def _init():
-        env = gym.make(env_name)
-        return env
-    return _init
-
-algo = "episodic_td3"
+''''
 env_id = "dmcWalkerDense-v0"
 #env_id = "dmcHopperDense-v0"
+#env_id = "dmcSwimmerDense-v0"
 #env_id = "dmcCheetahDense-v0"
 #env_id = "dmcSwimmerDense-v0"
 #env_id = "InvertedDoublePendulum-v0"
@@ -30,55 +20,73 @@ env_id = "dmcWalkerDense-v0"
 #env_id = "FetchReacher-v1"
 #env_id = "ALRReacherBalanceIP-v3"
 #env_id = "ALRHalfCheetahJump-v0"
-
 #env_id = "Hopper-v0"
+'''
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--env", type=str, help="the environment")
+parser.add_argument("--seed", type=str, help="the seed")
+args = parser.parse_args()
+
+
+# load yaml file
+algo = "episodic_td3"
 file_name = algo +".yml"
-data = read_yaml(file_name)[env_id]
+data = read_yaml(file_name)[args.env]
 data['env_params']['env_name'] = data['env_params']['env_name']
+
 
 # create log folder
 path = logging(data['env_params']['env_name'], data['algorithm'])
 data['path'] = path
 promp_policy_kwargs = data['promp_params']
 
+
 # make the environment
-env = gym.make(data["env_params"]['env_name'])
+env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
 eval_env = gym.make(data["env_params"]['env_name'])
 
+
+# learning rate and noise schedule
 Schedule = {
         'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
+        'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
+        'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
 }
 
-if env_id in Schedule.keys():
-    schedule = Schedule[env_id](env=env)
+if args.env in Schedule.keys():
+    schedule = Schedule[args.env](env=env)
 else:
     schedule = None
 
-# make the model and save the model
-ALGO = EpisodicTD3
+
+# load critic network type and architecture
 critic_kwargs = policy_kwargs_building(data)
 critic = data['algo_params']['policy']
 
+
+# build the model
 env.reset()
-algorithm = np.ones((data['promp_params']['num_basis'], env.action_space.shape[0]))
-
-algorithm = 0.1 * np.ones(algorithm.shape)
-algorithm = -0.1 * np.ones(shape=algorithm.shape)
-algorithm[:,:3] = 0.5
-
-model = ALGO(critic, env, seed=1,  initial_promp_params=data["algo_params"]['initial_promp_params'],
+model = EpisodicTD3(critic, env,
+             seed=int(args.seed),
+             initial_promp_params=data["algo_params"]['initial_promp_params'],
              schedule=schedule,
-             critic_network_kwargs=critic_kwargs, verbose=1,
-             noise_sigma=data["algo_params"]['noise_sigma'], promp_policy_kwargs=promp_policy_kwargs,
+             critic_network_kwargs=critic_kwargs,
+             verbose=1,
+             noise_sigma=data["algo_params"]['noise_sigma'],
+             promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
-             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=data['promp_params']['num_basis'],
+             actor_learning_rate=data["algo_params"]['actor_learning_rate'],
+             basis_num=data['promp_params']['num_basis'],
              data_path=data["path"])
+
 
 # csv file path
 data["path_in"] = data["path"] + '/' + data['algorithm'].upper() + '_1'
 data["path_out"] = data["path"] + '/data.csv'
 
+
+# train and save the model
 try:
     eval_env_path = data['path'] + "/eval/"
     model.learn(total_timesteps=int(data['algo_params']['total_timesteps']))
@@ -92,34 +100,3 @@ else:
     model.save(data["path"] + "/model.zip")
     print('')
     print('training FINISH, save the model and config file to ' + data['path'])
-
-'''
-import os
-import time
-from utils.yaml import read_yaml
-import gym
-import numpy as np
-from stable_baselines3 import PPO, A2C, DQN, HER, SAC, TD3, DDPG
-from stable_baselines3.common.noise import NormalActionNoise
-from model.promp_td3 import ProMPTD3
-from utils.env import env_maker, env_save, env_continue_load
-
-def make_env(env_name, path, rank, seed=0):
-    def _init():
-        env = gym.make(env_name)
-        return env
-    return _init
-
-algo = "promp_td3"
-
-#env_id = "FetchReacher-v"
-env_id = "Ant-v"
-env = env_id + '0'
-
-env = gym.make("alr_envs:" + env)
-env.reset()
-for _ in range(1000):
-    env.render()
-    env.step(env.action_space.sample()) # take a random action
-env.close()
-'''

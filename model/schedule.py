@@ -41,11 +41,53 @@ class dmcCheetahDens_v0_schedule(Schedule):
             model.actor_learning_rate = 0.000005
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
         elif model.eval_reward > 110:
-            actor_learning_rate = 0.0000005
-            model.actor_optimizer.param_groups[0]['lr'] = actor_learning_rate
+            model.actor_learning_rate = 0.0000005
+            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
         else:
             model.actor_learning_rate = 0.00005
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+
+
+class dmcHopperDens_v0_schedule(Schedule):
+
+    def schedule(self, model):
+        if model.eval_reward > 50:
+            model.actor_learning_rate = 0.000005
+            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+            model.noise_sigma = 0.05
+            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+        # elif model.eval_reward > 65:
+        #    model.actor_learning_rate = 0.00000005
+        #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        else:
+            model.actor_learning_rate = 0.00005
+            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+            model.noise_sigma = 0.1
+            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+
+class dmcWalkerDens_v0_schedule(Schedule):
+
+    def schedule(self, model):
+        if model.eval_reward > 30 and model.eval_reward < 40:
+            model.actor_learning_rate = 0.000005
+            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+            model.noise_sigma = 0.1
+            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+        #elif model.eval_reward > 40 and model.eval_reward < 50:
+        #    model.actor_learning_rate = 0.000005
+        #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        #    model.noise_sigma = 0.1
+        #    model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+        elif model.eval_reward > 40:
+            model.actor_learning_rate = 0.0000005
+            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+            model.noise_sigma = 0.1
+            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+        else:
+            model.actor_learning_rate = 0.00005
+            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+            model.noise_sigma = 0.1
+            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
 
 
 class FetchReacher_schedule(Schedule):

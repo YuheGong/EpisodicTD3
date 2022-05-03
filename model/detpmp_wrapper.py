@@ -208,7 +208,7 @@ class DetPMPWrapper(ABC):
             # export MUJOCO_GL="osmesa"
 
             for i in range(int(self.step_length)):
-                # time.sleep(0.1)
+                #time.sleep(0.1)
                 ac = self.get_action(i)
                 print("ac", ac)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
