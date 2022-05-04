@@ -32,7 +32,7 @@ env = "dmcCheetahDense-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_3"
+path = "logs/episodic_td3/" + env + "_12"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]

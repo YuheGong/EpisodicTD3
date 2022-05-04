@@ -195,7 +195,7 @@ dmcCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 1
-    actor_learning_rate: 0.00001
+    actor_learning_rate: 0.0001
     critic_learning_rate: 0.0001
     total_timesteps: 2.e+6
     policy: MlpPolicy
@@ -211,8 +211,8 @@ dmcCheetahDense-v0:
     zero_basis: 0
     controller_type: velocity
     controller_kwargs:
-      p_gains:
-      d_gains:
+      p_gains: 1
+      d_gains: 0.01
     width: 0.01
     weight_scale: 0.2
   env_params:
