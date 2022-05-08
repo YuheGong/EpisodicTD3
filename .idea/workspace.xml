@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/episodic_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/episodic_td3.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/episodic_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/episodic_td3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/schedule.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/schedule.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -162,7 +167,8 @@
       <workItem from="1651216017453" duration="54749000" />
       <workItem from="1651297543324" duration="103223000" />
       <workItem from="1651470890772" duration="45990000" />
-      <workItem from="1651557676305" duration="27794000" />
+      <workItem from="1651557676305" duration="33564000" />
+      <workItem from="1651647812319" duration="22836000" />
     </task>
     <servers />
   </component>

@@ -166,11 +166,11 @@ Hopper-v0:
 dmcWalkerDense-v0:
   algorithm: episodic_td3
   algo_params:
-    initial_promp_params: 0.00001
-    actor_learning_rate: 0.00001
+    initial_promp_params:  1
+    actor_learning_rate: 0.00005
     critic_learning_rate: 0.0001
     noise_sigma: 0.1
-    total_timesteps: 1.e+7
+    total_timesteps: 2.e+6
     policy: MlpPolicy
     policy_type: off_policy
     policy_kwargs:
@@ -183,8 +183,8 @@ dmcWalkerDense-v0:
     zero_basis: 0
     controller_type: velocity
     controller_kwargs:
-      p_gains: 10
-      d_gains: 0.001
+      p_gains: 1
+      d_gains: 0.1
     width: 0.01
     weight_scale: 0.2
   env_params:
@@ -195,12 +195,12 @@ dmcCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 1
-    actor_learning_rate: 0.00005
+    actor_learning_rate:  0.00005
     critic_learning_rate: 0.0001
     total_timesteps: 2.e+6
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.3
+    noise_sigma: 0.1
     policy_kwargs:
       activation_fn: ReLU
       pi: 256
@@ -235,7 +235,7 @@ dmcHopperDense-v0:
       pi: 256
       qf: 256
   promp_params:
-    num_basis: 20
+    num_basis: 50
     zero_start: False
     zero_basis: 0
     controller_type: velocity

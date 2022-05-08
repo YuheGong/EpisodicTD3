@@ -64,7 +64,7 @@ class EpisodicTD3(BaseAlgorithm):
         learning_start_episodes: int = 10,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
-        buffer_size: int = int(1e5),
+        buffer_size: int = int(1e6),
         tau: float = 0.005,
         gamma: float = 0.99,
         policy_delay: int = 2,
@@ -251,14 +251,15 @@ class EpisodicTD3(BaseAlgorithm):
                                           controller_kwargs=self.actor_kwargs)
 
         # Pass the promp parameters value to ProMP weights
-        self.actor.mp.initial_weights(self.promp_params)
+        self.actor.mp.weights = self.actor.mp.weights.to(device='cuda')
         (self.actor.mp.weights).requires_grad = True  # Enable the gradient of ProMP weights
 
         # Set the ProMP weights optimizer
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
 
         # Set target ProMP weights by target delay
-        self.actor_target.mp.initial_weights(self.promp_params * self.tau)
+        self.actor_target.mp.weights = self.promp_params * self.tau
+        self.actor_target.mp.weights = self.actor_target.mp.weights.to(device='cuda')
 
         # Update the reference trajectory according to weights
         self.actor.update()
@@ -349,7 +350,7 @@ class EpisodicTD3(BaseAlgorithm):
 
         # supervise the trajectory and weights, should be deleted when finished
         print("weights", self.actor.mp.weights[0])
-        print("trajectory", self.actor.trajectory_np[-1])
+        print("trajectory", self.actor.velocity_np[-1])
 
         # tensorboard logger
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")

@@ -28,14 +28,14 @@ class DeterministicProMP:
 
         #drop out the featrues for zero_basis
         self.pos_features_np , self.vel_features_np , self.acc_features_np = self._exponential_kernel(t)
+        self.pos_features_np *= self.weight_scale
+        self.vel_features_np *= self.weight_scale
+        self.acc_features_np *= self.weight_scale
         self.pos_features = th.Tensor(self.pos_features_np[:, self.n_zero_bases:]).to(device="cuda")
         self.vel_features = th.Tensor(self.vel_features_np[:, self.n_zero_bases:]).to(device="cuda")
         self.acc_features = th.Tensor(self.acc_features_np[:, self.n_zero_bases:]).to(device="cuda")
         self.pos_features.requires_grad = True
         self.vel_features.requires_grad = True
-
-    def initial_weights(self, initial_weights):
-        self.weights = initial_weights * self.weight_scale
 
 
     def _exponential_kernel(self, z):
