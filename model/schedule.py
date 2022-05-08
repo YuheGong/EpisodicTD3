@@ -90,7 +90,7 @@ class dmcWalkerDens_v0_schedule(Schedule):
             model.noise_sigma = 0.1
             model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
         elif model.eval_reward > 50:
-            model.actor_learning_rate = 0.00000001
+            model.actor_learning_rate = 0.000001
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
             #model.noise_sigma = 0.01
             #model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))

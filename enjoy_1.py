@@ -69,7 +69,7 @@ critic = data['algo_params']['policy']
 env.reset()
 model = EpisodicTD3(critic, env,
              initial_promp_params=data["algo_params"]['initial_promp_params'],
-             seed=1
+             seed=1,
              schedule=schedule,
              critic_network_kwargs=critic_kwargs,
              verbose=1,
