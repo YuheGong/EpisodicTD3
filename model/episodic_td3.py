@@ -251,7 +251,7 @@ class EpisodicTD3(BaseAlgorithm):
                                           controller_kwargs=self.actor_kwargs)
 
         # Pass the promp parameters value to ProMP weights
-        self.actor.mp.weights = self.actor.mp.weights.to(device='cuda')
+        self.actor.mp.weights = self.promp_params.to(device='cuda')
         (self.actor.mp.weights).requires_grad = True  # Enable the gradient of ProMP weights
 
         # Set the ProMP weights optimizer

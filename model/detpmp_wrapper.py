@@ -211,9 +211,9 @@ class DetPMPWrapper(ABC):
             for i in range(int(self.step_length)):
                 #time.sleep(0.1)
                 ac = self.get_action(i)
-                print("ac", ac)
+                #print("ac", ac)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-                print("ac", ac)
+                #print("ac", ac)
                 obs, reward, done, info = env.step(ac)
                 obses.append(obs)
                 aces.append(ac)
