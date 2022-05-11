@@ -190,8 +190,7 @@ class DetPMPWrapper(ABC):
         """
         import time
         print("render")
-        self.mp.weight_scale = 1
-        self.mp.initial_weights(th.Tensor(weights).to(device='cuda'))
+        self.mp.weights = th.Tensor(weights).to(device='cuda')
 
         self.update()
 
@@ -199,7 +198,9 @@ class DetPMPWrapper(ABC):
         step_length = self.step_length
         self.eval_rollout(env)
         env.reset()
+        obses = []
         import time
+        aces = []
 
         #print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
 
@@ -214,6 +215,8 @@ class DetPMPWrapper(ABC):
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
                 print("ac", ac)
                 obs, reward, done, info = env.step(ac)
+                obses.append(obs)
+                aces.append(ac)
                 rewards += reward
                 #env.render(mode="rgb_array")
                 print(i, reward)

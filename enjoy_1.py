@@ -49,7 +49,7 @@ eval_env = gym.make(data["env_params"]['env_name'])
 
 # learning rate and noise schedule
 Schedule = {
-        'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
+        #'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
         'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
         'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
 }
@@ -69,7 +69,7 @@ critic = data['algo_params']['policy']
 env.reset()
 model = EpisodicTD3(critic, env,
              initial_promp_params=data["algo_params"]['initial_promp_params'],
-             seed=1,
+             seed=19,
              schedule=schedule,
              critic_network_kwargs=critic_kwargs,
              verbose=1,
