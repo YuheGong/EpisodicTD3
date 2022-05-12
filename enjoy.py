@@ -21,10 +21,11 @@ algo = "episodic_td3"
 #env = env_id + '3'
 #env = "InvertedDoublePendulum-v0"
 env = "Ant-v1"
-env = "dmcWalkerDense-v0"
+#env = "dmcWalkerDense-v0"
+#env = "dmcSwimmerDense-v0"
 #env = "dmcSwimmerDense-v0"
 #env = "dmcHopperDense-v0"
-#env = "dmcCheetahDense-v0"
+env = "dmcCheetahDense-v0"
 #env = "MetaButtonPress-v2"
 #env = "ALRHalfCheetahJump-v0"
 #nv = "Hopper-v0"
@@ -32,7 +33,7 @@ env = "dmcWalkerDense-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_13"
+path = "logs/episodic_td3/" + env + "_72"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -138,7 +139,7 @@ for i in range(algorithm.shape[0]):
 #algorithm[:, 6] = 1.22 * np.ones(algorithm[:, 2].shape)
 #algorithm[:, 7] = 0.53 * np.ones(algorithm[:, 2].shape)
 #algorithm = np.random.rand(basis_num, env.action_space.shape[0])
-#algorithm = 0 * np.ones(shape=algorithm.shape)
+#algorithm = 0.1*np.ones(shape=algorithm.shape)
 
 
 #algorithm[:, 2:3] = 0.1 * np.ones(algorithm[:, 2:3].shape)

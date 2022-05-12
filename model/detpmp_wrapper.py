@@ -85,7 +85,7 @@ class DetPMPWrapper(ABC):
         if self.zero_start:
             if self.controller_type == 'motor':
                 self.trajectory += th.Tensor(
-                    self.controller.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)).to(device='cuda')
+                    self.controller.obs()[-3 * self.num_dof:-2 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
                     device='cuda')
@@ -220,7 +220,7 @@ class DetPMPWrapper(ABC):
                 rewards += reward
                 #env.render(mode="rgb_array")
                 print(i, reward)
-                env.render(mode="human")
+                #env.render(mode="human")
             env.close()
         elif "Meta" in str(env):
             for i in range(int(self.step_length)):
