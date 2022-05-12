@@ -40,18 +40,18 @@ class dmcCheetahDens_v0_schedule(Schedule):
         #if model.eval_reward > 50 and model.eval_reward < 80:
             ##model.actor_learning_rate = 0.0001
             #model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        if model.eval_reward > 80 and model.eval_reward < 100:
-            model.actor_learning_rate = 0.000005
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        if model.eval_reward > 120 and model.eval_reward < 150:
-            model.actor_learning_rate = 0.000001
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        elif model.eval_reward > 150:
+        if model.eval_reward > 200: #and model.eval_reward < 300:
             model.actor_learning_rate = 0.0000001
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        else:
-            model.actor_learning_rate = 0.00001
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        #if model.eval_reward > 120 and model.eval_reward < 150:
+        ##    model.actor_learning_rate = 0.000001
+        ##   model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        #elif model.eval_reward > 150:
+        #    model.actor_learning_rate = 0.0000001
+        #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        #else:
+        #    model.actor_learning_rate = 0.00001
+        #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
 
 
 class dmcHopperDens_v0_schedule(Schedule):
