@@ -194,8 +194,8 @@ dmcWalkerDense-v0:
 dmcCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
-    initial_promp_params: 1.e-7
-    actor_learning_rate:  0.00001
+    initial_promp_params: 1.e-4
+    actor_learning_rate:  0.001
     critic_learning_rate: 0.0001
     critic_initial_seed: 19
     total_timesteps: 2.e+6

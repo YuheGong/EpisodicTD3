@@ -220,7 +220,7 @@ class DetPMPWrapper(ABC):
                 rewards += reward
                 #env.render(mode="rgb_array")
                 print(i, reward)
-                #env.render(mode="human")
+                env.render(mode="human")
             env.close()
         elif "Meta" in str(env):
             for i in range(int(self.step_length)):

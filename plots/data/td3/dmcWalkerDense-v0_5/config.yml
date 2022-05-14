@@ -1,0 +1,27 @@
+algo_params:
+  batch_size: 200
+  gradient_steps: 1
+  learning_rate: 0.0001
+  n_steps: 20000
+  num_timesteps: 2000000
+  policy: MlpPolicy
+  policy_kwargs:
+    activation_fn: tanh
+    pi: 256
+    qf: 256
+  policy_type: off_policy
+  total_timesteps: 2000000.0
+  train_freq: 1
+algorithm: td3
+env_params:
+  env_name: alr_envs:dmcWalkerDense-v0
+  num_envs: 1
+  wrapper: None
+eval_env:
+  eval_freq: 500
+  n_eval_episode: 10
+name: DeepMind_Walker + TD3
+path: logs/td3/dmcWalkerDense-v0_5
+path_in: logs/td3/dmcWalkerDense-v0_5/TD3_1
+path_out: logs/td3/dmcWalkerDense-v0_5/data.csv
+seed: null

@@ -33,7 +33,7 @@ env = "dmcCheetahDense-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_72"
+path = "logs/episodic_td3/" + env + "_157"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -48,7 +48,7 @@ env = gym.make(data["env_params"]['env_name'])
 algo_path = path + "/best_model.npz"
 a = path + "/pos_features.npz"
 algo_path = path + "/best_model.npy.npz"
-algo_path = path + "/algo_mean.npz"
+#algo_path = path + "/algo_mean.npz"
 
 #a = []
 import pickle

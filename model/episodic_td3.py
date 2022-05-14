@@ -228,8 +228,15 @@ class EpisodicTD3(BaseAlgorithm):
             **self.policy_kwargs,  # pytype:disable=not-instantiable
         )
         self.policy = self.policy.to(self.device)
+
+        for i in self.policy.critic.parameters():
+            i.data.fill_(1.e-7)
+        for i in self.policy.critic_target.parameters():
+            i.data.fill_(1.e-7 * self.tau)
+
         self.critic = self.policy.critic
         self.critic_target = self.policy.critic_target
+
 
     def _setup_promp_model(self) -> None:
         """
