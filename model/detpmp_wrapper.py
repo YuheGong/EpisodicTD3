@@ -86,6 +86,8 @@ class DetPMPWrapper(ABC):
             if self.controller_type == 'motor':
                 self.trajectory += th.Tensor(
                     self.controller.obs()[-3 * self.num_dof:-2 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
+                #self.velocity += th.Tensor(
+                #    self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
                     device='cuda')
@@ -209,7 +211,7 @@ class DetPMPWrapper(ABC):
             # export MUJOCO_GL="osmesa"
 
             for i in range(int(self.step_length)):
-                #time.sleep(0.1)
+                time.sleep(0.1)
                 ac = self.get_action(i)
                 #print("ac", ac)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
