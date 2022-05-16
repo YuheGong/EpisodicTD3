@@ -85,7 +85,7 @@ class DetPMPWrapper(ABC):
         if self.zero_start:
             if self.controller_type == 'motor':
                 self.trajectory += th.Tensor(
-                    self.controller.obs()[-3 * self.num_dof:-2 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
+                    self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
                 #self.velocity += th.Tensor(
                 #    self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
@@ -115,7 +115,7 @@ class DetPMPWrapper(ABC):
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
         return actions
 
-    def get_action(self, timesteps):
+    def get_action(self, timesteps, noise=0.3):
         """
         This function generates the actions according to the observation of the environment.
         It is used for interacting with the environment.
@@ -125,7 +125,9 @@ class DetPMPWrapper(ABC):
         Return:
             action: the action used for indicating the movements of the robot.
         """
-        trajectory = self.trajectory_np[timesteps] #+ self.noise()
+        noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=noise * np.ones(self.num_dof))
+
+        trajectory = self.trajectory_np[timesteps] + noise_dist()
         velocity = self.velocity_np[timesteps] #+ self.noise()
         acceleration = self.acceleration_np[timesteps]
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
@@ -156,7 +158,7 @@ class DetPMPWrapper(ABC):
                 rewards += reward
         else:
             for i in range(step_length):
-                ac = self.get_action(i)
+                ac = self.get_action(i, noise=0)
                 ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward
@@ -165,7 +167,7 @@ class DetPMPWrapper(ABC):
                     break
 
 
-        if hasattr(self.env, "reward_no_ip"):
+        if hasattr(self.env, "rewards_no_ip"):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
         else:
             episode_reward = rewards
@@ -222,7 +224,7 @@ class DetPMPWrapper(ABC):
                 rewards += reward
                 #env.render(mode="rgb_array")
                 print(i, reward)
-                env.render(mode="human")
+                #env.render(mode="human")
             env.close()
         elif "Meta" in str(env):
             for i in range(int(self.step_length)):
@@ -241,11 +243,13 @@ class DetPMPWrapper(ABC):
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
 
                 obs, reward, done, info = env.step(ac)
+                obses.append(obs)
+                aces.append(ac)
                 rewards += reward
                 if done:
                     step_length = i + 1
                     break
-                env.render()
+                #env.render()
 
         print("reward", rewards)
 

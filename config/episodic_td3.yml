@@ -53,9 +53,44 @@ ALRReacherBalanceIP-v3:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 1
-    actor_learning_rate: 0.00001
+    actor_learning_rate: 0.0001
     critic_learning_rate: 0.0001
     critic_initial_seed: 1
+    noise_sigma: 0
+    n_steps: 20000
+    total_timesteps: 1.e+6
+    train_freq: 1
+    policy: MlpPolicy
+    policy_type: off_policy
+    policy_kwargs:
+      activation_fn: ReLU
+      pi: 256
+      qf: 256
+  promp_params:
+    controller_type: motor
+    controller_kwargs:
+      p_gains: 1
+      d_gains: 0.1
+    num_basis: 10
+    zero_start: True
+    zero_basis: 2
+    width: 0.01
+    weight_scale: 1
+  env_params:
+    env_name: alr_envs:ALRReacherBalanceIP-v3
+    num_envs: 1
+    wrapper: None
+  eval_env:
+    n_eval_episode: 10
+    eval_freq: 1000
+
+
+ALRReacherBalanceIP-v4:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 1
+    actor_learning_rate: 0.00005
+    critic_learning_rate: 0.0001
     noise_sigma: 0.3
     n_steps: 20000
     total_timesteps: 1.e+6
@@ -74,10 +109,10 @@ ALRReacherBalanceIP-v3:
     num_basis: 10
     zero_start: True
     zero_basis: 2
-    width: 0.1
+    width: 0.01
     weight_scale: 1
   env_params:
-    env_name: alr_envs:ALRReacherBalanceIP-v3
+    env_name: alr_envs:ALRReacherBalanceIP-v4
     num_envs: 1
     wrapper: None
   eval_env:
@@ -211,12 +246,12 @@ dmcCheetahDense-v0:
       qf: 256
   promp_params:
     num_basis: 20
-    zero_start: False
+    zero_start: True
     zero_basis: 2
     controller_type: motor
     controller_kwargs:
-      p_gains: 0, 0, 0, 0, 0, 0
-      d_gains: 0.1, 0.01, 0.05, 0.01, 0.01, 0.01
+      p_gains: 1, 1, 1, 1, 1, 1
+      d_gains: 0.1, 0.1, 0.1, 0.1, 0.1, 0.1
       i_gains:
     width: 0.01
     weight_scale: 1

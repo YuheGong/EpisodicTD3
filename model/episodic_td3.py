@@ -64,7 +64,7 @@ class EpisodicTD3(BaseAlgorithm):
         learning_start_episodes: int = 10,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
-        buffer_size: int = int(1e6),
+        buffer_size: int = int(1e5),
         tau: float = 0.005,
         gamma: float = 0.99,
         policy_delay: int = 2,
@@ -133,7 +133,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the batch size, training frequency and gradient steps equal to the length of one episode
         self.train_freq = self.max_episode_steps  # How many gradient steps to do after each rollout
         self.gradient_steps = self.max_episode_steps  # Update the model every ``train_freq`` timesteps.
-        self.batch_size = 200#self.max_episode_steps  # How many data to use in training
+        self.batch_size = self.max_episode_steps  # How many data to use in training
 
         # How many timesteps of the model to collect transitions for before learning starts.
         self.learning_starts = self.max_episode_steps * learning_start_episodes
@@ -556,7 +556,7 @@ class EpisodicTD3(BaseAlgorithm):
 
             if done:
                 # save the reward of the noisy sampling environment
-                if hasattr(self.env, "reward_no_ip"):
+                if hasattr(self.env, "rewards_no_ip"):
                     self.reward_with_noise = self.env.rewards_no_ip  # the total reward without initial phase
                 else:
                     self.reward_with_noise = episode_reward
