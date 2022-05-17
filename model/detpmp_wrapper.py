@@ -87,7 +87,9 @@ class DetPMPWrapper(ABC):
                 self.trajectory += th.Tensor(
                     self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
                 #self.velocity += th.Tensor(
-                #    self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
+                #   self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
+                #self.acceleration += th.Tensor(
+                #       self.controller.obs()[-1 * self.num_dof:].reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
                     device='cuda')
@@ -128,7 +130,7 @@ class DetPMPWrapper(ABC):
         noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=noise * np.ones(self.num_dof))
 
         trajectory = self.trajectory_np[timesteps] + noise_dist()
-        velocity = self.velocity_np[timesteps] #+ self.noise()
+        velocity = self.velocity_np[timesteps] + noise_dist()
         acceleration = self.acceleration_np[timesteps]
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
         return action
@@ -196,12 +198,13 @@ class DetPMPWrapper(ABC):
         print("render")
         self.mp.weights = th.Tensor(weights).to(device='cuda')
 
-        self.update()
+        #self.update()
 
         rewards = 0
         step_length = self.step_length
         self.eval_rollout(env)
         env.reset()
+        self.update()
         obses = []
         import time
         aces = []
@@ -214,7 +217,7 @@ class DetPMPWrapper(ABC):
 
             for i in range(int(self.step_length)):
                 time.sleep(0.1)
-                ac = self.get_action(i)
+                ac = self.get_action(i, noise=0)
                 #print("ac", ac)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
                 #print("ac", ac)
@@ -237,8 +240,8 @@ class DetPMPWrapper(ABC):
         else:
             for i in range(step_length):
                 #time.sleep(0.1)
-                self.update()
-                ac = self.get_action(i)
+
+                ac = self.get_action(i, noise=0)
                 print("ac", ac)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
 

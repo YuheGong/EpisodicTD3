@@ -206,6 +206,9 @@ class EpisodicTD3(BaseAlgorithm):
                                      f'now it is {initial_promp_params.shape}')
             initial_promp_params = th.Tensor(initial_promp_params)
 
+        initial_promp_params = initial_promp_params.reshape(self.basis_num, self.dof)
+        #initial_promp_params[:,3:5] = 1
+
         return (initial_promp_params.reshape(self.basis_num, self.dof)).to(device="cuda")
 
 
@@ -263,6 +266,8 @@ class EpisodicTD3(BaseAlgorithm):
 
         # Set the ProMP weights optimizer
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
+        self.pos_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
+        self.vel_optimizer = th.optim.Adam([self.actor.mp.vel_features], lr=self.actor_learning_rate)
 
         # Set target ProMP weights by target delay
         self.actor_target.mp.weights = self.promp_params * self.tau
@@ -355,9 +360,31 @@ class EpisodicTD3(BaseAlgorithm):
                 self.actor.update()
                 self.actor_target.update()
 
+            if self._n_updates % self.policy_delay == 1:
+                # Compute actor loss
+                act = self.actor.predict_action(replay_data.steps, replay_data.observations)
+                actor_loss = -self.critic.q1_forward(replay_data.observations, act,  (replay_data.steps+1)/self.max_episode_steps).mean()
+                actor_losses.append(actor_loss.item())
+
+                # Optimize the actor
+                self.pos_optimizer.zero_grad()
+                self.vel_optimizer.zero_grad()
+                actor_loss.backward()
+                self.pos_optimizer.step()
+                self.vel_optimizer.step()
+
+                # Update actor target
+                polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
+                self.actor_target.mp.pos_features = (self.actor.mp.pos_features * self.tau + (1 - self.tau) * self.actor_target.mp.pos_features).to(device="cuda")
+                self.actor_target.mp.vel_features = (self.actor.mp.vel_features * self.tau + (1 - self.tau) * self.actor_target.mp.vel_features).to(device="cuda")
+
+                # update the reference trajectory in ProMP
+                self.actor.update()
+                self.actor_target.update()
+
         # supervise the trajectory and weights, should be deleted when finished
         print("weights", self.actor.mp.weights[0])
-        print("trajectory", self.actor.velocity_np[-1])
+        print("trajectory", self.actor.mp.pos_features[-1])
 
         # tensorboard logger
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
@@ -419,7 +446,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
             scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
-            scaled_action = np.clip(scaled_action, -1, 1)
+            #scaled_action = np.clip(scaled_action, -1, 1)
             buffer_action = scaled_action
             action = self.policy.unscale_action(scaled_action)
             #action = unscaled_action

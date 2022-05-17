@@ -142,9 +142,9 @@ def csv_save(folder, name, algo, foler_num):
                     [np.array(h.step) for
                      h in histograms]))
 
-        for k in range(1, rewards[i-1].shape[0]):
-            if rewards[i-1][k] < rewards[i-1][k-1]:
-                rewards[i-1][k] = rewards[i-1][k-1]
+        #for k in range(1, rewards[i-1].shape[0]):
+        #    if rewards[i-1][k] < rewards[i-1][k-1]:
+        #        rewards[i-1][k] = rewards[i-1][k-1]
 
         a = 1
     rewards = np.array(rewards)
@@ -186,9 +186,9 @@ def csv_save_promp(folder, name, algo, foler_num):
                     [np.array(h.step) for
                      h in histograms]))
 
-        for k in range(1, rewards[i - 1].shape[0]):
-            if rewards[i - 1][k] < rewards[i - 1][k - 1]:
-                rewards[i - 1][k] = rewards[i - 1][k - 1]
+        #for k in range(1, rewards[i - 1].shape[0]):
+        #    if rewards[i - 1][k] < rewards[i - 1][k - 1]:
+        #        rewards[i - 1][k] = rewards[i - 1][k - 1]
 
     rewards = np.array(rewards)
     var = np.std(rewards, axis=0)
@@ -210,9 +210,9 @@ value = "eval/mean_reward"
 folder_num = 12  # 12
 
 env = "dmcCheetahDense-v0"
-env = "dmcWalkerDense-v0"
-env_promp = "dmcWalkerDenseProMP-v0"
-#env_promp = "dmcCheetahDenseProMP-v0"
+#env = "dmcWalkerDense-v0"
+#env_promp = "dmcWalkerDenseProMP-v0"
+env_promp = "dmcCheetahDenseProMP-v0"
 # env = "FetchReacher-v0"
 # folder = "forthweek"
 # value = "reward"
@@ -262,7 +262,7 @@ plt.ylabel("rewards")
 plt.ylim(ymin=0)
 # plt.title("ALRReacher-v3")
 # plt.ylim(ymin=-100)
-plt.ylim(ymax=80)
+plt.ylim(ymax=200)
 plt.legend()
 plt.show()
 plt.savefig("latex/alr5.png")

@@ -82,13 +82,13 @@ class VelController(BaseController):
 
     def get_action(self, des_pos, des_vel, des_acc):
         cur_vel = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
-        des_vel = (des_vel - cur_vel) * self.env.dt
+        des_vel = des_vel #- cur_vel) * self.env.dt
         #print("des_vel", des_vel)
         return des_vel, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_vel =  observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
-        des_vel = des_vel - cur_vel
+        des_vel = des_vel #- cur_vel
         return des_vel
 
     def obs(self):
@@ -150,9 +150,21 @@ class PIDController(BaseController):
                  d_gains: Union[float, Tuple],
                  i_gains: Union[float, Tuple],
                  num_dof: None):
-        self.p_gains = torch.Tensor([float(p_gains)]).to(device='cuda')
-        self.d_gains = torch.Tensor([float(d_gains)]).to(device='cuda')
-        self.i_gains = torch.Tensor([float(i_gains)]).to(device='cuda')
+        if isinstance(p_gains, str):
+            p_gains = np.fromstring(p_gains, dtype=float, sep=',')
+            self.p_gains = torch.Tensor(p_gains).to(device='cuda')
+        else:
+            self.p_gains = torch.Tensor([p_gains]).to(device='cuda')
+        if isinstance(d_gains, str):
+            d_gains = np.fromstring(d_gains, dtype=float, sep=',')
+            self.d_gains = torch.Tensor(d_gains).to(device='cuda')
+        else:
+            self.d_gains = torch.Tensor([d_gains]).to(device='cuda')
+        if isinstance(i_gains, str):
+            i_gains = np.fromstring(i_gains, dtype=float, sep=',')
+            self.i_gains = torch.Tensor(i_gains).to(device='cuda')
+        else:
+            self.i_gains = torch.Tensor([i_gains]).to(device='cuda')
         self.p_g = p_gains
         self.d_g = d_gains
         self.i_g = i_gains
@@ -169,7 +181,7 @@ class PIDController(BaseController):
         #print("(des_pos - cur_pos", des_pos - cur_pos)
         #print("des_vel - cur_vel", des_vel - cur_vel)
         trq = self.p_g * (des_pos - cur_pos) + self.d_g * (des_vel - cur_vel )\
-              + self.i_g * (des_acc - cur_acc) / self.env.dt #* self.env.dt
+              + self.i_g * (des_acc - cur_acc)  #* self.env.dt
         self.trq.append(trq)
         self.pos.append(cur_pos)
         self.vel.append(cur_vel)
@@ -179,8 +191,8 @@ class PIDController(BaseController):
         cur_acc = observation[:, -self.num_dof:].reshape(observation.shape[0], self.num_dof)
         cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
         cur_pos = observation[:, -3 * self.num_dof:-2*self.num_dof].reshape(observation.shape[0], self.num_dof)
-        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * ((des_vel - cur_vel) / self.env.dt + cur_acc)\
-              + self.i_gains * (des_acc - cur_acc) / self.env.dt #* self.env.dt
+        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel) \
+              + self.i_gains * (des_acc - cur_acc) #* self.env.dt
         return trq
 
     def obs(self):
