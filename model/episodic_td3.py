@@ -266,6 +266,8 @@ class EpisodicTD3(BaseAlgorithm):
 
         # Set the ProMP weights optimizer
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
+        self.controller_optimizer = th.optim.Adam([self.actor.controller.p_gains, self.actor.controller.d_gains],
+                                                  lr=self.actor_learning_rate)
         self.pos_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
         self.vel_optimizer = th.optim.Adam([self.actor.mp.vel_features], lr=self.actor_learning_rate)
 
@@ -349,17 +351,21 @@ class EpisodicTD3(BaseAlgorithm):
 
                 # Optimize the actor
                 self.actor_optimizer.zero_grad()
+                self.controller_optimizer.zero_grad()
                 actor_loss.backward()
                 self.actor_optimizer.step()
+                self.controller_optimizer.step()
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
+                self.actor_target.controller.p_gains = self.actor.controller.p_gains
+                self.actor_target.controller.d_gains = self.actor.controller.d_gains
 
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
-
+            '''
             if self._n_updates % self.policy_delay == 1:
                 # Compute actor loss
                 act = self.actor.predict_action(replay_data.steps, replay_data.observations)
@@ -375,16 +381,18 @@ class EpisodicTD3(BaseAlgorithm):
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
-                self.actor_target.mp.pos_features = (self.actor.mp.pos_features * self.tau + (1 - self.tau) * self.actor_target.mp.pos_features).to(device="cuda")
-                self.actor_target.mp.vel_features = (self.actor.mp.vel_features * self.tau + (1 - self.tau) * self.actor_target.mp.vel_features).to(device="cuda")
+                self.actor_target.mp.pos_features = self.actor.mp.pos_features.to(device="cuda")
+                self.actor_target.mp.vel_features = self.actor.mp.vel_features.to(device="cuda")
 
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
+            '''
 
         # supervise the trajectory and weights, should be deleted when finished
         print("weights", self.actor.mp.weights[0])
-        print("trajectory", self.actor.mp.pos_features[-1])
+        print("pos", self.actor.mp.pos_features[-1])
+        print("p_d", self.actor.controller.p_gains)
 
         # tensorboard logger
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")

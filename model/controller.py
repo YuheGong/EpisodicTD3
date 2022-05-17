@@ -37,10 +37,26 @@ The controllers.
 
 
 class BaseController:
-    def __init__(self, env: Env, **kwargs):
+    def __init__(self, env: Env, p_gains=None, d_gains=None, **kwargs):
         self.env = env
         if "Meta" in str(self.env):
             self.env.obs_for_promp = self.meta_obs
+        if p_gains is not None:
+            if isinstance(p_gains, str):
+                p_gains = np.fromstring(p_gains, dtype=float, sep=',')
+                self.p_gains = torch.Tensor(p_gains).to(device='cuda')
+            else:
+                self.p_gains = p_gains * torch.ones(self.num_dof).to(device='cuda')
+        if d_gains is not None:
+            if isinstance(d_gains, str):
+                d_gains = np.fromstring(d_gains, dtype=float, sep=',')
+                self.d_gains = torch.Tensor(d_gains).to(device='cuda')
+            else:
+                self.d_gains = d_gains * torch.ones(self.num_dof).to(device='cuda')
+        if self.p_gains.requires_grad == False:
+            self.p_gains.requires_grad = True
+        if self.d_gains.requires_grad == False:
+            self.d_gains.requires_grad = True
 
     def get_action(self, des_pos, des_vel, des_acc):
         raise NotImplementedError
@@ -104,27 +120,18 @@ class PDController(BaseController):
                  p_gains: Union[float, Tuple],
                  d_gains: Union[float, Tuple],
                  num_dof: None):
-        if isinstance(p_gains, str):
-            p_gains = np.fromstring(p_gains, dtype=float, sep=',')
-            self.p_gains = torch.Tensor(p_gains).to(device='cuda')
-            d_gains = np.fromstring(d_gains, dtype=float, sep=',')
-            self.d_gains = torch.Tensor(d_gains).to(device='cuda')
-        else:
-            self.p_gains = torch.Tensor([p_gains]).to(device='cuda')
-            self.d_gains = torch.Tensor([d_gains]).to(device='cuda')
-        self.p_g = p_gains
-        self.d_g = d_gains
         self.num_dof = num_dof
         self.trq = []
         self.pos = []
         self.vel = []
-        super(PDController, self).__init__(env)
+        super(PDController, self).__init__(env, p_gains, d_gains)
 
     def get_action(self, des_pos, des_vel, des_acc):#, action_noise=None):
         cur_pos = self.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)
         cur_vel = self.obs()[-1 * self.num_dof:].reshape(self.num_dof)
 
-        trq = self.p_g * (des_pos - cur_pos) + self.d_g * (des_vel - cur_vel)
+        trq = self.p_gains.cpu().detach().numpy() * (des_pos - cur_pos) \
+              + self.d_gains.cpu().detach().numpy() * (des_vel - cur_vel)
         #trq = self.p_g * (des_pos- cur_pos) + self.d_g * (des_vel )
         self.trq.append(trq)
         self.pos.append(cur_pos)
@@ -150,29 +157,16 @@ class PIDController(BaseController):
                  d_gains: Union[float, Tuple],
                  i_gains: Union[float, Tuple],
                  num_dof: None):
-        if isinstance(p_gains, str):
-            p_gains = np.fromstring(p_gains, dtype=float, sep=',')
-            self.p_gains = torch.Tensor(p_gains).to(device='cuda')
-        else:
-            self.p_gains = torch.Tensor([p_gains]).to(device='cuda')
-        if isinstance(d_gains, str):
-            d_gains = np.fromstring(d_gains, dtype=float, sep=',')
-            self.d_gains = torch.Tensor(d_gains).to(device='cuda')
-        else:
-            self.d_gains = torch.Tensor([d_gains]).to(device='cuda')
         if isinstance(i_gains, str):
             i_gains = np.fromstring(i_gains, dtype=float, sep=',')
             self.i_gains = torch.Tensor(i_gains).to(device='cuda')
         else:
             self.i_gains = torch.Tensor([i_gains]).to(device='cuda')
-        self.p_g = p_gains
-        self.d_g = d_gains
-        self.i_g = i_gains
         self.num_dof = num_dof
         self.trq = []
         self.pos = []
         self.vel = []
-        super(PIDController, self).__init__(env)
+        super(PIDController, self).__init__(env, p_gains, d_gains)
 
     def get_action(self, des_pos, des_vel, des_acc):#, action_noise=None):
         cur_pos = self.obs()[-3*self.num_dof:-2*self.num_dof].reshape(self.num_dof)
@@ -180,8 +174,9 @@ class PIDController(BaseController):
         cur_acc = self.obs()[-self.num_dof:].reshape(self.num_dof)
         #print("(des_pos - cur_pos", des_pos - cur_pos)
         #print("des_vel - cur_vel", des_vel - cur_vel)
-        trq = self.p_g * (des_pos - cur_pos) + self.d_g * (des_vel - cur_vel )\
-              + self.i_g * (des_acc - cur_acc)  #* self.env.dt
+        trq = self.p_gains.cpu().detach().numpy() * (des_pos - cur_pos) \
+              + self.d_gains.cpu().detach().numpy() * (des_vel - cur_vel )#\
+              #+ self.i_gains.cpu().detach().numpy() * (des_acc - cur_acc)  #* self.env.dt
         self.trq.append(trq)
         self.pos.append(cur_pos)
         self.vel.append(cur_vel)
@@ -191,8 +186,8 @@ class PIDController(BaseController):
         cur_acc = observation[:, -self.num_dof:].reshape(observation.shape[0], self.num_dof)
         cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
         cur_pos = observation[:, -3 * self.num_dof:-2*self.num_dof].reshape(observation.shape[0], self.num_dof)
-        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel) \
-              + self.i_gains * (des_acc - cur_acc) #* self.env.dt
+        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel) #\
+              #+ self.i_gains * (des_acc - cur_acc) #* self.env.dt
         return trq
 
     def obs(self):

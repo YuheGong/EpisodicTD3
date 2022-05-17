@@ -86,6 +86,8 @@ class DetPMPWrapper(ABC):
             if self.controller_type == 'motor':
                 self.trajectory += th.Tensor(
                     self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
+                #self.trajectory += th.Tensor(
+                #    self.env.current_pos.reshape(self.num_dof)).to(device='cuda')
                 #self.velocity += th.Tensor(
                 #   self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
                 #self.acceleration += th.Tensor(
@@ -93,6 +95,11 @@ class DetPMPWrapper(ABC):
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
                     device='cuda')
+            elif self.controller_type == 'pid':
+                #self.trajectory += th.Tensor(
+                #    self.controller.obs()[-3 * self.num_dof:-2 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
+                self.trajectory += th.Tensor(
+                    self.env.current_pos.reshape(self.num_dof)).to(device='cuda')
 
         # numpy version of the reference trajectory
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
@@ -186,7 +193,7 @@ class DetPMPWrapper(ABC):
         return des_pos, des_vel
     '''
 
-    def render_rollout(self, weights, env):
+    def render_rollout(self, weights, env, pos, vel):
         """
         This function render the environment.
 
@@ -197,6 +204,8 @@ class DetPMPWrapper(ABC):
         import time
         print("render")
         self.mp.weights = th.Tensor(weights).to(device='cuda')
+        self.mp.pos_features = th.Tensor(pos).to(device='cuda')
+        self.mp.vel_features = th.Tensor(vel).to(device='cuda')
 
         #self.update()
 
@@ -227,7 +236,7 @@ class DetPMPWrapper(ABC):
                 rewards += reward
                 #env.render(mode="rgb_array")
                 print(i, reward)
-                #env.render(mode="human")
+                env.render(mode="human")
             env.close()
         elif "Meta" in str(env):
             for i in range(int(self.step_length)):

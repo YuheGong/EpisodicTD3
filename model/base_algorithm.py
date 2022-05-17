@@ -576,9 +576,9 @@ class BaseAlgorithm(ABC):
                 f"expected {objects_needing_update}, got {updated_objects}"
             )
 
-    def load(self, algo, env) -> None:  # str, device: Union[th.device, str] = "auto") -> "BaseModel":
+    def load(self, algo, env, pos, vel) -> None:  # str, device: Union[th.device, str] = "auto") -> "BaseModel":
         env.reset()
-        self.actor.render_rollout(algo, env)
+        self.actor.render_rollout(algo, env, pos,vel)
 
     @classmethod
     def continue_load(
