@@ -391,7 +391,7 @@ class EpisodicTD3(BaseAlgorithm):
 
         # supervise the trajectory and weights, should be deleted when finished
         print("weights", self.actor.mp.weights[0])
-        print("pos", self.actor.mp.pos_features[-1])
+        print("pos", self.actor.mp.vel_features[-1])
         print("p_d", self.actor.controller.p_gains)
 
         # tensorboard logger
@@ -454,7 +454,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
             scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
-            #scaled_action = np.clip(scaled_action, -1, 1)
+            scaled_action = np.clip(scaled_action, -1, 1)
             buffer_action = scaled_action
             action = self.policy.unscale_action(scaled_action)
             #action = unscaled_action

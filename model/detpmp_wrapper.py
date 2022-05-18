@@ -64,7 +64,8 @@ class DetPMPWrapper(ABC):
         elif self.controller_type == 'position':
             self.controller = PosController(env, num_dof=num_dof)
         elif self.controller_type == 'velocity':
-            self.controller = VelController(env, num_dof=num_dof)
+            self.controller = VelController(env,p_gains=controller_kwargs['controller_kwargs']['p_gains'],
+                                           d_gains=controller_kwargs['controller_kwargs']['d_gains'], num_dof=num_dof)
         elif self.controller_type == 'pid':
             self.controller = PIDController(env, p_gains=controller_kwargs['controller_kwargs']['p_gains'],
                                             i_gains=controller_kwargs['controller_kwargs']['i_gains'],
@@ -124,7 +125,7 @@ class DetPMPWrapper(ABC):
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
         return actions
 
-    def get_action(self, timesteps, noise=0.3):
+    def get_action(self, timesteps, noise=0):
         """
         This function generates the actions according to the observation of the environment.
         It is used for interacting with the environment.

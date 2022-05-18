@@ -41,6 +41,7 @@ class BaseController:
         self.env = env
         if "Meta" in str(self.env):
             self.env.obs_for_promp = self.meta_obs
+
         if p_gains is not None:
             if isinstance(p_gains, str):
                 p_gains = np.fromstring(p_gains, dtype=float, sep=',')
@@ -57,6 +58,7 @@ class BaseController:
             self.p_gains.requires_grad = True
         if self.d_gains.requires_grad == False:
             self.d_gains.requires_grad = True
+
 
     def get_action(self, des_pos, des_vel, des_acc):
         raise NotImplementedError
@@ -92,19 +94,21 @@ class PosController(BaseController):
 class VelController(BaseController):
     def __init__(self,
                  env: None,
-                 num_dof: None):
+                 num_dof: None,
+                 p_gains: Union[float, Tuple],
+                 d_gains: Union[float, Tuple],):
         self.num_dof = int(num_dof)
-        super(VelController, self).__init__(env)
+        super(VelController, self).__init__(env, p_gains=p_gains, d_gains=d_gains)
 
     def get_action(self, des_pos, des_vel, des_acc):
         cur_vel = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
-        des_vel = des_vel #- cur_vel) * self.env.dt
+        des_vel = (des_vel - cur_vel) * self.d_gains.cpu().detach().numpy()
         #print("des_vel", des_vel)
         return des_vel, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
-        cur_vel =  observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
-        des_vel = des_vel #- cur_vel
+        cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
+        des_vel = (des_vel - cur_vel) *  self.d_gains
         return des_vel
 
     def obs(self):
