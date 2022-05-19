@@ -125,7 +125,7 @@ class DetPMPWrapper(ABC):
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
         return actions
 
-    def get_action(self, timesteps, noise=0):
+    def get_action(self, timesteps, noise=0.3):
         """
         This function generates the actions according to the observation of the environment.
         It is used for interacting with the environment.
@@ -221,7 +221,7 @@ class DetPMPWrapper(ABC):
 
         #print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
 
-        if "dmc" in str(env):
+        if "dmc" in str(env) or "DeepMind" in str(env):
 
             # export MUJOCO_GL="osmesa"
 

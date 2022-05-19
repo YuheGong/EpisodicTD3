@@ -91,7 +91,7 @@ ALRReacherBalanceIP-v4:
     initial_promp_params: 1
     actor_learning_rate: 0.00005
     critic_learning_rate: 0.0001
-    noise_sigma: 0.3
+    noise_sigma: 0
     n_steps: 20000
     total_timesteps: 1.e+6
     train_freq: 1
@@ -234,25 +234,25 @@ dmcCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 1.e-7
-    actor_learning_rate:  0.0001
+    actor_learning_rate:  0.000001
     critic_learning_rate: 0.0001
     critic_initial_seed: 2
     total_timesteps: 2.e+6
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.1
+    noise_sigma: 0
     policy_kwargs:
-      activation_fn: ReLU
+      activation_fn: tanh
       pi: 256
       qf: 256
   promp_params:
     num_basis: 10
-    zero_start: False
-    zero_basis: 0
+    zero_start: True
+    zero_basis: 2
     controller_type: pid
     controller_kwargs:
-      p_gains: 1.
-      d_gains: 0.1
+      p_gains: 100
+      d_gains: 10
       i_gains: 0
     width: 0.01
     weight_scale: 1
@@ -402,4 +402,35 @@ ALRHalfCheetahJump-v0:
     weight_scale: 1
   env_params:
     env_name: alr_envs:ALRHalfCheetahJump-v0
+    num_envs: 1
+
+
+DeepMindBallInCupDense-v1:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 1.e-7
+    actor_learning_rate: 0.0001
+    critic_learning_rate: 0.0001
+    critic_initial_seed: 2
+    total_timesteps: 2.e+6
+    policy: MlpPolicy
+    policy_type: off_policy
+    noise_sigma: 0
+    policy_kwargs:
+      activation_fn: tanh
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 5
+    zero_start: True
+    zero_basis: 2
+    controller_type: pid
+    controller_kwargs:
+      p_gains: 5
+      d_gains: 0.1
+      i_gains: 0
+    width: 0.025
+    weight_scale: 1
+  env_params:
+    env_name: alr_envs:DeepMindBallInCupDense-v1
     num_envs: 1

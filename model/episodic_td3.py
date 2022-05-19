@@ -64,7 +64,7 @@ class EpisodicTD3(BaseAlgorithm):
         learning_start_episodes: int = 10,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
-        buffer_size: int = int(1e6),
+        buffer_size: int = int(1e5),
         tau: float = 0.005,
         gamma: float = 0.99,
         policy_delay: int = 2,
@@ -133,7 +133,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the batch size, training frequency and gradient steps equal to the length of one episode
         self.train_freq = self.max_episode_steps  # How many gradient steps to do after each rollout
         self.gradient_steps = self.max_episode_steps  # Update the model every ``train_freq`` timesteps.
-        self.batch_size = 200#self.max_episode_steps  # How many data to use in training
+        self.batch_size = 100#self.max_episode_steps  # How many data to use in training
 
         # How many timesteps of the model to collect transitions for before learning starts.
         self.learning_starts = self.max_episode_steps * learning_start_episodes
@@ -368,7 +368,9 @@ class EpisodicTD3(BaseAlgorithm):
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
+
             '''
+
             if self._n_updates % self.policy_delay == 1:
                 # Compute actor loss
                 act = self.actor.predict_action(replay_data.steps, replay_data.observations)
@@ -376,33 +378,34 @@ class EpisodicTD3(BaseAlgorithm):
                 actor_losses.append(actor_loss.item())
 
                 # Optimize the actor
-                #self.pos_optimizer.zero_grad()
-                #self.vel_optimizer.zero_grad()
-                #actor_loss.backward()
-                #self.pos_optimizer.step()
-                #self.vel_optimizer.step()
-                self.controller_optimizer.zero_grad()
+                self.pos_optimizer.zero_grad()
+                self.vel_optimizer.zero_grad()
                 actor_loss.backward()
-                self.controller_optimizer.step()
+                self.pos_optimizer.step()
+                self.vel_optimizer.step()
+                #self.controller_optimizer.zero_grad()
+                #actor_loss.backward()
+                #self.controller_optimizer.step()
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
-                #self.actor_target.mp.pos_features = self.actor.mp.pos_features.to(device="cuda")
-                #self.actor_target.mp.vel_features = self.actor.mp.vel_features.to(device="cuda")
+                self.actor_target.mp.pos_features = self.actor.mp.pos_features.to(device="cuda")
+                self.actor_target.mp.vel_features = self.actor.mp.vel_features.to(device="cuda")
                 #self.actor_target.controller.p_gains = self.actor.controller.p_gains
-                self.actor_target.controller.d_gains = self.actor.controller.d_gains
+                #self.actor_target.controller.d_gains = self.actor.controller.d_gains
                 #self.actor_target.controller.i_gains = self.actor.controller.i_gains
 
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
+                '''
 
-            '''
+
 
         # supervise the trajectory and weights, should be deleted when finished
         print("weights", self.actor.mp.weights[0])
         print("pos", self.actor.mp.vel_features[-1])
-        print("p_d", self.actor.controller.p_gains)
+        #print("p_d", self.actor.controller.p_gains)
 
         # tensorboard logger
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
