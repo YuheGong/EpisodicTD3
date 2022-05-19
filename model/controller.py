@@ -102,13 +102,14 @@ class VelController(BaseController):
 
     def get_action(self, des_pos, des_vel, des_acc):
         cur_vel = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
-        des_vel = (des_vel - cur_vel) * self.d_gains.cpu().detach().numpy()
+        #des_vel = (des_vel - cur_vel) * self.d_gains.cpu().detach().numpy()
+        des_vel = (des_vel ) * self.d_gains.cpu().detach().numpy()
         #print("des_vel", des_vel)
         return des_vel, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
-        des_vel = (des_vel - cur_vel) *  self.d_gains
+        des_vel = (des_vel) * self.d_gains
         return des_vel
 
     def obs(self):
@@ -161,12 +162,15 @@ class PIDController(BaseController):
                  d_gains: Union[float, Tuple],
                  i_gains: Union[float, Tuple],
                  num_dof: None):
+        self.num_dof = num_dof
         if isinstance(i_gains, str):
             i_gains = np.fromstring(i_gains, dtype=float, sep=',')
             self.i_gains = torch.Tensor(i_gains).to(device='cuda')
         else:
-            self.i_gains = torch.Tensor([i_gains]).to(device='cuda')
-        self.num_dof = num_dof
+            self.i_gains = i_gains * torch.ones(self.num_dof).to(device='cuda')
+        if self.i_gains.requires_grad == False:
+            self.i_gains.requires_grad = True
+
         self.trq = []
         self.pos = []
         self.vel = []
@@ -178,8 +182,8 @@ class PIDController(BaseController):
         cur_acc = self.obs()[-self.num_dof:].reshape(self.num_dof)
         #print("(des_pos - cur_pos", des_pos - cur_pos)
         #print("des_vel - cur_vel", des_vel - cur_vel)
-        trq = self.p_gains.cpu().detach().numpy() * (des_pos - cur_pos) \
-              + self.d_gains.cpu().detach().numpy() * (des_vel - cur_vel )#\
+        trq = self.p_gains.cpu().detach().numpy() * (des_pos ) \
+              + self.d_gains.cpu().detach().numpy() * (des_vel ) #\
               #+ self.i_gains.cpu().detach().numpy() * (des_acc - cur_acc)  #* self.env.dt
         self.trq.append(trq)
         self.pos.append(cur_pos)
@@ -190,7 +194,7 @@ class PIDController(BaseController):
         cur_acc = observation[:, -self.num_dof:].reshape(observation.shape[0], self.num_dof)
         cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
         cur_pos = observation[:, -3 * self.num_dof:-2*self.num_dof].reshape(observation.shape[0], self.num_dof)
-        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel) #\
+        trq = self.p_gains * (des_pos ) + self.d_gains * (des_vel ) #\
               #+ self.i_gains * (des_acc - cur_acc) #* self.env.dt
         return trq
 

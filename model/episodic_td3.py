@@ -64,7 +64,7 @@ class EpisodicTD3(BaseAlgorithm):
         learning_start_episodes: int = 10,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
-        buffer_size: int = int(1e5),
+        buffer_size: int = int(1e6),
         tau: float = 0.005,
         gamma: float = 0.99,
         policy_delay: int = 2,
@@ -133,7 +133,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the batch size, training frequency and gradient steps equal to the length of one episode
         self.train_freq = self.max_episode_steps  # How many gradient steps to do after each rollout
         self.gradient_steps = self.max_episode_steps  # Update the model every ``train_freq`` timesteps.
-        self.batch_size = self.max_episode_steps  # How many data to use in training
+        self.batch_size = 200#self.max_episode_steps  # How many data to use in training
 
         # How many timesteps of the model to collect transitions for before learning starts.
         self.learning_starts = self.max_episode_steps * learning_start_episodes
@@ -233,9 +233,9 @@ class EpisodicTD3(BaseAlgorithm):
         self.policy = self.policy.to(self.device)
 
         #for i in self.policy.critic.parameters():
-        #    i.data.fill_(1.e-7)
+        #    i.data.fill_(1.)
         #for i in self.policy.critic_target.parameters():
-        #    i.data.fill_(1.e-7 * self.tau)
+        #    i.data.fill_(1.)
 
         self.critic = self.policy.critic
         self.critic_target = self.policy.critic_target
@@ -266,8 +266,11 @@ class EpisodicTD3(BaseAlgorithm):
 
         # Set the ProMP weights optimizer
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
-        self.controller_optimizer = th.optim.Adam([self.actor.controller.p_gains, self.actor.controller.d_gains],
+        self.controller_optimizer = th.optim.Adam([self.actor.controller.p_gains, self.actor.controller.d_gains,
+                                                   ],
                                                   lr=self.actor_learning_rate)
+        #self.controller_optimizer = th.optim.Adam([ self.actor.controller.d_gains],
+        #                                          lr=self.actor_learning_rate)
         self.pos_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
         self.vel_optimizer = th.optim.Adam([self.actor.mp.vel_features], lr=self.actor_learning_rate)
 
@@ -351,10 +354,10 @@ class EpisodicTD3(BaseAlgorithm):
 
                 # Optimize the actor
                 self.actor_optimizer.zero_grad()
-                self.controller_optimizer.zero_grad()
+                #self.controller_optimizer.zero_grad()
                 actor_loss.backward()
                 self.actor_optimizer.step()
-                self.controller_optimizer.step()
+                #self.controller_optimizer.step()
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
@@ -373,20 +376,27 @@ class EpisodicTD3(BaseAlgorithm):
                 actor_losses.append(actor_loss.item())
 
                 # Optimize the actor
-                self.pos_optimizer.zero_grad()
-                self.vel_optimizer.zero_grad()
+                #self.pos_optimizer.zero_grad()
+                #self.vel_optimizer.zero_grad()
+                #actor_loss.backward()
+                #self.pos_optimizer.step()
+                #self.vel_optimizer.step()
+                self.controller_optimizer.zero_grad()
                 actor_loss.backward()
-                self.pos_optimizer.step()
-                self.vel_optimizer.step()
+                self.controller_optimizer.step()
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
-                self.actor_target.mp.pos_features = self.actor.mp.pos_features.to(device="cuda")
-                self.actor_target.mp.vel_features = self.actor.mp.vel_features.to(device="cuda")
+                #self.actor_target.mp.pos_features = self.actor.mp.pos_features.to(device="cuda")
+                #self.actor_target.mp.vel_features = self.actor.mp.vel_features.to(device="cuda")
+                #self.actor_target.controller.p_gains = self.actor.controller.p_gains
+                self.actor_target.controller.d_gains = self.actor.controller.d_gains
+                #self.actor_target.controller.i_gains = self.actor.controller.i_gains
 
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
+
             '''
 
         # supervise the trajectory and weights, should be deleted when finished
