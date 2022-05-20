@@ -102,14 +102,38 @@ class VelController(BaseController):
 
     def get_action(self, des_pos, des_vel, des_acc):
         cur_vel = self.obs()[-2 * self.num_dof:-self.num_dof].reshape(self.num_dof)
+        cur_pos = self.obs()[-3 * self.num_dof:-2 * self.num_dof].reshape(self.num_dof)
         #des_vel = (des_vel - cur_vel) * self.d_gains.cpu().detach().numpy()
-        des_vel = (des_vel ) * self.d_gains.cpu().detach().numpy()
+        #des_vel = (des_vel ) * self.d_gains.cpu().detach().numpy()
         #print("des_vel", des_vel)
+        self.env.env.physics.data.qfrc_bias[3:].copy().reshape(-1),
+        self.env.env.physics.data.qM.copy().reshape(-1),
+        self.env.env.physics.data.efc_force.copy().reshape(-1),
+        self.env.env.physics.data.efc_J.copy().reshape(-1),
+
+
+        c = self.obs()[:self.num_dof].reshape(self.num_dof)
+        M = self.obs()[self.num_dof:self.num_dof+self.num_dof*self.num_dof].reshape(self.num_dof,self.num_dof)
+        v_point = (des_pos-cur_pos)/self.env.env.dt - cur_vel #/ self.env.env.dt
+        f = self.obs()[self.num_dof+self.num_dof*self.num_dof:self.num_dof+self.num_dof*self.num_dof+500]
+        J = self.obs()[self.num_dof+self.num_dof*self.num_dof+500:self.num_dof+self.num_dof*self.num_dof+5000]
+        des_vel = (M.reshape(6,6) @ v_point.reshape(6,1)).reshape(-1) + c - (J.reshape(9,500) @ f.reshape(500,1))[3:].reshape(-1)
         return des_vel, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
-        des_vel = (des_vel) * self.d_gains
+        cur_pos = observation[:, -3 * self.num_dof:-2 * self.num_dof].reshape(observation.shape[0], self.num_dof)
+        #des_vel = (des_vel) * self.d_gains
+
+        c = observation[:,:self.num_dof].reshape(-1,self.num_dof)
+        M = observation[:,self.num_dof:self.num_dof + self.num_dof * self.num_dof].reshape(-1, self.num_dof,self.num_dof)
+        v_point = ((des_pos-cur_pos)/self.env.env.dt  - cur_vel) #/ self.env.env.dt
+        f = observation[:,
+            self.num_dof + self.num_dof * self.num_dof:self.num_dof + self.num_dof * self.num_dof + 500]
+        J = observation[:,
+            self.num_dof + self.num_dof * self.num_dof + 500:self.num_dof + self.num_dof * self.num_dof + 5000]
+        des_vel = (M @ v_point.reshape(-1,6,1)).reshape(-1, 6) + c\
+                  - (J.reshape(-1,9, 500) @ f.reshape(-1,500, 1))[:, 3:, :].reshape(-1, 6)
         return des_vel
 
     def obs(self):
@@ -183,7 +207,7 @@ class PIDController(BaseController):
         #print("(des_pos - cur_pos", des_pos - cur_pos)
         #print("des_vel - cur_vel", des_vel - cur_vel)
         trq = self.p_gains.cpu().detach().numpy() * (des_pos - cur_pos) \
-              + self.d_gains.cpu().detach().numpy() * (des_vel- cur_vel) #\
+              + self.d_gains.cpu().detach().numpy() * (- cur_vel) #\
               #+ self.i_gains.cpu().detach().numpy() * (des_acc - cur_acc)  #* self.env.dt
         self.trq.append(trq)
         self.pos.append(cur_pos)
@@ -194,7 +218,7 @@ class PIDController(BaseController):
         cur_acc = observation[:, -self.num_dof:].reshape(observation.shape[0], self.num_dof)
         cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
         cur_pos = observation[:, -3 * self.num_dof:-2*self.num_dof].reshape(observation.shape[0], self.num_dof)
-        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel- cur_vel ) #\
+        trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (- cur_vel ) #\
               #+ self.i_gains * (des_acc - cur_acc) #* self.env.dt
         return trq
 

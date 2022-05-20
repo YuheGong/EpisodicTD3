@@ -125,7 +125,7 @@ class DetPMPWrapper(ABC):
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
         return actions
 
-    def get_action(self, timesteps, noise=0.3):
+    def get_action(self, timesteps, noise=0.05):
         """
         This function generates the actions according to the observation of the environment.
         It is used for interacting with the environment.
