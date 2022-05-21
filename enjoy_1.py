@@ -70,7 +70,7 @@ env.reset()
 model = EpisodicTD3(critic, env,
              initial_promp_params=data["algo_params"]['initial_promp_params'],
              schedule=schedule,
-             seed=1,
+             seed=2,
              critic_network_kwargs=critic_kwargs,
              verbose=1,
              noise_sigma=data["algo_params"]['noise_sigma'],

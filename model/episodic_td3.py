@@ -133,7 +133,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the batch size, training frequency and gradient steps equal to the length of one episode
         self.train_freq = self.max_episode_steps  # How many gradient steps to do after each rollout
         self.gradient_steps = self.max_episode_steps  # Update the model every ``train_freq`` timesteps.
-        self.batch_size = 100#self.max_episode_steps  # How many data to use in training
+        self.batch_size = 1024#self.max_episode_steps  # How many data to use in training
 
         # How many timesteps of the model to collect transitions for before learning starts.
         self.learning_starts = self.max_episode_steps * learning_start_episodes
@@ -267,8 +267,8 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the ProMP weights optimizer
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
         self.controller_optimizer = th.optim.Adam([self.actor.controller.p_gains, self.actor.controller.d_gains,
-                                                   ],
-                                                  lr=self.actor_learning_rate * 0.001)
+                                                   self.actor.controller.i_gains],
+                                                  lr=self.actor_learning_rate * 0.00001)
         #self.controller_optimizer = th.optim.Adam([ self.actor.controller.d_gains],
         #                                          lr=self.actor_learning_rate)
         #self.pos_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
@@ -362,15 +362,15 @@ class EpisodicTD3(BaseAlgorithm):
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
-                self.actor_target.controller.p_gains = self.actor.controller.p_gains
-                self.actor_target.controller.d_gains = self.actor.controller.d_gains
+                #self.actor_target.controller.p_gains = self.actor.controller.p_gains
+                #self.actor_target.controller.d_gains = self.actor.controller.d_gains
 
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
 
-
             '''
+
             if self._n_updates % self.policy_delay == 1:
                 # Compute actor loss
                 act = self.actor.predict_action(replay_data.steps, replay_data.observations)
@@ -383,6 +383,8 @@ class EpisodicTD3(BaseAlgorithm):
                 #actor_loss.backward()
                 #self.pos_optimizer.step()
                 #self.vel_optimizer.step()
+                actor_loss = self.actor.controller.pos_loss.sum() + self.actor.controller.vel_loss.sum()
+
                 self.controller_optimizer.zero_grad()
                 actor_loss.backward()
                 self.controller_optimizer.step()
@@ -398,14 +400,14 @@ class EpisodicTD3(BaseAlgorithm):
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
-            '''
 
+            '''
 
 
         # supervise the trajectory and weights, should be deleted when finished
         print("weights", self.actor.mp.weights[0])
-        print("pos", self.actor.mp.vel_features[-1])
-        #print("p_d", self.actor.controller.p_gains)
+        #print("pos", self.actor.mp.vel_features[-1])
+        print("gains", self.actor.controller.p_gains, self.actor.controller.d_gains)
 
         # tensorboard logger
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
@@ -463,15 +465,16 @@ class EpisodicTD3(BaseAlgorithm):
         This function samples the data from the environment.
         """
         unscaled_action = self.actor.get_action(episode_timesteps)
+        unscaled_action += self.noise().reshape(-1)
 
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
-            scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
-            scaled_action = np.clip(scaled_action, -1, 1)
-            buffer_action = scaled_action
-            action = self.policy.unscale_action(scaled_action)
-            #action = unscaled_action
-            #buffer_action = action
+            #scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
+            #scaled_action = np.clip(scaled_action, -1, 1)
+            #buffer_action = scaled_action
+            #action = self.policy.unscale_action(scaled_action)
+            action = unscaled_action
+            buffer_action = action
         else:
             # Discrete case, no need to normalize or clip
             buffer_action = np.clip(unscaled_action, -1, 1)
@@ -560,7 +563,7 @@ class EpisodicTD3(BaseAlgorithm):
                 # print("obs, sample", self.actor.controller.obs())
 
                 # Rescale and perform action
-                action = action + self.noise().reshape(action.shape)
+                #action = action + self.noise().reshape(action.shape)
                 if 'Meta' in str(env):
                     action = action.reshape(-1)
                 self.obs.append(self.actor.controller.obs())
@@ -570,6 +573,8 @@ class EpisodicTD3(BaseAlgorithm):
 
                 new_obs = np.hstack([new_obs]).reshape(1, -1)
                 action = action.reshape(1,-1)
+                #action = action + self.noise().reshape(action.shape)
+                #action = action.reshape(1, -1)
                 new_obs = new_obs.reshape(1,-1)
                 self.actions.append(action)
 

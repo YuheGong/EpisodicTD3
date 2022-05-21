@@ -125,7 +125,7 @@ class DetPMPWrapper(ABC):
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
         return actions
 
-    def get_action(self, timesteps, noise=0.05):
+    def get_action(self, timesteps, noise=0):
         """
         This function generates the actions according to the observation of the environment.
         It is used for interacting with the environment.
@@ -236,7 +236,7 @@ class DetPMPWrapper(ABC):
                 aces.append(ac)
                 rewards += reward
                 #env.render(mode="rgb_array")
-                print(i, reward)
+                print(i,ac, reward)
                 env.render(mode="human")
             env.close()
         elif "Meta" in str(env):

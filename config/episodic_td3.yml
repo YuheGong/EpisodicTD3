@@ -234,25 +234,25 @@ dmcCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 1.e-7
-    actor_learning_rate:  0.000001
-    critic_learning_rate: 0.000001
+    actor_learning_rate:  0.00001
+    critic_learning_rate: 0.0001
     critic_initial_seed: 2
     total_timesteps: 2.e+6
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0
+    noise_sigma: 0.3
     policy_kwargs:
-      activation_fn: tanh
+      activation_fn: ReLU
       pi: 256
       qf: 256
   promp_params:
     num_basis: 10
-    zero_start: True
-    zero_basis: 2
-    controller_type: velocity
+    zero_start: False
+    zero_basis: 0
+    controller_type: pid
     controller_kwargs:
-      p_gains: 100
-      d_gains: 10
+      p_gains: 1
+      d_gains: 0.01
       i_gains: 0
     width: 0.01
     weight_scale: 1
