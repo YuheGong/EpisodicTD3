@@ -26,6 +26,7 @@ env = "Ant-v1"
 #env = "dmcSwimmerDense-v0"
 #env = "dmcHopperDense-v0"
 env = "dmcCheetahDense-v0"
+#env = "DeepMindBallInCupDense-v1"
 #env = "MetaButtonPress-v2"
 #env = "ALRHalfCheetahJump-v0"
 #nv = "Hopper-v0"
@@ -33,7 +34,7 @@ env = "dmcCheetahDense-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_140"
+path = "logs/episodic_td3/" + env + "_225"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -46,7 +47,8 @@ data['path'] = path
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
 algo_path = path + "/best_model.npz"
-a = path + "/pos_features.npz"
+pos = path + "/pos_features.npz"
+vel = path + "/vel_features.npz"
 algo_path = path + "/best_model.npy.npz"
 algo_path = path + "/algo_mean.npz"
 
@@ -61,6 +63,14 @@ import pickle
 algorithm = np.load(algo_path, encoding='bytes', allow_pickle=True)
 for i in algorithm:
     algorithm = np.array(algorithm[i])
+
+pos = np.load(pos, encoding='bytes', allow_pickle=True)
+for i in pos:
+    pos = np.array(pos[i])
+
+vel = np.load(vel, encoding='bytes', allow_pickle=True)
+for i in vel:
+    vel = np.array(vel[i])
 
 #for i in pos_feature:
 #    pos_feature = np.array(pos_feature[i])
@@ -153,4 +163,4 @@ for i in range(algorithm.shape[0]):
 #algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)#
 
 print("algorithm", algorithm)
-model.load(algorithm, env)
+model.load(algorithm, env, pos=pos, vel=vel)
