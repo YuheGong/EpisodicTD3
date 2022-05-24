@@ -268,7 +268,7 @@ class EpisodicTD3(BaseAlgorithm):
         self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
         self.controller_optimizer = th.optim.Adam([self.actor.controller.p_gains, self.actor.controller.d_gains,
                                                    self.actor.controller.i_gains],
-                                                  lr=self.actor_learning_rate * 0.00001)
+                                                  lr=self.actor_learning_rate )
         #self.controller_optimizer = th.optim.Adam([ self.actor.controller.d_gains],
         #                                          lr=self.actor_learning_rate)
         #self.pos_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
@@ -369,8 +369,8 @@ class EpisodicTD3(BaseAlgorithm):
                 self.actor.update()
                 self.actor_target.update()
 
-            '''
 
+            '''
             if self._n_updates % self.policy_delay == 1:
                 # Compute actor loss
                 act = self.actor.predict_action(replay_data.steps, replay_data.observations)
@@ -393,7 +393,7 @@ class EpisodicTD3(BaseAlgorithm):
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 #self.actor_target.mp.pos_features = self.actor.mp.pos_features.to(device="cuda")
                 #self.actor_target.mp.vel_features = self.actor.mp.vel_features.to(device="cuda")
-                self.actor_target.controller.p_gains = self.actor.controller.p_gains
+                #self.actor_target.controller.p_gains = self.actor.controller.p_gains
                 self.actor_target.controller.d_gains = self.actor.controller.d_gains
                 #self.actor_target.controller.i_gains = self.actor.controller.i_gains
 

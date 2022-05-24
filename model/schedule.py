@@ -46,15 +46,24 @@ class dmcCheetahDens_v0_schedule(Schedule):
         #if model.eval_reward > 100 and model.eval_reward < 190:
         #    model.actor_learning_rate = 0.00001
         #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        if model.eval_reward > 100: #and model.eval_reward < 150:
-            model.actor_learning_rate = 0.000001
+        if model.eval_reward > 140: #and model.eval_reward < 150:
+            model.noise_sigma = 0.01
+            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+            #model.actor_learning_rate = 0.000001
+            #model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        if model.eval_reward > 165:
+            model.actor_learning_rate = 1.e-10
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        elif model.eval_reward > 180: #and model.eval_reward < 150:
-            model.actor_learning_rate = 0.000000001
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        else:
-            model.actor_learning_rate = 0.00001
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+
+    #elif model.eval_reward > 180: #and model.eval_reward < 150:
+        #    model.actor_learning_rate = 0.000000001
+        #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        #else:
+        #    model.noise_sigma = 0.1
+        #    model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+
+            #model.actor_learning_rate = 0.00001
+            #model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
             #model.noise_sigma = 1
             #model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
 
