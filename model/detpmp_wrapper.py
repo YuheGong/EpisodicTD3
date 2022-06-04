@@ -137,9 +137,9 @@ class DetPMPWrapper(ABC):
         """
         noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=noise * np.ones(self.num_dof))
 
-        trajectory = self.trajectory_np[timesteps] + noise_dist()
-        velocity = self.velocity_np[timesteps] + noise_dist()
-        acceleration = self.acceleration_np[timesteps]
+        trajectory = self.trajectory_np[timesteps].copy()
+        velocity = self.velocity_np[timesteps].copy()
+        acceleration = self.acceleration_np[timesteps].copy()
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
         return action
 

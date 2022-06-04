@@ -133,7 +133,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the batch size, training frequency and gradient steps equal to the length of one episode
         self.train_freq = self.max_episode_steps  # How many gradient steps to do after each rollout
         self.gradient_steps = self.max_episode_steps  # Update the model every ``train_freq`` timesteps.
-        self.batch_size = 1024#self.max_episode_steps  # How many data to use in training
+        self.batch_size = 100#self.max_episode_steps  # How many data to use in training
 
         # How many timesteps of the model to collect transitions for before learning starts.
         self.learning_starts = self.max_episode_steps * learning_start_episodes

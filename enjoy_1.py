@@ -49,9 +49,9 @@ eval_env = gym.make(data["env_params"]['env_name'])
 
 # learning rate and noise schedule
 Schedule = {
-        'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
-        'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
-        'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
+        #'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
+        #'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
+        #'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
 }
 
 if args.env in Schedule.keys():
