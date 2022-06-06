@@ -5,7 +5,8 @@ import argparse
 from utils.model import policy_kwargs_building
 from model.episodic_td3 import EpisodicTD3
 import numpy as np
-from model.schedule import dmcCheetahDens_v0_schedule, dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule
+from model.schedule import dmcCheetahDens_v0_schedule, \
+    dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule,FetchReacher_schedule
 
 
 ''''
@@ -49,10 +50,10 @@ eval_env = gym.make(data["env_params"]['env_name'])
 
 # learning rate and noise schedule
 Schedule = {
-        #'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
+        'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
         #'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
         'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
-        'FetchReacher-v0': FetchReacher-v0,
+        'FetchReacher-v0': FetchReacher_schedule,
 }
 
 if args.env in Schedule.keys():
@@ -71,7 +72,7 @@ env.reset()
 model = EpisodicTD3(critic, env,
              initial_promp_params=data["algo_params"]['initial_promp_params'],
              schedule=schedule,
-             seed=1,
+             seed=args.seed,
              critic_network_kwargs=critic_kwargs,
              verbose=1,
              noise_sigma=data["algo_params"]['noise_sigma'],
