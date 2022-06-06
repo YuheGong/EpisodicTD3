@@ -74,7 +74,7 @@ class PosController(BaseController):
         super(PosController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel, des_acc):
-        cur_pos = self.obs()[-self.num_dof:].reshape(-1)
+        cur_pos =self.env.current_pos().reshape(-1)
         des_pos = des_pos - cur_pos
         return des_pos, des_pos, des_vel
 
@@ -83,8 +83,7 @@ class PosController(BaseController):
         des_pos = des_pos - cur_pos
         return des_pos
 
-    def obs(self):
-        return self.env.obs_for_promp()
+
 
 
 class VelController(BaseController):
@@ -132,11 +131,6 @@ class VelController(BaseController):
                   #- (J.reshape(-1,9, 500) @ f.reshape(-1,500, 1))[:, 3:, :].reshape(-1, 6)
         return des_vel
 
-    def obs(self):
-        return self.env.obs_for_promp()
-
-
-
 
 class PDController(BaseController):
 
@@ -152,12 +146,11 @@ class PDController(BaseController):
         super(PDController, self).__init__(env, p_gains, d_gains)
 
     def get_action(self, des_pos, des_vel, des_acc):#, action_noise=None):
-        cur_pos = self.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)
-        cur_vel = self.obs()[-1 * self.num_dof:].reshape(self.num_dof)
+        cur_pos = self.env.current_pos().reshape(self.num_dof)
+        cur_vel = self.env.current_vel().reshape(self.num_dof)
 
         trq = self.p_gains.cpu().detach().numpy() * (des_pos - cur_pos) \
               + self.d_gains.cpu().detach().numpy() * (des_vel - cur_vel)
-        #trq = self.p_g * (des_pos- cur_pos) + self.d_g * (des_vel )
         self.trq.append(trq)
         self.pos.append(cur_pos)
         self.vel.append(cur_vel)
@@ -171,7 +164,7 @@ class PDController(BaseController):
         return trq
 
     def obs(self):
-        return self.env.obs_for_promp()
+        return self.env.current_pos()
 
 
 class PIDController(BaseController):

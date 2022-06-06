@@ -53,7 +53,7 @@ Schedule = {
         'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
         #'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
         'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
-        'FetchReacher-v0': FetchReacher_schedule,
+        #'FetchReacher-v0': FetchReacher_schedule,
 }
 
 if args.env in Schedule.keys():
