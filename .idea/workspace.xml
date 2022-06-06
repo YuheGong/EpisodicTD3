@@ -8,9 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/episodic_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/episodic_td3.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/base_algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/base_algorithm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/detpmp_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_wrapper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/episodic_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/episodic_td3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/schedule.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/schedule.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

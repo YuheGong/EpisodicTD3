@@ -54,10 +54,6 @@ class BaseController:
                 self.d_gains = torch.Tensor(d_gains).to(device='cuda')
             else:
                 self.d_gains = d_gains * torch.ones(self.num_dof).to(device='cuda')
-        if self.p_gains.requires_grad == False:
-            self.p_gains.requires_grad = True
-        if self.d_gains.requires_grad == False:
-            self.d_gains.requires_grad = True
 
 
     def get_action(self, des_pos, des_vel, des_acc):
@@ -79,12 +75,12 @@ class PosController(BaseController):
 
     def get_action(self, des_pos, des_vel, des_acc):
         cur_pos = self.obs()[-self.num_dof:].reshape(-1)
-        des_pos = des_pos #- cur_pos
+        des_pos = des_pos - cur_pos
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_pos = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
-        des_pos = des_pos #- cur_pos
+        des_pos = des_pos - cur_pos
         return des_pos
 
     def obs(self):

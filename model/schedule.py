@@ -98,27 +98,17 @@ class dmcHopperDens_v0_schedule(Schedule):
 class dmcWalkerDens_v0_schedule(Schedule):
 
     def schedule(self, model):
-        #if model.eval_reward > 20 and model.eval_reward < 40:
-        #    model.actor_learning_rate = 0.000001
-        #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-            #model.noise_sigma = 0.3
+       if model.eval_reward > 45:#and model.eval_reward < 50:
+            model.actor_learning_rate = 1.e-9
+            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+            #model.noise_sigma = 0.01
             #model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
-        #elif model.eval_reward > 40 and model.eval_reward < 50:
-        #    model.actor_learning_rate = 0.000005
+        #if model.eval_reward > 55: #and model.eval_reward < 50:
+        #    model.actor_learning_rate = 1.e-1
         #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        #    model.noise_sigma = 0.1
-        #    model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
-        if model.eval_reward > 40:#and model.eval_reward < 50:
-            model.actor_learning_rate = 1.e-8
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-            model.noise_sigma = 0.01
-            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
-        if model.eval_reward > 50: #and model.eval_reward < 50:
-            model.actor_learning_rate = 1.e-9
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
-        if model.eval_reward > 60: #and model.eval_reward < 50:
-            model.actor_learning_rate = 1.e-9
-            model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
+        #if model.eval_reward > 60: #and model.eval_reward < 50:
+        #    model.actor_learning_rate = 1.e-9
+        #    model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
 
             #elif model.eval_reward > 50:
         #    model.actor_learning_rate = 0.0000001
