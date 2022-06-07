@@ -16,12 +16,12 @@ def make_env(env_name, path, rank, seed=0):
 
 algo = "episodic_td3"
 
-#env_id = "FetchReacher-v"
+env = "FetchReacher-v0"
 #env_id = "ALRReacherBalanceIP-v"
 #env = env_id + '3'
 #env = "InvertedDoublePendulum-v0"
-env = "Ant-v1"
-env = "dmcWalkerDense-v0"
+#env = "Ant-v1"
+#env = "dmcWalkerDense-v0"
 #env = "dmcSwimmerDense-v0"
 #env = "dmcSwimmerDense-v0"
 #env = "dmcHopperDense-v0"
@@ -34,7 +34,7 @@ env = "dmcWalkerDense-v0"
 #env = "Ant-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_6"
+path = "logs/episodic_td3/" + env + "_1"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -46,11 +46,8 @@ data['path'] = path
 
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
-algo_path = path + "/best_model.npz"
-pos = path + "/pos_features.npz"
-vel = path + "/vel_features.npz"
-algo_path = path + "/best_model.npy.npz"
-algo_path = path + "/algo_mean.npz"
+algo_path = path + "/best_model.npy"
+algo_path = path + "/algo_mean.npy"
 
 #a = []
 import pickle
@@ -60,47 +57,18 @@ import pickle
 
 #print("a",h)
 #data = np.array(algo_path )
-algorithm = np.load(algo_path, encoding='bytes', allow_pickle=True)
-for i in algorithm:
-    algorithm = np.array(algorithm[i])
-
-pos = np.load(pos, encoding='bytes', allow_pickle=True)
-for i in pos:
-    pos = np.array(pos[i])
-
-vel = np.load(vel, encoding='bytes', allow_pickle=True)
-for i in vel:
-    vel = np.array(vel[i])
-
-#for i in pos_feature:
-#    pos_feature = np.array(pos_feature[i])
-
-#for i in vel_feature:
-#    vel_feature = np.array(vel_feature[i])
-#"alr_envs:" + env
+algorithm = np.load(algo_path)#, encoding='bytes', allow_pickle=True)
+#for i in algorithm:
+#    algorithm = np.array(algorithm[i])
 
 # make the model and save the model
-ALGOS = {
-        'a2c': A2C,
-        'dqn': DQN,
-        'ddpg': DDPG,
-        'her': HER,
-        'sac': SAC,
-        'ppo': PPO,
-        'td3': TD3,
-        'episodic_td3': EpisodicTD3
-}
-ALGO = ALGOS[algo]
+ALGO = EpisodicTD3
 
 critic = data['algo_params']['policy']
 promp_policy_kwargs = data['promp_params']
 print(env)
-
-model = ALGO(critic, env, seed=1,  initial_promp_params=0.1,  verbose=1,
-             noise_sigma=0, promp_policy_kwargs=promp_policy_kwargs,
-             critic_learning_rate=data["algo_params"]['critic_learning_rate'],
-             actor_learning_rate=data["algo_params"]['actor_learning_rate'], basis_num=data['promp_params']['num_basis'],
-             data_path=data["path"])
+model_path = os.path.join(path, 'model')
+model = EpisodicTD3.continue_load(model_path,  env=env)
 
 n_actions = env.action_space.shape[-1]
 noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0 * np.ones(n_actions))
@@ -163,4 +131,4 @@ for i in range(algorithm.shape[0]):
 #algorithm[:, :2] = -0.3 * np.ones(algorithm[:, :2].shape)#
 
 print("algorithm", algorithm)
-model.load(algorithm, env, pos=pos, vel=vel)
+model.load(algorithm, env, pos=None, vel=None)

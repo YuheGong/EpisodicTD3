@@ -94,7 +94,7 @@ class DetPMPWrapper(ABC):
                 #self.acceleration += th.Tensor(
                 #       self.controller.obs()[-1 * self.num_dof:].reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
-                self.trajectory += th.Tensor(self.controller.obs()[-self.num_dof:].reshape(self.num_dof)).to(
+                self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
                     device='cuda')
             elif self.controller_type == 'pid':
                 #self.trajectory += th.Tensor(
@@ -158,8 +158,6 @@ class DetPMPWrapper(ABC):
         rewards = 0
         step_length = self.step_length
         env.reset()
-        #env.render()
-
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
@@ -203,66 +201,32 @@ class DetPMPWrapper(ABC):
             env: the environment we want to render.
         """
         import time
-        print("render")
+        #print("render")
+        ##self.mp.pos_features = th.Tensor(pos).to(device='cuda')
+        #self.mp.vel_features = th.Tensor(vel).to(device='cuda')
         self.mp.weights = th.Tensor(weights).to(device='cuda')
-        self.mp.pos_features = th.Tensor(pos).to(device='cuda')
-        self.mp.vel_features = th.Tensor(vel).to(device='cuda')
-
-        #self.update()
+        self.update()
 
         rewards = 0
         step_length = self.step_length
-        self.eval_rollout(env)
         env.reset()
-        self.update()
-        obses = []
-        import time
-        aces = []
-
-        #print("init_value", self.env.sim.data.mocap_pos, self.env.sim.data.qpos, self.env.sim.data.qvel)
-
-        if "dmc" in str(env) or "DeepMind" in str(env):
-
-            # export MUJOCO_GL="osmesa"
-
-            for i in range(int(self.step_length)):
-                time.sleep(0.1)
-                ac = self.get_action(i, noise=0)
-                #print("ac", ac)
-                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-                #print("ac", ac)
-                obs, reward, done, info = env.step(ac)
-                obses.append(obs)
-                aces.append(ac)
-                rewards += reward
-                #env.render(mode="rgb_array")
-                print(i,ac, reward)
-                env.render(mode="human")
-            env.close()
-        elif "Meta" in str(env):
+        if "Meta" in str(env):
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
                 rewards += reward
-                #time.sleep(1)
-                env.render(False)
         else:
+            import time
             for i in range(step_length):
                 #time.sleep(0.1)
-
+                print("i", i)
                 ac = self.get_action(i, noise=0)
-                print("ac", ac)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-
                 obs, reward, done, info = env.step(ac)
-                obses.append(obs)
-                aces.append(ac)
                 rewards += reward
+                env.render()
                 if done:
                     step_length = i + 1
                     break
-                #env.render()
-
-        print("reward", rewards)
-
+        print("rewards", rewards)

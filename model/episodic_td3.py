@@ -516,7 +516,7 @@ class EpisodicTD3(BaseAlgorithm):
                 #action = action + self.noise().reshape(action.shape)
                 if 'Meta' in str(env):
                     action = action.reshape(-1)
-                self.obs.append(self.actor.controller.obs())
+                self.obs.append(self.env.current_pos())
 
                 new_obs, reward, done, infos = env.step(action)
 

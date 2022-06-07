@@ -7,7 +7,7 @@ FetchReacher-v0:
     total_timesteps: 1.e+6
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.1
+    noise_sigma: 0.5
     policy_kwargs:
       activation_fn: ReLU
       pi: 256
@@ -32,6 +32,7 @@ FetchReacher-v1:
     n_steps:  20000
     total_timesteps: 1.e+6
     train_freq: 1
+    noise_sigma: 0.5
     policy: MlpPolicy
     policy_type: off_policy
     policy_kwargs:
@@ -82,7 +83,7 @@ ALRReacherBalanceIP-v3:
     actor_learning_rate: 0.00005
     critic_learning_rate: 0.0001
     critic_initial_seed: 1
-    noise_sigma: 0.1
+    noise_sigma: 0.3
     n_steps: 20000
     total_timesteps: 2.e+6
     train_freq: 1
@@ -117,7 +118,7 @@ ALRReacherBalanceIP-v4:
     initial_promp_params: 1
     actor_learning_rate: 0.00005
     critic_learning_rate: 0.0001
-    noise_sigma: 0.1
+    noise_sigma: 0.3
     n_steps: 20000
     total_timesteps: 2.e+6
     train_freq: 1
