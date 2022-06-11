@@ -3,7 +3,7 @@ import torch as th
 
 class DeterministicProMP:
 
-    def __init__(self, n_basis, n_dof, width=None, off=0.01, zero_start=False, n_zero_bases=0, step_length=None,
+    def __init__(self, n_basis, n_dof, basis_function="rbf", width=None, off=0.01, zero_start=False, n_zero_bases=0, step_length=None,
                  dt=0.02, weight_scale=1):
         self.n_basis = n_basis
         self.n_dof = n_dof
@@ -21,6 +21,12 @@ class DeterministicProMP:
         else:
             self.widths = np.ones(self.n_basis + self.n_zero_bases) * width
 
+        basis_function = "rythmic"
+        if basis_function == "rbf":
+            self._exponential_kernel = self._exponential_kernel_RBF
+        elif basis_function == "rythmic":
+            self._exponential_kernel = self._exponential_kernel_Rythmic
+
         N = step_length
         t = np.linspace(0, 1, N)
         self.cr_scale = th.Tensor([step_length * dt]).to(device="cuda")
@@ -37,13 +43,26 @@ class DeterministicProMP:
         self.pos_features.requires_grad = True
         self.vel_features.requires_grad = True
 
-
-    def _exponential_kernel(self, z):
+    def _exponential_kernel_RBF(self, z):
         z_ext = z[:, None]
-        diffs = z_ext - self.centers[None, :]
-        w = np.exp(-(np.square(diffs) / (2 * self.widths[None, :])))
+        diffs = z_ext - self.centers[None, :]  ## broadcast z_ext to diffs, center for each steps
+        w = np.exp(-(np.square(diffs) / (2 * self.widths[None, :])))  # stroke-based movements
         w_der = -(diffs / self.widths[None, :]) * w
         w_der2 = -(1 / self.widths[None, :]) * w + np.square(diffs / self.widths[None, :]) * w
+        sum_w = np.sum(w, axis=1)[:, None]
+        sum_w_der = np.sum(w_der, axis=1)[:, None]
+        sum_w_der2 = np.sum(w_der2, axis=1)[:, None]
+        tmp = w_der * sum_w - w * sum_w_der
+        return w / sum_w, tmp / np.square(sum_w), \
+               ((w_der2 * sum_w - sum_w_der2 * w) * sum_w - 2 * sum_w_der * tmp) / np.power(sum_w, 3)
+
+    def _exponential_kernel_Rythmic(self, z):
+        z_ext = z[:, None]
+        diffs = z_ext - self.centers[None, :]
+        w_inside = diffs / self.widths[None, :] * 2 * np.pi
+        w = np.cos(w_inside)
+        w_der = -2 * np.pi / self.widths[None, :] * np.sin(w_inside)
+        w_der2 = -np.square(2 * np.pi / self.widths[None, :]) * w
         sum_w = np.sum(w, axis=1)[:, None]
         sum_w_der = np.sum(w_der, axis=1)[:, None]
         sum_w_der2 = np.sum(w_der2, axis=1)[:, None]

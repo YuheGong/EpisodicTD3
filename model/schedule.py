@@ -59,7 +59,7 @@ class dmcWalkerDens_v0_schedule(Schedule):
 
     def schedule(self, model):
        if model.eval_reward > 45:#and model.eval_reward < 50:
-            model.actor_learning_rate = 1.e-10
+            model.actor_learning_rate = 1.e-9
             model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
 
 class FetchReacher_schedule(Schedule):
@@ -67,10 +67,10 @@ class FetchReacher_schedule(Schedule):
     def schedule(self, model):
 
         if model.eval_reward > -2 and model.eval_reward <= -1:
-            model.noise_sigma = 0.3
+            model.noise_sigma = 0.1
             model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
         elif model.eval_reward > -1:
-            model.noise_sigma = 0.1
+            model.noise_sigma = 0.01
             model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
         else:
             model.noise_sigma = 0.5
