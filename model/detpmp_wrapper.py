@@ -220,8 +220,9 @@ class DetPMPWrapper(ABC):
             import time
             for i in range(step_length):
                 #time.sleep(0.1)
-                print("i", i)
+
                 ac = self.get_action(i, noise=0)
+                print("i",ac,)
                 ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward

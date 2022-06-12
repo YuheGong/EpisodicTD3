@@ -66,6 +66,8 @@ else:
 critic_kwargs = policy_kwargs_building(data)
 critic = data['algo_params']['policy']
 
+#data["algo_params"]['initial_promp_params'] = np.ones(30).reshape(5,6)
+#data["algo_params"]['initial_promp_params'][:,:3] = -1
 
 # build the model
 env.reset()

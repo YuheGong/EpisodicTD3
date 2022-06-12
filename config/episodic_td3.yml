@@ -232,7 +232,7 @@ dmcWalkerDense-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params:  1.e-2
-    actor_learning_rate:  1.e-5
+    actor_learning_rate:  1.e-7
     critic_learning_rate: 0.0001
     noise_sigma: 0.1
     total_timesteps: 2.e+6
@@ -243,10 +243,10 @@ dmcWalkerDense-v0:
       pi: 256
       qf: 256
   promp_params:
-    num_basis: 10
-    zero_start: True
-    zero_basis: 2
-    controller_type: motor
+    num_basis: 3
+    zero_start: False
+    zero_basis: 0
+    controller_type: pid
     controller_kwargs:
       p_gains: 1
       d_gains: 0.1
@@ -260,26 +260,25 @@ dmcWalkerDense-v0:
 dmcCheetahDense-v0:
   algorithm: episodic_td3
   algo_params:
-    initial_promp_params: 1.e-7
-    actor_learning_rate:  1.e-7
+    initial_promp_params: 1.e-2
+    actor_learning_rate:  1.e-6
     critic_learning_rate: 0.0001
-    critic_initial_seed: 2
     total_timesteps: 2.e+6
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.1
+    noise_sigma: 0.5
     policy_kwargs:
       activation_fn: ReLU
       pi: 256
       qf: 256
   promp_params:
-    num_basis: 10
+    num_basis: 5
     zero_start: False
-    zero_basis: 0
+    zero_basis: 2
     controller_type: pid
     controller_kwargs:
       p_gains: 1
-      d_gains: 0.01
+      d_gains: 0.1
       i_gains: 0
     width: 0.01
     weight_scale: 1
