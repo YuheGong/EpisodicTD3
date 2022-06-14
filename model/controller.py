@@ -74,13 +74,13 @@ class PosController(BaseController):
         super(PosController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel, des_acc):
-        cur_pos =self.env.current_pos().reshape(-1)
-        des_pos = des_pos - cur_pos
+        #cur_pos =self.env.current_pos().reshape(-1)
+        des_pos = des_pos #- cur_pos
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
-        cur_pos = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
-        des_pos = des_pos - cur_pos
+        #cur_pos = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
+        des_pos = des_pos #- cur_pos
         return des_pos
 
 
@@ -146,8 +146,8 @@ class PDController(BaseController):
         super(PDController, self).__init__(env, p_gains, d_gains)
 
     def get_action(self, des_pos, des_vel, des_acc):#, action_noise=None):
-        cur_pos = self.env.current_pos.reshape(self.num_dof)
-        cur_vel = self.env.current_vel.reshape(self.num_dof)
+        cur_pos = self.env.current_pos().reshape(self.num_dof)
+        cur_vel = self.env.current_vel().reshape(self.num_dof)
 
         trq = self.p_gains.cpu().detach().numpy() * (des_pos - cur_pos) \
               + self.d_gains.cpu().detach().numpy() * (des_vel - cur_vel)

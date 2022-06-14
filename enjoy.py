@@ -17,24 +17,12 @@ def make_env(env_name, path, rank, seed=0):
 algo = "episodic_td3"
 
 env = "FetchReacher-v0"
-#env_id = "ALRReacherBalanceIP-v"
-#env = env_id + '3'
-#env = "InvertedDoublePendulum-v0"
-#env = "Ant-v1"
-env = "dmcWalkerDense-v0"
-#env = "dmcSwimmerDense-v0"
-#env = "dmcSwimmerDense-v0"
-#env = "dmcHopperDense-v0"
-env = "dmcCheetahDense-v0"
-#env = "DeepMindBallInCupDense-v1"
-#env = "MetaButtonPress-v2"
-#env = "ALRHalfCheetahJump-v0"
-#nv = "Hopper-v0"
-#env = "ALRReacherBalanceIP-v4"
-#env = "Ant-v0"
+env = "ALRReacherBalanceIP-v3"
+#env = "dmcCheetahDense-v0"
+env = 'MetaPickAndPlace-v0'
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_38"
+path = "logs/episodic_td3/" + env + "_4"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -46,8 +34,8 @@ data['path'] = path
 
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
-algo_path = path + "/best_model.npy.npz"
-algo_path = path + "/algo_mean.npz"
+algo_path = path + "/best_model.npz"
+#algo_path = path + "/algo_mean.npz"
 
 #a = []
 #import pickle

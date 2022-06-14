@@ -6,10 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MUJOCO_LOG.TXT" beforeDir="false" afterPath="$PROJECT_DIR$/MUJOCO_LOG.TXT" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/episodic_td3.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/episodic_td3.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/enjoy_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/detpmp_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_wrapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/episodic_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/episodic_td3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +40,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/yre/Desktop/KIT/masterthesis/plots&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/yre/Desktop/KIT/masterthesis/hopper/GradientProMP&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -204,6 +206,10 @@
       <workItem from="1654715796450" duration="5735000" />
       <workItem from="1654863517875" duration="52883000" />
       <workItem from="1655041943016" duration="3710000" />
+      <workItem from="1655054851086" duration="666000" />
+      <workItem from="1655104122987" duration="4054000" />
+      <workItem from="1655198586852" duration="1218000" />
+      <workItem from="1655201227620" duration="635000" />
     </task>
     <servers />
   </component>
@@ -239,23 +245,18 @@
           <option name="timeStamp" value="55" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/metaworld/metaworld/envs/mujoco/sawyer_xyz/sawyer_xyz_env.py</url>
-          <line>378</line>
-          <option name="timeStamp" value="89" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/metaworld/metaworld/envs/mujoco/sawyer_xyz/v2/sawyer_button_press_v2.py</url>
           <line>133</line>
           <option name="timeStamp" value="95" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/controller.py</url>
-          <line>195</line>
+          <line>217</line>
           <option name="timeStamp" value="101" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/enjoy.py</url>
-          <line>90</line>
+          <line>77</line>
           <option name="timeStamp" value="106" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -305,32 +306,32 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>385</line>
+          <line>360</line>
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>287</line>
+          <line>279</line>
           <option name="timeStamp" value="199" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>317</line>
+          <line>310</line>
           <option name="timeStamp" value="202" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>583</line>
+          <line>560</line>
           <option name="timeStamp" value="204" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>536</line>
+          <line>511</line>
           <option name="timeStamp" value="205" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/enjoy.py</url>
-          <line>66</line>
+          <line>53</line>
           <option name="timeStamp" value="206" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
