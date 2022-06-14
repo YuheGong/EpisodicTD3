@@ -287,8 +287,7 @@ class EpisodicTD3(BaseAlgorithm):
         if self.best_model < self.eval_reward:
             self.best_model = self.eval_reward
             np.savez(self.data_path + "/best_model", self.actor.mp.weights.cpu().detach().numpy())
-        print("eval", self.eval_reward)
-        print("best", self.best_model)
+
         # save current policy parameters
         np.savez(self.data_path + "/algo_mean", self.actor.mp.weights.cpu().detach().numpy())
         np.savez(self.data_path + "/pos_features", self.actor.mp.pos_features.cpu().detach().numpy())
