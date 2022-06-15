@@ -201,18 +201,21 @@ class DetPMPWrapper(ABC):
             env: the environment we want to render.
         """
         import time
-        #print("render")
-        ##self.mp.pos_features = th.Tensor(pos).to(device='cuda')
-        #self.mp.vel_features = th.Tensor(vel).to(device='cuda')
+
         self.mp.weights = th.Tensor(weights).to(device='cuda')
         self.update()
+        print("pos_model",self.mp.pos_features_np)
+
 
         rewards = 0
         step_length = self.step_length
         env.reset()
-        print("env", env)
+        print("env", self.step_length)
+
+        import time
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
+                time.sleep(0.01)
                 ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
