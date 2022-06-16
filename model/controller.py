@@ -39,9 +39,6 @@ The controllers.
 class BaseController:
     def __init__(self, env: Env, p_gains=None, d_gains=None, **kwargs):
         self.env = env
-        if "Meta" in str(self.env):
-            self.env.obs_for_promp = self.meta_obs
-
         if p_gains is not None:
             if isinstance(p_gains, str):
                 p_gains = np.fromstring(p_gains, dtype=float, sep=',')
@@ -59,12 +56,6 @@ class BaseController:
     def get_action(self, des_pos, des_vel, des_acc):
         raise NotImplementedError
 
-    def meta_obs(self):
-        return np.concatenate([
-            np.array(self.env.sim.data.mocap_quat).reshape(-1),
-            np.array(self.env.sim.data.mocap_pos).reshape(-1),
-            np.array([1, ]).reshape(-1),
-        ]).reshape(-1)
 
 class PosController(BaseController):
     def __init__(self,
@@ -74,17 +65,44 @@ class PosController(BaseController):
         super(PosController, self).__init__(env)
 
     def get_action(self, des_pos, des_vel, des_acc):
-        cur_pos =self.env.current_pos().reshape(-1)
-        des_pos = des_pos - cur_pos
+        #cur_pos =self.env.current_pos().reshape(-1)
+        des_pos = des_pos #- cur_pos
         return des_pos, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
-        cur_pos = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
-        des_pos = des_pos - cur_pos
+        #cur_pos = observation[:, -self.num_dof:].reshape(-1,self.num_dof)
+        des_pos = des_pos # - cur_pos
         return des_pos
 
 
+class MetaWorldController(BaseController):
+    """
+    A Metaworld Controller. Using position and velocity information from a provided environment,
+    the controller calculates a response based on the desired position and velocity.
+    Unlike the other Controllers, this is a special controller for MetaWorld environments.
+    They use a position delta for the xyz coordinates and a raw position for the gripper opening.
+    :param env: A position environment
+    """
 
+    def __init__(self,
+                 env: None,
+                 num_dof: None):
+        self.num_dof = int(num_dof)
+        super(MetaWorldController, self).__init__(env)
+
+    def get_action(self, des_pos, des_vel, des_acc):
+        gripper_pos = des_pos[-1]
+        cur_pos = self.env.current_pos()[-self.num_dof:-1]
+        xyz_pos = des_pos[:-1]
+        trq = np.hstack([(xyz_pos - cur_pos), gripper_pos])
+        return trq, des_pos, des_vel
+
+    def predict_actions(self, des_pos, des_vel, des_acc, observation):
+        gripper_pos = des_pos[:, -1]
+        cur_pos = observation[:, -self.num_dof:-1].reshape(-1,self.num_dof-1)
+        xyz_pos = des_pos[:, :-1]
+        trq = torch.hstack([(xyz_pos - cur_pos), gripper_pos.reshape(-1,1)])
+        return trq
 
 class VelController(BaseController):
     def __init__(self,

@@ -3,7 +3,7 @@ import gym
 import numpy as np
 from .detpmp_model import DeterministicProMP
 import torch as th
-from .controller import PosController, PDController, VelController, PIDController
+from .controller import PosController, PDController, VelController, PIDController, MetaWorldController
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
 
@@ -71,6 +71,8 @@ class DetPMPWrapper(ABC):
                                             i_gains=controller_kwargs['controller_kwargs']['i_gains'],
                                             d_gains=controller_kwargs['controller_kwargs']['d_gains'],
                                             num_dof=num_dof)
+        elif self.controller_type == 'MetaWorld':
+            self.controller = MetaWorldController(env, num_dof=num_dof)
         else:
             raise AssertionError("controller not exist")
 
@@ -96,6 +98,10 @@ class DetPMPWrapper(ABC):
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
                     device='cuda')
+            elif self.controller_type == "MetaWorld":
+                self.trajectory[:,:-1] += th.Tensor(self.env.current_pos()[:-1].reshape(self.num_dof-1)).to(
+                    device='cuda')
+
             elif self.controller_type == 'pid':
                 #self.trajectory += th.Tensor(
                 #    self.controller.obs()[-3 * self.num_dof:-2 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
@@ -215,10 +221,11 @@ class DetPMPWrapper(ABC):
         import time
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
-                time.sleep(0.01)
+                time.sleep(0.1)
                 ac = self.get_action(i)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
+                print(i, reward)
                 rewards += reward
                 env.render(False)
         else:
