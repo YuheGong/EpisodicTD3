@@ -6,7 +6,8 @@ from utils.model import policy_kwargs_building
 from model.episodic_td3 import EpisodicTD3
 import numpy as np
 from model.schedule import dmcCheetahDens_v0_schedule, \
-    dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule,FetchReacher_schedule
+    dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule,FetchReacher_schedule,\
+    MetaPickAndPlace_schedule
 
 
 ''''
@@ -54,6 +55,7 @@ Schedule = {
         #'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
         #'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
         'FetchReacher-v0': FetchReacher_schedule,
+        'MetaPickAndPlace-v0': MetaPickAndPlace_schedule,
 }
 
 if args.env in Schedule.keys():

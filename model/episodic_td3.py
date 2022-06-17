@@ -148,7 +148,9 @@ class EpisodicTD3(BaseAlgorithm):
 
         # set the exploration noise
         self.noise_sigma = noise_sigma
+        #if isinstance(self.noise_sigma, float) or isinstance(self.noise_sigma, int):
         self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
+
 
         # Setup initial ProMP parameters
         self.promp_params = self._setup_promp_params(initial_promp_params)

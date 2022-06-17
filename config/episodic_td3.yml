@@ -472,7 +472,7 @@ MetaPickAndPlace-v0:
     total_timesteps: 3.e+8
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.1
+    noise_sigma: [0.5, 0.5, 0.5, 0.1]
     policy_kwargs:
       activation_fn: ReLU
       pi: 256

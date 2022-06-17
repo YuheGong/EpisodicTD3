@@ -80,3 +80,11 @@ class FetchReacher_schedule(Schedule):
             #model.actor_optimizer.param_groups[0]['lr'] = model.actor_learning_rate
 
 
+class MetaPickAndPlace_schedule(Schedule):
+
+    def schedule(self, model):
+
+        if model.eval_reward > 1100:
+            model.noise_sigma = 0.1
+            model.noise = NormalActionNoise(mean=np.zeros(model.dof), sigma=model.noise_sigma * np.ones(model.dof))
+
