@@ -211,23 +211,24 @@ class DetPMPWrapper(ABC):
         self.mp.weights = th.Tensor(weights).to(device='cuda')
         self.update()
         print("pos_model",self.mp.pos_features_np)
-
+        noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=0.1 * np.ones(self.num_dof))
 
         rewards = 0
         step_length = self.step_length
         env.reset()
         print("env", self.step_length)
-
+        obs = []
         import time
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
-                time.sleep(0.1)
+                #time.sleep(0.1)
                 ac = self.get_action(i)
-                ac = np.clip(ac, -1, 1).reshape(self.num_dof)
-                obs, reward, dones, info = env.step(ac)
-                print(i, reward)
+                acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
+                ob, reward, dones, info = env.step(acs)
+                print(i, reward, ac, acs)
+                obs.append(self.env.sim.data.mocap_pos.copy())
                 rewards += reward
-                env.render(False)
+                #env.render(False)
         else:
             import time
             for i in range(step_length):
