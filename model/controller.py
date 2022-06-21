@@ -93,7 +93,7 @@ class MetaWorldController(BaseController):
 
     def get_action(self, des_pos, des_vel, des_acc):
         gripper_pos = des_pos[-1]
-        cur_pos = self.env.current_pos()[-self.num_dof:-1]
+        #cur_pos = self.env.current_pos()[-self.num_dof:-1]
         xyz_pos = des_pos[:-1] #* self.env.action_scale
         trq = np.hstack([(xyz_pos), gripper_pos])
         return trq, des_pos, des_vel

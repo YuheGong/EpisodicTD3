@@ -23,6 +23,8 @@ from stable_baselines3.common.vec_env import VecEnv
 from .replay_buffer import ReplayBufferStep
 import gym
 from stable_baselines3.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
+from .contextual import ContextNN
+
 
 
 class EpisodicTD3(BaseAlgorithm):
@@ -64,7 +66,7 @@ class EpisodicTD3(BaseAlgorithm):
         learning_start_episodes: int = 10,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
-        buffer_size: int = int(1e5),
+        buffer_size: int = int(200),
         tau: float = 0.005,
         gamma: float = 0.99,
         policy_delay: int = 2,
@@ -77,6 +79,8 @@ class EpisodicTD3(BaseAlgorithm):
         seed: Optional[int] = None,
         device: Union[th.device, str] = "auto",
         data_path: str = None,
+        contextual: bool = False,
+        context_hidden_layer: int = 1,
     ):
 
 
@@ -153,7 +157,13 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # Setup initial ProMP parameters
-        self.promp_params = self._setup_promp_params(initial_promp_params)
+        contextual = True
+        self.contextual = contextual
+        if self.contextual:
+            self.context_hidden_layer = context_hidden_layer
+        else:
+            self.promp_params = initial_promp_params
+
         self.promp_policy_kwargs = promp_policy_kwargs
 
         # The initial reward of the best model
@@ -166,9 +176,21 @@ class EpisodicTD3(BaseAlgorithm):
         """
         The function to initialize ProMP and critic network.
         """
+
         self._setup_lr_schedule() # learning rate schedule
         self._setup_critic_model() # initializing critic network
         self._convert_train_freq()
+
+        if self.contextual:
+            n_input = self.env.context().shape[0]
+            assert len(self.env.context().shape) == 1, \
+                "the contextual information should be reshape into one dimension."
+            n_hidden = self.context_hidden_layer
+            n_output = self.basis_num * self.dof
+            self.contextNN = ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
+            th.Tensor(self.env.context()).to(device='cuda')
+        else:
+            self.promp_params = self._setup_promp_params(self.promp_params)
 
         # ProMP hyperparameters
         if 'controller_kwargs' in self.promp_policy_kwargs.keys():
@@ -256,15 +278,20 @@ class EpisodicTD3(BaseAlgorithm):
                                           noise_sigma=self.noise_sigma,
                                           controller_kwargs=self.actor_kwargs)
 
-        # Pass the promp parameters value to ProMP weights
-        self.actor.mp.weights = self.promp_params.to(device='cuda')
-        (self.actor.mp.weights).requires_grad = True  # Enable the gradient of ProMP weights
 
         # Set the ProMP weights optimizer
-        self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
+        if self.contextual:
+            self.actor.mp.weights = self.contextNN.forward(th.Tensor(self.env.context()).to(device='cuda'))\
+                .reshape(self.basis_num, self.dof)
+            self.actor_optimizer = th.optim.Adam(self.contextNN.parameters(), lr=self.actor_learning_rate)
+        else:
+            # Pass the promp parameters value to ProMP weights
+            self.actor.mp.weights = self.promp_params.to(device='cuda')
+            (self.actor.mp.weights).requires_grad = True  # Enable the gradient of ProMP weights
+            self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
 
         # Set target ProMP weights by target delay
-        self.actor_target.mp.weights = self.promp_params * self.tau
+        self.actor_target.mp.weights = self.actor.mp.weights * self.tau
         self.actor_target.mp.weights = self.actor_target.mp.weights.to(device='cuda')
 
         # Update the reference trajectory according to weights
@@ -350,6 +377,9 @@ class EpisodicTD3(BaseAlgorithm):
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
+                if self.contextual:
+                    self.actor.mp.weights = self.contextNN.forward(th.Tensor(self.env.context()).to(device='cuda')) \
+                        .reshape(self.basis_num, self.dof)
                 self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
                 #self.actor_target.controller.p_gains = self.actor.controller.p_gains
                 #self.actor_target.controller.d_gains = self.actor.controller.d_gains

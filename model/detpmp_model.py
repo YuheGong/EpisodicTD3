@@ -77,6 +77,8 @@ class DeterministicProMP:
             self.pos_features.requires_grad = True
         if self.vel_features.requires_grad == False:
             self.vel_features.requires_grad = True
+        if self.weights.requires_grad == False:
+            self.weights.requires_grad = True
         return self.t * self.cr_scale, th.matmul(self.pos_features, self.weights), \
                th.matmul(self.vel_features, self.weights) / self.cr_scale, \
                th.matmul(self.acc_features, self.weights) / th.square(self.cr_scale)

@@ -185,6 +185,8 @@ class DetPMPWrapper(ABC):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
         else:
             episode_reward = rewards
+
+        print("episode_reward", episode_reward)
         return episode_reward, step_length
 
     # should be deleted when finished, use render_rollout to render the environment
@@ -211,24 +213,30 @@ class DetPMPWrapper(ABC):
         self.mp.weights = th.Tensor(weights).to(device='cuda')
         self.update()
         print("pos_model",self.mp.pos_features_np)
-        noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=0.1 * np.ones(self.num_dof))
+        noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=0 * np.ones(self.num_dof))
 
         rewards = 0
         step_length = self.step_length
-        env.reset()
-        print("env", self.step_length)
+        ob = env.reset()
+        print("ob", ob, self.env.sim.data.qpos, self.env.sim.data.qvel)
         obs = []
+        ac1 = []
+        infos = []
         import time
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
-                #time.sleep(0.1)
+                time.sleep(0.05)
                 ac = self.get_action(i)
                 acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
                 ob, reward, dones, info = env.step(acs)
-                print(i, reward, ac, acs)
+                #print(i, reward, ac, acs)
+                infos.append(info['obj_to_target'])
                 obs.append(self.env.sim.data.mocap_pos.copy())
                 rewards += reward
-                #env.render(False)
+                env.render(False)
+            infos = np.array(infos)
+            print(np.min(infos))
+            print("rewards", rewards)
         else:
             import time
             for i in range(step_length):
@@ -243,4 +251,3 @@ class DetPMPWrapper(ABC):
                 if done:
                     step_length = i + 1
                     break
-        print("rewards", rewards)
