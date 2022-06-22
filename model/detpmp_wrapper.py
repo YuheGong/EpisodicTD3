@@ -89,19 +89,12 @@ class DetPMPWrapper(ABC):
             if self.controller_type == 'motor':
                 self.trajectory += th.Tensor(
                     self.env.current_pos().reshape(self.num_dof)).to(device='cuda')
-                #self.trajectory += th.Tensor(
-                #    self.env.current_pos.reshape(self.num_dof)).to(device='cuda')
-                #self.velocity += th.Tensor(
-                #   self.controller.obs()[-2 * self.num_dof:-1 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
-                #self.acceleration += th.Tensor(
-                #       self.controller.obs()[-1 * self.num_dof:].reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
                     device='cuda')
             elif self.controller_type == "MetaWorld":
                 self.trajectory[:,:-1] += th.Tensor(self.env.current_pos()[:-1].reshape(self.num_dof-1)).to(
                     device='cuda')
-
             elif self.controller_type == 'pid':
                 #self.trajectory += th.Tensor(
                 #    self.controller.obs()[-3 * self.num_dof:-2 * self.num_dof].reshape(self.num_dof)).to(device='cuda')
@@ -113,6 +106,51 @@ class DetPMPWrapper(ABC):
         self.velocity_np = self.velocity.cpu().detach().numpy()
         self.acceleration_np = self.acceleration.cpu().detach().numpy()
 
+    def update_context(self, steps):
+        """
+        This function build up the reference trajectory of ProMP
+        according to the current weights in each iteration.
+        """
+        # torch version of the reference trajectory
+        self.trajectory = self.mp.pos_features[steps] @ self.mp.weights
+        self.velocity = self.mp.vel_features[steps] @ self.mp.weights
+        self.acceleration = self.mp.acc_features[steps] @ self.mp.weights
+
+        # add initial position
+        if self.zero_start:
+            if self.controller_type == 'motor':
+                self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(device='cuda')
+            elif self.controller_type == 'position':
+                self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
+                    device='cuda')
+            elif self.controller_type == "MetaWorld":
+                self.trajectory[:,:-1] += th.Tensor(self.env.current_pos()[:-1].reshape(self.num_dof-1)).to(
+                    device='cuda')
+            elif self.controller_type == 'pid':
+               self.trajectory += th.Tensor(
+                    self.env.current_pos.reshape(self.num_dof)).to(device='cuda')
+
+        # numpy version of the reference trajectory
+        #self.trajectory_np = self.trajectory.cpu().detach().numpy()
+        #self.velocity_np = self.velocity.cpu().detach().numpy()
+        #self.acceleration_np = self.acceleration.cpu().detach().numpy()
+
+    def predict_action_context(self, step, observation):
+        """
+        This function predicts the actions according to the Replay Buffer observations.
+        It is used for critic network and actor policy updating.
+
+        Input:
+            step: the timestep information stored in Replay Buffer.
+            observation: the observation stored in Replay Buffer.
+        Return:
+            action: the action based on current ProMP parameters.
+        """
+        self.positions = self.trajectory.reshape(-1, self.num_dof)
+        self.velocities = self.velocity.reshape(-1, self.num_dof)
+        self.accelerations = self.acceleration.reshape(-1, self.num_dof)
+        actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
+        return actions
 
     def predict_action(self, step, observation):
         """

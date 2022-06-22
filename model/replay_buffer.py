@@ -43,6 +43,7 @@ class ReplayBufferStepSamples(NamedTuple):
     rewards: th.Tensor
     steps: th.Tensor
     next_steps: th.Tensor
+    context: th.Tensor
 
 class ReplayBufferStep(BaseBuffer):
 
@@ -54,6 +55,7 @@ class ReplayBufferStep(BaseBuffer):
         device: Union[th.device, str] = "cpu",
         n_envs: int = 1,
         optimize_memory_usage: bool = False,
+        context_space: spaces.Space = None
     ):
         super(ReplayBufferStep, self).__init__(buffer_size, observation_space, action_space, device, n_envs=n_envs)
 
@@ -65,6 +67,8 @@ class ReplayBufferStep(BaseBuffer):
 
         self.optimize_memory_usage = optimize_memory_usage
         self.observations = np.zeros((self.buffer_size, self.n_envs) + self.obs_shape, dtype=np.float32)
+
+
         if optimize_memory_usage:
             # `observations` contains also the next observation
             self.next_observations = None
@@ -75,6 +79,12 @@ class ReplayBufferStep(BaseBuffer):
         self.dones = np.zeros((self.buffer_size, self.n_envs), dtype=np.float32)
         self.steps = np.zeros((self.buffer_size, self.n_envs), dtype=np.int)
         self.next_steps = np.zeros((self.buffer_size, self.n_envs), dtype=np.int)
+
+        if context_space is not None:
+            self.context_dim = context_space.shape[0]
+        else:
+            self.context_dim = 0
+        self.context = np.zeros((self.buffer_size, self.n_envs, self.context_dim), dtype=np.float32)
 
 
         if psutil is not None:
@@ -92,7 +102,7 @@ class ReplayBufferStep(BaseBuffer):
                 )
 
     def add(self, obs: np.ndarray, next_obs: np.ndarray, action: np.ndarray, reward: np.ndarray, done: np.ndarray, steps: np.ndarray,
-            next_steps: np.ndarray) -> None:
+            next_steps: np.ndarray, context: np.ndarray = None) -> None:
         # Copy to avoid modification by reference
         self.observations[self.pos] = np.array(obs).copy()
         if self.optimize_memory_usage:
@@ -105,6 +115,8 @@ class ReplayBufferStep(BaseBuffer):
         self.dones[self.pos] = np.array(done).copy()
         self.steps[self.pos] = np.array(steps).copy()
         self.next_steps[self.pos] = np.array(next_steps).copy()
+        if context is not None:
+            self.context[self.pos] = np.array(context).copy()
 
         self.pos += 1
         if self.pos == self.buffer_size:
@@ -132,6 +144,7 @@ class ReplayBufferStep(BaseBuffer):
             self._normalize_reward(self.rewards[batch_inds], env),
             self.steps[batch_inds],
             self.next_steps[batch_inds],
+            self.context[batch_inds]
         )
         return ReplayBufferStepSamples(*tuple(map(self.to_torch, data)))
 

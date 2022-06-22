@@ -80,7 +80,7 @@ class EpisodicTD3(BaseAlgorithm):
         device: Union[th.device, str] = "auto",
         data_path: str = None,
         contextual: bool = False,
-        context_hidden_layer: int = 1,
+        context_hidden_layer: int = 256,
     ):
 
 
@@ -161,8 +161,12 @@ class EpisodicTD3(BaseAlgorithm):
         self.contextual = contextual
         if self.contextual:
             self.context_hidden_layer = context_hidden_layer
+            self.train = self.train_context
+            self.collect_rollouts = self.collect_rollouts_context
         else:
             self.promp_params = initial_promp_params
+            self.train = self.train_no_context
+            self.collect_rollouts = self.collect_rollouts_no_context
 
         self.promp_policy_kwargs = promp_policy_kwargs
 
@@ -187,8 +191,10 @@ class EpisodicTD3(BaseAlgorithm):
                 "the contextual information should be reshape into one dimension."
             n_hidden = self.context_hidden_layer
             n_output = self.basis_num * self.dof
-            self.contextNN = ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
-            th.Tensor(self.env.context()).to(device='cuda')
+            self.actor_contextNN = ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
+            self.actor_target_contextNN = ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
+            #self.actor_contextNN = self.policy.actor #ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
+            #self.actor_target_contextNN = self.policy.actor_target #ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
         else:
             self.promp_params = self._setup_promp_params(self.promp_params)
 
@@ -241,13 +247,25 @@ class EpisodicTD3(BaseAlgorithm):
         Initialize the critic model
         """
         self.set_random_seed(self.seed)
-        self.replay_buffer = ReplayBufferStep(
-            self.buffer_size,
-            self.observation_space,
-            self.action_space,
-            self.device,
-            optimize_memory_usage=self.optimize_memory_usage,
-        )
+        if self.contextual:
+            self.replay_buffer = ReplayBufferStep(
+                self.buffer_size,
+                self.observation_space,
+                self.action_space,
+                self.device,
+                optimize_memory_usage=self.optimize_memory_usage,
+                context_space=self.env.context_space(),
+            )
+        else:
+            self.replay_buffer = ReplayBufferStep(
+                self.buffer_size,
+                self.observation_space,
+                self.action_space,
+                self.device,
+                optimize_memory_usage=self.optimize_memory_usage,
+            )
+        self.policy_kwargs['basis_num'] = self.basis_num
+        self.policy_kwargs['dof'] = self.dof
         self.policy = self.policy_class(  # pytype:disable=not-instantiable
             self.observation_space,
             self.action_space,
@@ -281,25 +299,28 @@ class EpisodicTD3(BaseAlgorithm):
 
         # Set the ProMP weights optimizer
         if self.contextual:
-            self.actor.mp.weights = self.contextNN.forward(th.Tensor(self.env.context()).to(device='cuda'))\
-                .reshape(self.basis_num, self.dof)
-            self.actor_optimizer = th.optim.Adam(self.contextNN.parameters(), lr=self.actor_learning_rate)
+            self.env.reset()
+            self.actor.mp.weights = self.actor_contextNN.forward(
+                th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
+            self.actor_target.mp.weights = self.actor_target_contextNN.forward(
+                th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
+            self.actor_optimizer = th.optim.Adam(self.actor_contextNN.parameters(), lr=self.actor_learning_rate)
         else:
             # Pass the promp parameters value to ProMP weights
             self.actor.mp.weights = self.promp_params.to(device='cuda')
             (self.actor.mp.weights).requires_grad = True  # Enable the gradient of ProMP weights
             self.actor_optimizer = th.optim.Adam([self.actor.mp.weights], lr=self.actor_learning_rate)
 
-        # Set target ProMP weights by target delay
-        self.actor_target.mp.weights = self.actor.mp.weights * self.tau
-        self.actor_target.mp.weights = self.actor_target.mp.weights.to(device='cuda')
+            # Set target ProMP weights by target delay
+            self.actor_target.mp.weights = self.actor.mp.weights * self.tau
+            self.actor_target.mp.weights = self.actor_target.mp.weights.to(device='cuda')
 
         # Update the reference trajectory according to weights
         self.actor.update()
         self.actor_target.update()
 
 
-    def train(self, gradient_steps: int, batch_size: int = 100) -> None:
+    def train_no_context(self, gradient_steps: int, batch_size: int = 100) -> None:
         """
         The function updates the parameters of critic network and ProMP weights.
         """
@@ -378,18 +399,26 @@ class EpisodicTD3(BaseAlgorithm):
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 if self.contextual:
-                    self.actor.mp.weights = self.contextNN.forward(th.Tensor(self.env.context()).to(device='cuda')) \
-                        .reshape(self.basis_num, self.dof)
-                self.actor_target.mp.weights = (self.actor.mp.weights * self.tau + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
-                #self.actor_target.controller.p_gains = self.actor.controller.p_gains
-                #self.actor_target.controller.d_gains = self.actor.controller.d_gains
+                    polyak_update(self.actor_contextNN.parameters(), self.actor_target_contextNN.parameters(), self.tau)
+                    self.env.reset()
+                    self.actor.mp.weights = self.actor_contextNN.forward(
+                        th.Tensor(self.env.context()).to(device='cuda')) .reshape(self.basis_num, self.dof)
+                    self.actor_target.mp.weights = self.actor_target_contextNN.forward(
+                        th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
+                else:
+                    self.actor_target.mp.weights = (self.actor.mp.weights * self.tau
+                                                    + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
 
                 # update the reference trajectory in ProMP
                 self.actor.update()
                 self.actor_target.update()
 
         # supervise the trajectory and weights, should be deleted when finished
+        print("context", self.env.context())
         print("weights", self.actor.mp.weights[0])
+        #for i in self.actor_contextNN.parameters():
+        #    print(i[0][:10])
+
 
         # tensorboard logger
         logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
@@ -451,10 +480,12 @@ class EpisodicTD3(BaseAlgorithm):
 
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
-            #scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
-            #scaled_action = np.clip(scaled_action, -1, 1)
-            #buffer_action = scaled_action
-            #action = self.policy.unscale_action(scaled_action)
+            #if self.contextual:
+            #    scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
+            #    scaled_action = np.clip(scaled_action, -1, 1)
+            #    buffer_action = scaled_action
+            #    action = self.policy.unscale_action(scaled_action)
+            #else:
             action = unscaled_action
             buffer_action = action
         else:
@@ -485,21 +516,25 @@ class EpisodicTD3(BaseAlgorithm):
 
     def _store_transition(self, replay_buffer: ReplayBufferStep, buffer_action: np.ndarray,
                           new_obs: np.ndarray, reward: np.ndarray, done: np.ndarray,
-                          infos: List[Dict[str, Any]], steps: np.ndarray, next_steps: np.ndarray) -> None:
+                          infos: List[Dict[str, Any]], steps: np.ndarray, next_steps: np.ndarray,
+                          context: np.ndarray = None) -> None:
         """
         Store the transitions into Replay Buffer.
         """
         self._last_original_obs, new_obs_, reward_ = self._last_obs, new_obs, reward
         next_obs = new_obs_
+        steps = np.array(steps).reshape(-1)
+        next_steps = np.array(next_steps).reshape(-1)
+        context = np.array(context).reshape(-1)
 
-        replay_buffer.add(self._last_original_obs, next_obs, buffer_action, reward_, done, steps, next_steps)
+        replay_buffer.add(self._last_original_obs, next_obs, buffer_action, reward_, done, steps, next_steps, context)
 
         self._last_obs = new_obs
         # Save the unnormalized observation
         if self._vec_normalize_env is not None:
             self._last_original_obs = new_obs_
 
-    def collect_rollouts(self, env: VecEnv, callback: BaseCallback, train_freq: TrainFreq,
+    def collect_rollouts_no_context(self, env: VecEnv, callback: BaseCallback, train_freq: TrainFreq,
                          replay_buffer: ReplayBufferStep, learning_starts: int = 0,
                          log_interval: Optional[int] = None,
                          ) -> RolloutReturn:
@@ -680,6 +715,241 @@ class EpisodicTD3(BaseAlgorithm):
         return super()._setup_learn(
             total_timesteps, eval_env, callback, eval_freq, n_eval_episodes, log_path, reset_num_timesteps, tb_log_name
         )
+
+    def update_context(self, context):
+        self.actor.mp.weights = self.actor_contextNN.forward(
+            context).reshape(self.basis_num, self.dof)
+        self.actor_target.mp.weights = self.actor_target_contextNN.forward(
+           context).reshape(self.basis_num, self.dof)
+        self.actor.update()
+        self.actor_target.update()
+
+
+    def update_context_in_training(self, context, steps):
+        self.actor.mp.weights = self.actor_contextNN.forward(
+            context).reshape(self.batch_size, self.basis_num, self.dof)
+        self.actor_target.mp.weights = self.actor_target_contextNN.forward(
+           context).reshape(self.batch_size, self.basis_num, self.dof)
+        self.actor.update_context(steps)
+        self.actor_target.update_context(steps)
+
+
+
+    def train_context(self, gradient_steps: int, batch_size: int = 100) -> None:
+        """
+        The function updates the parameters of critic network and ProMP weights.
+        """
+
+        # evaluate the current policy, and save the reward and the episode length
+        self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
+        self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
+        self.env.reset()
+
+        # learning rate and noise schedule
+        if self.need_schedule:
+            self.schedule.schedule(model=self)
+
+        # save the best evaluate reward
+        if self.best_model < self.eval_reward:
+            self.best_model = self.eval_reward
+            np.savez(self.data_path + "/best_model", self.actor.mp.weights.cpu().detach().numpy())
+
+        # save current policy parameters
+        np.savez(self.data_path + "/algo_mean", self.actor.mp.weights.cpu().detach().numpy())
+        np.savez(self.data_path + "/pos_features", self.actor.mp.pos_features.cpu().detach().numpy())
+        np.savez(self.data_path + "/vel_features", self.actor.mp.vel_features.cpu().detach().numpy())
+
+        # critic learning rate schedule
+        self._update_learning_rate([self.critic.optimizer])
+
+        actor_losses, critic_losses = [], []
+
+        for gradient_step in range(gradient_steps):
+
+            self._n_updates += 1
+            # Sample replay buffer
+            replay_data = self.replay_buffer.sample(batch_size, env=self._vec_normalize_env)
+
+            with th.no_grad():
+
+                # Select action according to policy and add clipped noise
+                noise = replay_data.actions.clone().data.normal_(0, self.target_policy_noise)
+                noise = noise.clamp(-self.target_noise_clip, self.target_noise_clip)
+                next_step = replay_data.next_steps
+
+                self.update_context_in_training(replay_data.context, replay_data.next_steps)
+                self.env.reset()
+
+                next_actions = (self.actor_target.predict_action_context(next_step, replay_data.next_observations) + noise).clamp(-1, 1)
+
+                # Compute the next Q-values: min over all critics targets
+                next_q_values = th.cat(self.critic_target(replay_data.next_observations, next_actions, (next_step+1)/self.max_episode_steps),
+                                       dim=1)
+                next_q_values, _ = th.min(next_q_values, dim=1, keepdim=True)
+                target_q_values = replay_data.rewards + (1 - replay_data.dones) * self.gamma * next_q_values
+
+            # Get current Q-values estimates for each critic network
+            current_q_values = self.critic(replay_data.observations, replay_data.actions, ((replay_data.steps+1)/self.max_episode_steps))
+
+            # Compute critic loss
+            critic_loss = sum([F.mse_loss(current_q,  target_q_values) for current_q in current_q_values])
+            critic_losses.append(critic_loss.item())
+
+            # Optimize the critics
+            self.critic.optimizer.zero_grad()
+            critic_loss.backward()
+            self.critic.optimizer.step()
+
+            # Delayed policy updates
+
+            if self._n_updates % self.policy_delay == 0:
+                # Compute actor loss
+
+                self.update_context_in_training(replay_data.context, replay_data.steps)
+                self.env.reset()
+
+                act = self.actor.predict_action_context(replay_data.steps, replay_data.observations)
+                actor_loss = -self.critic.q1_forward(replay_data.observations, act,  (replay_data.steps+1)/self.max_episode_steps).mean()
+                actor_losses.append(actor_loss.item())
+
+                # Optimize the actor
+                self.actor_optimizer.zero_grad()
+                #self.controller_optimizer.zero_grad()
+                actor_loss.backward()
+                self.actor_optimizer.step()
+                #self.controller_optimizer.step()
+
+                # Update actor target
+                polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
+                polyak_update(self.actor_contextNN.parameters(), self.actor_target_contextNN.parameters(), self.tau)
+                #self.update_context()
+                #self.env.reset()
+
+        self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
+
+        # supervise the trajectory and weights, should be deleted when finished
+        print("context", self.env.context())
+        print("weights", self.actor.mp.weights[0])
+        #for i in self.actor_contextNN.parameters():
+        #    print(i[0][:10])
+
+
+        # tensorboard logger
+        logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
+        if len(actor_losses) > 0:
+            logger.record("train/actor_loss", np.mean(actor_losses))
+        logger.record("train/critic_loss", np.mean(critic_losses))
+        logger.record("eval/noise_reward", self.reward_with_noise)
+        logger.record("train/actor_learning_rate", self.actor_learning_rate)
+        logger.record("train/gradient_steps", gradient_steps)
+        logger.record("train/noise_sigma", self.noise_sigma)
+        logger.record("train/num_basis", self.basis_num)
+        logger.record("eval/mean_reward", self.eval_reward)
+        logger.record("eval/episode_length", eval_epi_length)
+
+    def collect_rollouts_context(self, env: VecEnv, callback: BaseCallback, train_freq: TrainFreq,
+                         replay_buffer: ReplayBufferStep, learning_starts: int = 0,
+                         log_interval: Optional[int] = None,
+                         ) -> RolloutReturn:
+
+        """
+        Collect the data.
+        """
+
+        episode_rewards, total_timesteps = [], []
+        num_collected_steps, num_collected_episodes = 0, 0
+
+
+        if self.use_sde:
+            self.actor.reset_noise()
+
+        callback.on_rollout_start()
+        continue_training = True
+
+        #  the timestep information in each episode
+        if self.episode_timesteps == 0:
+            done = False
+            self.actor.update()
+
+        while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
+                self.ls_number < self.learning_starts:
+
+            # loop for episode
+            done = False
+            episode_reward = 0.0
+            self.obs = []
+            self.actions = []
+
+
+            while not done:  # loop for steps during one episode (timesteps plus one)
+
+                # Select action according to policy
+                action, buffer_action = self._sample_action(self.episode_timesteps)
+
+                # Rescale and perform action
+                if 'Meta' in str(env):
+                    action = action.reshape(-1)
+
+                new_obs, reward, done, infos = env.step(action)
+
+                context = self.env.context().reshape(1,-1)
+                new_obs = np.hstack([new_obs]).reshape(1, -1)
+                action = action.reshape(1,-1)
+                new_obs = new_obs.reshape(1,-1)
+                self.actions.append(action)
+
+
+                self.num_timesteps += 1
+                self.episode_timesteps += 1
+                self.ls_number += 1
+                num_collected_steps += 1
+
+                # Give access to local variables
+                callback.update_locals(locals())
+                episode_reward += reward
+
+                # Store data in replay buffer (normalized action and unnormalized observation)
+                next_step = self.episode_timesteps
+                if self.episode_timesteps == self.max_episode_steps:
+                    next_step = self.max_episode_steps-1
+                self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
+                                       self.episode_timesteps - 1, next_step, context)
+
+                self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
+
+                # should I use this?
+                # if the environment ends before one episode length, restart the environment
+                #if not (should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) and
+                #        self.ls_number < self.learning_starts):
+                #    env.reset()
+                #    self.episode_timesteps = 0
+                #    break
+
+                #env.render()
+
+            if done:
+                # save the reward of the noisy sampling environment
+                if hasattr(self.env, "rewards_no_ip"):
+                    self.reward_with_noise = self.env.rewards_no_ip  # the total reward without initial phase
+                else:
+                    self.reward_with_noise = episode_reward
+                env.reset()
+                num_collected_episodes += 1
+                self._episode_num += 1
+                episode_rewards.append(episode_reward)
+                total_timesteps.append(self.episode_timesteps)
+                self.episode_timesteps = 0
+
+                # Log training infos
+                if log_interval is not None and self._episode_num % log_interval == 0:
+                    print("")
+                    self._dump_logs()
+
+        mean_reward = np.mean(episode_rewards) if num_collected_episodes > 0 else 0.0
+
+        callback.on_rollout_end()
+
+        return RolloutReturn(mean_reward, num_collected_steps, num_collected_episodes, continue_training)
 
 
 

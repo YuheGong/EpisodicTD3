@@ -13,7 +13,72 @@ from stable_baselines3.common.torch_layers import (
     get_actor_critic_arch,
 )
 from stable_baselines3.common.type_aliases import Schedule
+from stable_baselines3.common.preprocessing import get_action_dim
 
+class Actor(BasePolicy):
+    """
+    Actor network (policy) for TD3.
+
+    :param observation_space: Obervation space
+    :param action_space: Action space
+    :param net_arch: Network architecture
+    :param features_extractor: Network to extract features
+        (a CNN when using images, a nn.Flatten() layer otherwise)
+    :param features_dim: Number of features
+    :param activation_fn: Activation function
+    :param normalize_images: Whether to normalize images or not,
+         dividing by 255.0 (True by default)
+    """
+
+    def __init__(
+        self,
+        observation_space: gym.spaces.Space,
+        action_space: gym.spaces.Space,
+        net_arch: List[int],
+        features_extractor: nn.Module,
+        features_dim: int,
+        activation_fn: Type[nn.Module] = nn.ReLU,
+        normalize_images: bool = True,
+    ):
+        super(Actor, self).__init__(
+            observation_space,
+            action_space,
+            features_extractor=features_extractor,
+            normalize_images=normalize_images,
+            squash_output=True,
+        )
+
+        self.net_arch = net_arch
+        self.features_dim = features_dim
+        self.activation_fn = activation_fn
+
+        action_dim = self.action_space #et_action_dim(self.action_space)
+        actor_net = create_mlp(features_dim, action_dim, net_arch, activation_fn, squash_output=True)
+        # Deterministic action
+        self.mu = nn.Sequential(*actor_net)
+
+    def _get_constructor_parameters(self) -> Dict[str, Any]:
+        data = super()._get_constructor_parameters()
+
+        data.update(
+            dict(
+                net_arch=self.net_arch,
+                features_dim=self.features_dim,
+                activation_fn=self.activation_fn,
+                features_extractor=self.features_extractor,
+            )
+        )
+        return data
+
+    def forward(self, obs: th.Tensor) -> th.Tensor:
+        # assert deterministic, 'The TD3 actor only outputs deterministic actions'
+        features = self.extract_features(obs)
+        return self.mu(features)
+
+    def _predict(self, observation: th.Tensor, deterministic: bool = False) -> th.Tensor:
+        # Note: the deterministic deterministic parameter is ignored in the case of TD3.
+        #   Predictions are always deterministic.
+        return self.forward(observation)
 
 
 class TD3Policy(BasePolicy):
@@ -53,6 +118,8 @@ class TD3Policy(BasePolicy):
         optimizer_kwargs: Optional[Dict[str, Any]] = None,
         n_critics: int = 2,
         share_features_extractor: bool = True,
+        basis_num: int = None,
+        dof: int = None,
     ):
         super(TD3Policy, self).__init__(
             observation_space,
@@ -65,6 +132,8 @@ class TD3Policy(BasePolicy):
         )
 
         # Default network architecture, from the original paper
+        self.basis_num = basis_num
+        self.dof = dof
         if net_arch is None:
             if features_extractor_class == FlattenExtractor:
                 net_arch = [400, 300]
@@ -82,7 +151,13 @@ class TD3Policy(BasePolicy):
             "activation_fn": self.activation_fn,
             "normalize_images": normalize_images,
         }
-        #self.actor_kwargs = self.net_args.copy()
+        #self.actor_kwargs = {
+        #    "observation_space": self.context_space,
+        #    "action_space": self.basis_num * self.dof,
+        #    "net_arch": actor_arch,
+        #    "activation_fn": self.activation_fn,
+        #    "normalize_images": normalize_images,
+        #}
         self.critic_kwargs = self.net_args.copy()
         self.critic_kwargs.update(
             {
@@ -99,6 +174,13 @@ class TD3Policy(BasePolicy):
         self._build(lr_schedule)
 
     def _build(self, lr_schedule: Schedule) -> None:
+        #self.actor = self.make_actor(features_extractor=None)
+        #self.actor_target = self.make_actor(features_extractor=None)
+        # Initialize the target to have the same weights as the actor
+        #self.actor_target.load_state_dict(self.actor.state_dict())
+
+        #self.actor.optimizer = self.optimizer_class(self.actor.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)
+
         if self.share_features_extractor:
             self.critic = self.make_critic(features_extractor=None)
             self.critic_target = self.make_critic(features_extractor=None)
@@ -109,6 +191,12 @@ class TD3Policy(BasePolicy):
 
         self.critic_target.load_state_dict(self.critic.state_dict())
         self.critic.optimizer = self.optimizer_class(self.critic.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)
+
+    def make_actor(self, features_extractor: Optional[BaseFeaturesExtractor] = None) -> Actor:
+        actor_kwargs = self._update_features_extractor(self.actor_kwargs, features_extractor)
+        actor_kwargs['features_dim'] = 6
+        return Actor(**actor_kwargs).to(self.device)
+
 
     def _get_constructor_parameters(self) -> Dict[str, Any]:
         data = super()._get_constructor_parameters()

@@ -16,22 +16,16 @@ class ContextNN(nn.Module):
     """
     def __init__(self, n_input, n_hidden, n_output):
         super(ContextNN,self).__init__()
-        self.seq = nn.Sequential(nn.Linear(n_input, n_hidden),
+        self.seq = nn.Sequential(nn.Linear(n_input, n_hidden, bias=False),
                                  # TODO: Adjust here
+                                 #nn.ReLU(),
+                                 #nn.Linear(n_hidden, n_hidden),
                                  nn.ReLU(),
-                                 nn.Linear(n_hidden, n_hidden),
-                                 nn.ReLU(),
-                                 nn.Linear(n_hidden, n_output))
-        self.hidden1 = nn.Linear(n_input,n_hidden)
-        self.hidden2 = nn.Linear(n_hidden,n_hidden)
-        self.predict = nn.Linear(n_hidden,n_output)
+                                 nn.Linear(n_hidden, n_output, bias=False),
+                                 nn.Tanh())
+
 
     def forward(self, input):
-        #out = self.hidden1(input)
-        #out = F.ReLU(out)
-        #out = self.hidden2(out)
-        #out = F.ReLU(out)
-        #out =self.predict(out)
         out = self.seq(input)
         return out
 
