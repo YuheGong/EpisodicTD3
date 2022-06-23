@@ -192,7 +192,12 @@ class EpisodicTD3(BaseAlgorithm):
             n_hidden = self.context_hidden_layer
             n_output = self.basis_num * self.dof
             self.actor_contextNN = ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
+            for i in self.actor_contextNN.parameters():
+                i.data.fill_(0.01)
+
             self.actor_target_contextNN = ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
+            for i in self.actor_target_contextNN.parameters():
+                i.data.fill_(0.01 * self.tau)
             #self.actor_contextNN = self.policy.actor #ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
             #self.actor_target_contextNN = self.policy.actor_target #ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
         else:
@@ -476,18 +481,19 @@ class EpisodicTD3(BaseAlgorithm):
         This function samples the data from the environment.
         """
         unscaled_action = self.actor.get_action(episode_timesteps)
-        unscaled_action += self.noise().reshape(-1)
 
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
-            #if self.contextual:
-            #    scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
-            #    scaled_action = np.clip(scaled_action, -1, 1)
-            #    buffer_action = scaled_action
-            #    action = self.policy.unscale_action(scaled_action)
-            #else:
-            action = unscaled_action
-            buffer_action = action
+            if self.contextual:
+                scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
+                scaled_action = np.clip(scaled_action, -1, 1)
+                scaled_action += self.noise().reshape(-1)
+                buffer_action = scaled_action
+                action = self.policy.unscale_action(scaled_action)
+            else:
+                unscaled_action += self.noise().reshape(-1)
+                action = unscaled_action
+                buffer_action = action
         else:
             # Discrete case, no need to normalize or clip
             buffer_action = np.clip(unscaled_action, -1, 1)
@@ -778,7 +784,7 @@ class EpisodicTD3(BaseAlgorithm):
                 next_step = replay_data.next_steps
 
                 self.update_context_in_training(replay_data.context, replay_data.next_steps)
-                self.env.reset()
+                #self.env.reset()
 
                 next_actions = (self.actor_target.predict_action_context(next_step, replay_data.next_observations) + noise).clamp(-1, 1)
 
@@ -806,7 +812,7 @@ class EpisodicTD3(BaseAlgorithm):
                 # Compute actor loss
 
                 self.update_context_in_training(replay_data.context, replay_data.steps)
-                self.env.reset()
+                #self.env.reset()
 
                 act = self.actor.predict_action_context(replay_data.steps, replay_data.observations)
                 actor_loss = -self.critic.q1_forward(replay_data.observations, act,  (replay_data.steps+1)/self.max_episode_steps).mean()
