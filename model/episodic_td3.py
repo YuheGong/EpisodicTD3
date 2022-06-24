@@ -185,6 +185,7 @@ class EpisodicTD3(BaseAlgorithm):
         self._setup_critic_model() # initializing critic network
         self._convert_train_freq()
 
+        '''
         if self.contextual:
             n_input = self.env.context().shape[0]
             assert len(self.env.context().shape) == 1, \
@@ -197,10 +198,14 @@ class EpisodicTD3(BaseAlgorithm):
 
             self.actor_target_contextNN = ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
             for i in self.actor_target_contextNN.parameters():
-                i.data.fill_(0.01 * self.tau)
+                i.data.fill_(0.01)
             #self.actor_contextNN = self.policy.actor #ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
             #self.actor_target_contextNN = self.policy.actor_target #ContextNN(n_input=n_input, n_hidden=n_hidden, n_output=n_output).cuda()
         else:
+            self.promp_params = self._setup_promp_params(self.promp_params)
+        '''
+
+        if self.contextual is None:
             self.promp_params = self._setup_promp_params(self.promp_params)
 
         # ProMP hyperparameters
@@ -275,7 +280,9 @@ class EpisodicTD3(BaseAlgorithm):
             self.observation_space,
             self.action_space,
             self.lr_schedule,
+            self.env.context_space,
             **self.policy_kwargs,  # pytype:disable=not-instantiable
+
         )
         self.policy = self.policy.to(self.device)
         self.critic = self.policy.critic
@@ -305,11 +312,18 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the ProMP weights optimizer
         if self.contextual:
             self.env.reset()
+            '''
             self.actor.mp.weights = self.actor_contextNN.forward(
                 th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
             self.actor_target.mp.weights = self.actor_target_contextNN.forward(
                 th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
             self.actor_optimizer = th.optim.Adam(self.actor_contextNN.parameters(), lr=self.actor_learning_rate)
+            '''
+            self.actor.mp.weights = self.policy.actor(th.Tensor(
+                self.env.context()).to(device='cuda').reshape(1,-1)).reshape(self.basis_num, self.dof)
+            self.actor_target.mp.weights = self.policy.actor_target(th.Tensor(
+                self.env.context()).to(device='cuda').reshape(1,-1)).reshape(self.basis_num, self.dof)
+            self.actor_optimizer = self.policy.actor.optimizer
         else:
             # Pass the promp parameters value to ProMP weights
             self.actor.mp.weights = self.promp_params.to(device='cuda')
@@ -723,18 +737,18 @@ class EpisodicTD3(BaseAlgorithm):
         )
 
     def update_context(self, context):
-        self.actor.mp.weights = self.actor_contextNN.forward(
-            context).reshape(self.basis_num, self.dof)
-        self.actor_target.mp.weights = self.actor_target_contextNN.forward(
-           context).reshape(self.basis_num, self.dof)
+        self.actor.mp.weights = self.policy.actor.forward(
+            context.reshape(1,-1)).reshape(self.basis_num, self.dof)
+        self.actor_target.mp.weights = self.policy.actor_target.forward(
+           context.reshape(1,-1)).reshape(self.basis_num, self.dof)
         self.actor.update()
         self.actor_target.update()
 
 
     def update_context_in_training(self, context, steps):
-        self.actor.mp.weights = self.actor_contextNN.forward(
+        self.actor.mp.weights = self.policy.actor.forward(
             context).reshape(self.batch_size, self.basis_num, self.dof)
-        self.actor_target.mp.weights = self.actor_target_contextNN.forward(
+        self.actor_target.mp.weights = self.policy.actor_target.forward(
            context).reshape(self.batch_size, self.basis_num, self.dof)
         self.actor.update_context(steps)
         self.actor_target.update_context(steps)
@@ -827,7 +841,7 @@ class EpisodicTD3(BaseAlgorithm):
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
-                polyak_update(self.actor_contextNN.parameters(), self.actor_target_contextNN.parameters(), self.tau)
+                polyak_update(self.policy.actor.parameters(), self.policy.actor_target.parameters(), self.tau)
                 #self.update_context()
                 #self.env.reset()
 

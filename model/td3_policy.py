@@ -109,6 +109,7 @@ class TD3Policy(BasePolicy):
         observation_space: gym.spaces.Space,
         action_space: gym.spaces.Space,
         lr_schedule: Schedule,
+        context_space: gym.spaces.Space = None,
         net_arch: Optional[Union[List[int], Dict[str, List[int]]]] = None,
         activation_fn: Type[nn.Module] = nn.ReLU,
         features_extractor_class: Type[BaseFeaturesExtractor] = FlattenExtractor,
@@ -151,13 +152,14 @@ class TD3Policy(BasePolicy):
             "activation_fn": self.activation_fn,
             "normalize_images": normalize_images,
         }
-        #self.actor_kwargs = {
-        #    "observation_space": self.context_space,
-        #    "action_space": self.basis_num * self.dof,
-        #    "net_arch": actor_arch,
-        #    "activation_fn": self.activation_fn,
-        #    "normalize_images": normalize_images,
-        #}
+        self.context_space = context_space()
+        self.actor_kwargs = {
+            "observation_space": self.context_space,
+            "action_space": self.basis_num * self.dof,
+            "net_arch": actor_arch,
+            "activation_fn": self.activation_fn,
+            "normalize_images": normalize_images,
+        }
         self.critic_kwargs = self.net_args.copy()
         self.critic_kwargs.update(
             {
@@ -174,12 +176,12 @@ class TD3Policy(BasePolicy):
         self._build(lr_schedule)
 
     def _build(self, lr_schedule: Schedule) -> None:
-        #self.actor = self.make_actor(features_extractor=None)
-        #self.actor_target = self.make_actor(features_extractor=None)
+        self.actor = self.make_actor(features_extractor=None)
+        self.actor_target = self.make_actor(features_extractor=None)
         # Initialize the target to have the same weights as the actor
-        #self.actor_target.load_state_dict(self.actor.state_dict())
+        self.actor_target.load_state_dict(self.actor.state_dict())
 
-        #self.actor.optimizer = self.optimizer_class(self.actor.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)
+        self.actor.optimizer = self.optimizer_class(self.actor.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)
 
         if self.share_features_extractor:
             self.critic = self.make_critic(features_extractor=None)
@@ -193,8 +195,7 @@ class TD3Policy(BasePolicy):
         self.critic.optimizer = self.optimizer_class(self.critic.parameters(), lr=lr_schedule(1), **self.optimizer_kwargs)
 
     def make_actor(self, features_extractor: Optional[BaseFeaturesExtractor] = None) -> Actor:
-        actor_kwargs = self._update_features_extractor(self.actor_kwargs, features_extractor)
-        actor_kwargs['features_dim'] = 6
+        actor_kwargs = self._update_features_extractor(self.actor_kwargs, features_extractor, space=self.context_space)
         return Actor(**actor_kwargs).to(self.device)
 
 

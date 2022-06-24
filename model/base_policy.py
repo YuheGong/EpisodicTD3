@@ -85,7 +85,7 @@ class BaseModel(nn.Module, ABC):
         pass
 
     def _update_features_extractor(
-        self, net_kwargs: Dict[str, Any], features_extractor: Optional[BaseFeaturesExtractor] = None
+        self, net_kwargs: Dict[str, Any], features_extractor: Optional[BaseFeaturesExtractor] = None, space=None
     ) -> Dict[str, Any]:
         """
         Update the network keyword arguments and create a new features extractor object if needed.
@@ -100,13 +100,17 @@ class BaseModel(nn.Module, ABC):
         net_kwargs = net_kwargs.copy()
         if features_extractor is None:
             # The features extractor is not shared, create a new one
-            features_extractor = self.make_features_extractor()
+            features_extractor = self.make_features_extractor(space=space)
         net_kwargs.update(dict(features_extractor=features_extractor, features_dim=features_extractor.features_dim))
         return net_kwargs
 
-    def make_features_extractor(self) -> BaseFeaturesExtractor:
+    def make_features_extractor(self, space=None) -> BaseFeaturesExtractor:
         """ Helper method to create a features extractor."""
-        return self.features_extractor_class(self.observation_space, **self.features_extractor_kwargs)
+        if space == None:
+            space = self.observation_space
+        else:
+            space = space
+        return self.features_extractor_class(space, **self.features_extractor_kwargs)
 
     def extract_features(self, obs: th.Tensor) -> th.Tensor:
         """

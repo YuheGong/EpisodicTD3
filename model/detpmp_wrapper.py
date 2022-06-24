@@ -124,7 +124,7 @@ class DetPMPWrapper(ABC):
                 self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
                     device='cuda')
             elif self.controller_type == "MetaWorld":
-                self.trajectory[:,:-1] += th.Tensor(self.env.current_pos()[:-1].reshape(self.num_dof-1)).to(
+                self.trajectory[:,:, :-1] += th.Tensor(self.env.current_pos()[:-1].reshape(self.num_dof-1)).to(
                     device='cuda')
             elif self.controller_type == 'pid':
                self.trajectory += th.Tensor(

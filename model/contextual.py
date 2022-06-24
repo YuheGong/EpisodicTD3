@@ -16,9 +16,9 @@ class ContextNN(nn.Module):
     """
     def __init__(self, n_input, n_hidden, n_output):
         super(ContextNN,self).__init__()
-        self.seq = nn.Sequential(nn.Linear(n_input, n_output, bias=False),
-                                 #nn.ReLU(),
-                                 #nn.Linear(n_hidden, n_hidden),
+        self.seq = nn.Sequential(nn.Linear(n_input, n_hidden, bias=False),
+                                 nn.ReLU(),
+                                 nn.Linear(n_hidden, n_output),
                                  #nn.ReLU(),
                                  #nn.Linear(n_hidden, n_output, bias=False),
                                  #nn.Tanh()
