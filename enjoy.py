@@ -22,7 +22,7 @@ env = "ALRReacherBalanceIP-v3"
 env = 'MetaPickAndPlace-v0'
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_4"
+path = "logs/episodic_td3/" + env + "_36"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -35,20 +35,23 @@ data['path'] = path
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
 algo_path = path + "/best_model.npz"
-#algo_path = path + "/algo_mean.npz"
+algo_path = path + "/algo_mean.npz"
 
-#a = []
-#import pickle
-#with open("my_file.pkl", "wb") as h:
-#    pickle.dump(a, h)
-#zzzopen(algo_path, 'rb').close()
-
-#print("a",h)
-#data = np.array(algo_path )
 algorithm = np.load(algo_path, encoding='bytes', allow_pickle=True)
 for i in algorithm:
     algorithm = np.array(algorithm[i])
 
+
+pos = path + "/pos_features.npz"
+vel = path + "/vel_features.npz"
+
+pos_feature= np.load(pos, encoding='bytes', allow_pickle=True)
+for i in pos_feature:
+    pos_feature = np.array(pos_feature[i])
+vel_feature= np.load(vel, encoding='bytes', allow_pickle=True)
+for i in vel_feature:
+    vel_feature = np.array(vel_feature[i])
+print("pos_feature",pos_feature)
 # make the model and save the model
 ALGO = EpisodicTD3
 
@@ -89,4 +92,4 @@ basis_num = data['promp_params']['num_basis']
 
 print("algorithm", algorithm)
 
-model.load(algorithm, env, pos=None, vel=None)
+model.load(algorithm, env, pos=pos_feature, vel=vel_feature)

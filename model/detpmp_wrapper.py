@@ -42,7 +42,7 @@ class DetPMPWrapper(ABC):
         self.start_traj = None
         self.trajectory = None
         self.velocity = None
-        self.noise = NormalActionNoise(mean=np.zeros(num_dof), sigma=noise_sigma * np.ones(num_dof))
+        self.noise = NormalActionNoise(mean=np.zeros(num_dof), sigma=noise_sigma * np.ones(num_dof * num_basis))
 
         self.step_length = step_length
         self.env = env
@@ -180,9 +180,11 @@ class DetPMPWrapper(ABC):
         Return:
             action: the action used for indicating the movements of the robot.
         """
-        noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=noise * np.ones(self.num_dof))
+        contextual = True
+        if contextual == True:
+            noise_traj = self.mp.pos_features_np * self.noise().reshape(-1, self.num_dof)
 
-        trajectory = self.trajectory_np[timesteps].copy()
+        trajectory = self.trajectory_np[timesteps].copy() + noise_traj
         velocity = self.velocity_np[timesteps].copy()
         acceleration = self.acceleration_np[timesteps].copy()
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
@@ -206,6 +208,7 @@ class DetPMPWrapper(ABC):
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
+                ac = np.tanh(ac)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
                 rewards += reward
@@ -224,7 +227,7 @@ class DetPMPWrapper(ABC):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
         else:
             episode_reward = rewards
-
+        print("action", ac)
         print("episode_reward", episode_reward)
         return episode_reward, step_length
 
