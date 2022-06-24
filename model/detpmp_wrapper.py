@@ -42,7 +42,7 @@ class DetPMPWrapper(ABC):
         self.start_traj = None
         self.trajectory = None
         self.velocity = None
-        self.noise = NormalActionNoise(mean=np.zeros(num_dof * num_basis), sigma=noise_sigma * np.ones(num_dof * num_basis))
+        #self.noise = NormalActionNoise(mean=np.zeros(num_dof * num_basis), sigma=noise_sigma * np.ones(num_dof * num_basis))
 
         self.step_length = step_length
         self.env = env
@@ -181,7 +181,7 @@ class DetPMPWrapper(ABC):
             action: the action used for indicating the movements of the robot.
         """
 
-        trajectory = self.trajectory_np[timesteps].copy() + noise_traj
+        trajectory = self.trajectory_np[timesteps].copy() #+ noise_traj
         velocity = self.velocity_np[timesteps].copy()
         acceleration = self.acceleration_np[timesteps].copy()
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
@@ -266,9 +266,10 @@ class DetPMPWrapper(ABC):
             for i in range(int(self.step_length)):
                 time.sleep(0.05)
                 ac = self.get_action(i)
+                ac = np.tanh(ac)
                 acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
                 ob, reward, dones, info = env.step(acs)
-                #print(i, reward, ac, acs)
+                print(i, reward, ac, acs)
                 infos.append(info['obj_to_target'])
                 obs.append(self.env.sim.data.mocap_pos.copy())
                 rewards += reward
