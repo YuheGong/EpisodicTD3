@@ -499,6 +499,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
             if self.contextual:
+                unscaled_action = np.tanh(unscaled_action)
                 scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
                 scaled_action = np.clip(scaled_action, -1, 1)
                 scaled_action += self.noise().reshape(-1)

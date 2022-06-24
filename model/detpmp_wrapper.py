@@ -150,6 +150,7 @@ class DetPMPWrapper(ABC):
         self.velocities = self.velocity.reshape(-1, self.num_dof)
         self.accelerations = self.acceleration.reshape(-1, self.num_dof)
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
+        actions = th.tanh(actions)
         return actions
 
     def predict_action(self, step, observation):
