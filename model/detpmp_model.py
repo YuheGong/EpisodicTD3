@@ -37,9 +37,12 @@ class DeterministicProMP:
         self.pos_features_np *= self.weight_scale
         self.vel_features_np *= self.weight_scale
         self.acc_features_np *= self.weight_scale
-        self.pos_features = th.Tensor(self.pos_features_np[:, self.n_zero_bases:]).to(device="cuda")
-        self.vel_features = th.Tensor(self.vel_features_np[:, self.n_zero_bases:]).to(device="cuda")
-        self.acc_features = th.Tensor(self.acc_features_np[:, self.n_zero_bases:]).to(device="cuda")
+        self.pos_features_np = self.pos_features_np[:, self.n_zero_bases:]
+        self.vel_features_np = self.vel_features_np[:, self.n_zero_bases:]
+        self.acc_features_np = self.acc_features_np[:, self.n_zero_bases:]
+        self.pos_features = th.Tensor(self.pos_features_np).to(device="cuda")
+        self.vel_features = th.Tensor(self.vel_features_np).to(device="cuda")
+        self.acc_features = th.Tensor(self.acc_features_np).to(device="cuda")
         self.pos_features.requires_grad = True
         self.vel_features.requires_grad = True
 

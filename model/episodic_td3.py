@@ -507,7 +507,7 @@ class EpisodicTD3(BaseAlgorithm):
             #    action = self.policy.unscale_action(scaled_action)
             #else:
             unscaled_action = np.tanh(unscaled_action)
-            #nscaled_action += self.noise().reshape(-1)
+            unscaled_action += self.noise().reshape(-1)
             action = unscaled_action
             buffer_action = action
         else:

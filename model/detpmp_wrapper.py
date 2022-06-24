@@ -42,7 +42,7 @@ class DetPMPWrapper(ABC):
         self.start_traj = None
         self.trajectory = None
         self.velocity = None
-        self.noise = NormalActionNoise(mean=np.zeros(num_dof), sigma=noise_sigma * np.ones(num_dof * num_basis))
+        self.noise = NormalActionNoise(mean=np.zeros(num_dof * num_basis), sigma=noise_sigma * np.ones(num_dof * num_basis))
 
         self.step_length = step_length
         self.env = env
@@ -180,9 +180,6 @@ class DetPMPWrapper(ABC):
         Return:
             action: the action used for indicating the movements of the robot.
         """
-        contextual = True
-        if contextual == True:
-            noise_traj = self.mp.pos_features_np * self.noise().reshape(-1, self.num_dof)
 
         trajectory = self.trajectory_np[timesteps].copy() + noise_traj
         velocity = self.velocity_np[timesteps].copy()
