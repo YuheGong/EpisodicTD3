@@ -66,7 +66,7 @@ class EpisodicTD3(BaseAlgorithm):
         learning_start_episodes: int = 10,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
-        buffer_size: int = int(200),
+        buffer_size: int = int(1e6),
         tau: float = 0.005,
         gamma: float = 0.99,
         policy_delay: int = 2,
@@ -264,7 +264,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.action_space,
                 self.device,
                 optimize_memory_usage=self.optimize_memory_usage,
-                context_space=self.env.context_space(),
+                context_space=self.env.context_space,
             )
         else:
             self.replay_buffer = ReplayBufferStep(
@@ -324,6 +324,8 @@ class EpisodicTD3(BaseAlgorithm):
             self.actor_target.mp.weights = self.policy.actor_target(th.Tensor(
                 self.env.context()).to(device='cuda').reshape(1,-1)).reshape(self.basis_num, self.dof)
             self.actor_optimizer = self.policy.actor.optimizer
+            self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
+            self.weights_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
         else:
             # Pass the promp parameters value to ProMP weights
             self.actor.mp.weights = self.promp_params.to(device='cuda')
@@ -409,10 +411,12 @@ class EpisodicTD3(BaseAlgorithm):
                 actor_losses.append(actor_loss.item())
 
                 # Optimize the actor
+                #self.weights_optimizer.zero_grad()
                 self.actor_optimizer.zero_grad()
                 #self.controller_optimizer.zero_grad()
                 actor_loss.backward()
                 self.actor_optimizer.step()
+                #self.weights_optimizer.step()
                 #self.controller_optimizer.step()
 
                 # Update actor target
@@ -422,8 +426,8 @@ class EpisodicTD3(BaseAlgorithm):
                     self.env.reset()
                     self.actor.mp.weights = self.actor_contextNN.forward(
                         th.Tensor(self.env.context()).to(device='cuda')) .reshape(self.basis_num, self.dof)
-                    self.actor_target.mp.weights = self.actor_target_contextNN.forward(
-                        th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
+                    #self.actor_target.mp.weights = self.actor_target_contextNN.forward(
+                    #    th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
                 else:
                     self.actor_target.mp.weights = (self.actor.mp.weights * self.tau
                                                     + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
@@ -435,6 +439,7 @@ class EpisodicTD3(BaseAlgorithm):
         # supervise the trajectory and weights, should be deleted when finished
         print("context", self.env.context())
         print("weights", self.actor.mp.weights[0])
+
         #for i in self.actor_contextNN.parameters():
         #    print(i[0][:10])
 
@@ -844,6 +849,8 @@ class EpisodicTD3(BaseAlgorithm):
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
                 polyak_update(self.policy.actor.parameters(), self.policy.actor_target.parameters(), self.tau)
+                #self.actor_target.mp.pos_features = (self.actor.mp.pos_features * self.tau
+                #                        + (1 - self.tau) * self.actor_target.mp.pos_features).to(device="cuda")
                 #self.update_context()
                 #self.env.reset()
 
@@ -852,6 +859,7 @@ class EpisodicTD3(BaseAlgorithm):
         # supervise the trajectory and weights, should be deleted when finished
         print("context", self.env.context())
         print("weights", self.actor.mp.weights[0])
+        print("features", self.actor.mp.pos_features[0])
         #for i in self.actor_contextNN.parameters():
         #    print(i[0][:10])
 

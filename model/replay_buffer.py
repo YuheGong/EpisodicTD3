@@ -128,6 +128,7 @@ class ReplayBufferStep(BaseBuffer):
             batch_inds = (np.random.randint(1, self.buffer_size, size=batch_size) + self.pos) % self.buffer_size
         else:
             batch_inds = np.random.randint(0, self.pos, size=batch_size)
+        #batch_inds = np.linspace(0, batch_size - 1, batch_size).astype(int)
         return self._get_samples(batch_inds, env=env)
 
     def _get_samples(self, batch_inds: np.ndarray, env: Optional[VecNormalize] = None) -> ReplayBufferSamples:

@@ -153,7 +153,7 @@ class TD3Policy(BasePolicy):
             "activation_fn": self.activation_fn,
             "normalize_images": normalize_images,
         }
-        self.context_space = context_space()
+        self.context_space = context_space
         self.actor_kwargs = {
             "observation_space": self.context_space,
             "action_space": self.basis_num * self.dof,
