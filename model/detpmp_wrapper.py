@@ -224,7 +224,7 @@ class DetPMPWrapper(ABC):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
         else:
             episode_reward = rewards
-        print("action", ac)
+
         print("episode_reward", episode_reward)
         return episode_reward, step_length
 
@@ -269,7 +269,7 @@ class DetPMPWrapper(ABC):
                 ac = np.tanh(ac)
                 acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
                 ob, reward, dones, info = env.step(acs)
-                print(i, reward, ac, acs)
+                print(i, self.env.context())
                 infos.append(info['obj_to_target'])
                 obs.append(self.env.sim.data.mocap_pos.copy())
                 rewards += reward
