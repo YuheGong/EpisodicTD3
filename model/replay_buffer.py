@@ -128,15 +128,15 @@ class ReplayBufferStep(BaseBuffer):
             batch_inds = (np.random.randint(1, self.buffer_size, size=batch_size) + self.pos) % self.buffer_size
         else:
             batch_inds = np.random.randint(0, self.pos, size=batch_size)
-        batch_inds = np.random.randint(0, self.pos/200, size=batch_size)
-        self.episode_length = 200
-        batch_inds = batch_inds #* self.episode_length
-        batch = []
-        for i in batch_inds:
-            batch.append(np.linspace(i * self.episode_length, (i + 1) * self.episode_length - 1, self.episode_length))
-        batch = np.array(batch).reshape(-1).astype(int)
-        return self._get_samples(batch, env=env)
-        #return self._get_samples(batch_inds, env=env)
+        #batch_inds = np.random.randint(0, self.pos/200, size=batch_size)
+        #self.episode_length = 200
+        #batch_inds = batch_inds #* self.episode_length
+        #batch = []
+        ##for i in batch_inds:
+        #    batch.append(np.linspace(i * self.episode_length, (i + 1) * self.episode_length - 1, self.episode_length))
+        #batch = np.array(batch).reshape(-1).astype(int)
+        #return self._get_samples(batch, env=env)
+        return self._get_samples(batch_inds, env=env)
 
     def _get_samples(self, batch_inds: np.ndarray, env: Optional[VecNormalize] = None) -> ReplayBufferSamples:
         if self.optimize_memory_usage:
