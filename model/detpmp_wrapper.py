@@ -205,7 +205,7 @@ class DetPMPWrapper(ABC):
         if "Meta" in str(env):
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
-                ac = np.tanh(ac)
+                #ac = np.tanh(ac)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
                 rewards += reward
@@ -266,10 +266,12 @@ class DetPMPWrapper(ABC):
             for i in range(int(self.step_length)):
                 time.sleep(0.05)
                 ac = self.get_action(i)
-                ac = np.tanh(ac)
+                #ac = np.tanh(ac)
                 acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
+                #acs[2] = 0
+
                 ob, reward, dones, info = env.step(acs)
-                print(i, self.env.context())
+                print(i, acs, reward)
                 infos.append(info['obj_to_target'])
                 obs.append(self.env.sim.data.mocap_pos.copy())
                 rewards += reward

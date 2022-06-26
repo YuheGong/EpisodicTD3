@@ -137,7 +137,7 @@ class EpisodicTD3(BaseAlgorithm):
         # Set the batch size, training frequency and gradient steps equal to the length of one episode
         self.train_freq = self.max_episode_steps  # How many gradient steps to do after each rollout
         self.gradient_steps = self.max_episode_steps  # Update the model every ``train_freq`` timesteps.
-        self.batch_size = 64#self.max_episode_steps  # How many data to use in training
+        self.batch_size = self.max_episode_steps  # How many data to use in training
 
         # How many timesteps of the model to collect transitions for before learning starts.
         self.learning_starts = self.max_episode_steps * learning_start_episodes
@@ -157,7 +157,7 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # Setup initial ProMP parameters
-        contextual = True
+        contextual = False
         self.contextual = contextual
         if self.contextual:
             self.context_hidden_layer = context_hidden_layer
@@ -205,7 +205,7 @@ class EpisodicTD3(BaseAlgorithm):
             self.promp_params = self._setup_promp_params(self.promp_params)
         '''
 
-        if self.contextual is None:
+        if self.contextual is False:
             self.promp_params = self._setup_promp_params(self.promp_params)
 
         # ProMP hyperparameters
@@ -421,15 +421,7 @@ class EpisodicTD3(BaseAlgorithm):
 
                 # Update actor target
                 polyak_update(self.critic.parameters(), self.critic_target.parameters(), self.tau)
-                if self.contextual:
-                    polyak_update(self.actor_contextNN.parameters(), self.actor_target_contextNN.parameters(), self.tau)
-                    self.env.reset()
-                    self.actor.mp.weights = self.actor_contextNN.forward(
-                        th.Tensor(self.env.context()).to(device='cuda')) .reshape(self.basis_num, self.dof)
-                    #self.actor_target.mp.weights = self.actor_target_contextNN.forward(
-                    #    th.Tensor(self.env.context()).to(device='cuda')).reshape(self.basis_num, self.dof)
-                else:
-                    self.actor_target.mp.weights = (self.actor.mp.weights * self.tau
+                self.actor_target.mp.weights = (self.actor.mp.weights * self.tau
                                                     + (1 - self.tau) * self.actor_target.mp.weights).to(device="cuda")
 
                 # update the reference trajectory in ProMP
@@ -438,7 +430,7 @@ class EpisodicTD3(BaseAlgorithm):
 
         # supervise the trajectory and weights, should be deleted when finished
         print("context", self.env.context())
-        print("weights", self.actor.mp.weights[0])
+        print("weights", self.actor.mp.weights[-1])
 
         #for i in self.actor_contextNN.parameters():
         #    print(i[0][:10])
@@ -511,7 +503,7 @@ class EpisodicTD3(BaseAlgorithm):
                 buffer_action = scaled_action
                 action = self.policy.unscale_action(scaled_action)
             else:
-                unscaled_action = np.tanh(unscaled_action)
+                #unscaled_action = np.tanh(unscaled_action)
                 unscaled_action += self.noise().reshape(-1)
                 action = unscaled_action
                 buffer_action = action
@@ -942,8 +934,8 @@ class EpisodicTD3(BaseAlgorithm):
                 next_step = self.episode_timesteps
                 if self.episode_timesteps == self.max_episode_steps:
                     next_step = self.max_episode_steps-1
-                self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
-                                       self.episode_timesteps - 1, next_step, context)
+                    self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
+                                           self.episode_timesteps - 1, next_step, context)
 
                 self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
 

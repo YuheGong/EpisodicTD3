@@ -467,18 +467,18 @@ MetaPickAndPlace-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 0.01
-    actor_learning_rate: 0.000001
+    actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
     total_timesteps: 3.e+8
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.1
+    noise_sigma: 0.5
     policy_kwargs:
       activation_fn: tanh
       pi: 256
       qf: 256
   promp_params:
-    num_basis: 5
+    num_basis: 10
     zero_start: True
     zero_basis: 1
     controller_type: MetaWorld
