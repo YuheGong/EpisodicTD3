@@ -203,12 +203,22 @@ class DetPMPWrapper(ABC):
         step_length = self.step_length
         env.reset()
         if "Meta" in str(env):
+            self.min_target_object = 100
+            self.last_target_object = 0
+            self.last_success = 0
+            self.control_cost = 0
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
                 #ac = np.tanh(ac)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
                 rewards += reward
+                self.control_cost += np.sum(np.square(ac))
+                if self.min_target_object > info['obj_to_target']:
+                    self.min_target_object = info['obj_to_target']
+            self.last_success = info['success']
+            self.last_target_object = info['obj_to_target']
+
         else:
             for i in range(step_length):
                 ac = self.get_action(i, noise=0)

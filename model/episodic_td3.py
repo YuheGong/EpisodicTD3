@@ -448,6 +448,12 @@ class EpisodicTD3(BaseAlgorithm):
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
         logger.record("eval/episode_length", eval_epi_length)
+        if "Meta" in str(self.env):
+            logger.record("eval/last_success", self.actor.last_success)
+            logger.record("eval/last_object_to_target", self.actor.last_target_object)
+            logger.record("eval/min_object_to_target", self.actor.min_target_object)
+            logger.record("eval/control_cost", self.actor.control_cost)
+
 
     def learn(self, total_timesteps: int, callback: MaybeCallback = None, log_interval: int = 4,
               eval_env: Optional[GymEnv] = None, eval_freq: int = -1, n_eval_episodes: int = 5,

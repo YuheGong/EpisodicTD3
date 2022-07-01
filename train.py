@@ -31,12 +31,18 @@ parser.add_argument("--seed", type=str, help="the seed")
 args = parser.parse_args()
 
 
+
+
 # load yaml file
 algo = "episodic_td3"
 file_name = algo +".yml"
-data = read_yaml(file_name)[args.env]
-data['env_params']['env_name'] = data['env_params']['env_name']
+if "Meta" in args.env:
+    data = read_yaml(file_name)["Meta-v2"]
+else:
+    data = read_yaml(file_name)[args.env]
 
+if "Meta" in args.env:
+    data['env_params']['env_name'] = data['env_params']['env_name'] + ":" + args.env
 
 # create log folder
 path = logging(data['env_params']['env_name'], data['algorithm'])
@@ -45,8 +51,8 @@ promp_policy_kwargs = data['promp_params']
 
 
 # make the environment
-env = gym.make(data["env_params"]['env_name'])
-eval_env = gym.make(data["env_params"]['env_name'])
+env = gym.make(data["env_params"]['env_name'], seed=args.seed)
+eval_env = gym.make(data["env_params"]['env_name'], seed=args.seed)
 
 
 # learning rate and noise schedule

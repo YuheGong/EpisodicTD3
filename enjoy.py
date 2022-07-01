@@ -20,9 +20,10 @@ env = "FetchReacher-v0"
 env = "ALRReacherBalanceIP-v3"
 #env = "dmcCheetahDense-v0"
 env = 'MetaPickAndPlace-v0'
+#env = "MetaBottonPress-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_36"
+path = "logs/episodic_td3/" + env + "_16"
 
 file_name = algo +".yml"
 data = read_yaml(file_name)[env_id]
@@ -35,7 +36,7 @@ data['path'] = path
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
 algo_path = path + "/best_model.npz"
-algo_path = path + "/algo_mean.npz"
+#algo_path = path + "/algo_mean.npz"
 
 algorithm = np.load(algo_path, encoding='bytes', allow_pickle=True)
 for i in algorithm:
