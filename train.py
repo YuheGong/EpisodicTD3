@@ -42,7 +42,7 @@ else:
     data = read_yaml(file_name)[args.env]
 
 if "Meta" in args.env:
-    data['env_params']['env_name'] = data['env_params']['env_name'] + ":" + args.env
+    data['env_params']['env_name'] = data['env_params']['env_name'] + ":" + args.env_id
 
 # create log folder
 path = logging(data['env_params']['env_name'], data['algorithm'])
