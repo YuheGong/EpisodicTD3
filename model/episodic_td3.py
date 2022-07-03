@@ -152,8 +152,14 @@ class EpisodicTD3(BaseAlgorithm):
 
         # set the exploration noise
         self.noise_sigma = noise_sigma
-        #if isinstance(self.noise_sigma, float) or isinstance(self.noise_sigma, int):
-        self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
+
+        self.weight_noise_judge = False
+        if self.weight_noise_judge == True:
+            self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=0 * np.ones(self.dof))
+            self.weight_noise = NormalActionNoise(mean=np.zeros((self.basis_num, self.dof)),
+                                              sigma=self.noise_sigma * np.ones((self.basis_num, self.dof)))
+        else:
+            self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
 
 
         # Setup initial ProMP parameters
@@ -247,7 +253,6 @@ class EpisodicTD3(BaseAlgorithm):
             initial_promp_params = th.Tensor(initial_promp_params)
 
         initial_promp_params = initial_promp_params.reshape(self.basis_num, self.dof)
-        #initial_promp_params[:,3:5] = 1
 
         return (initial_promp_params.reshape(self.basis_num, self.dof)).to(device="cuda")
 
@@ -347,6 +352,7 @@ class EpisodicTD3(BaseAlgorithm):
         """
 
         # evaluate the current policy, and save the reward and the episode length
+        self.actor.update()
         self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
         self.env.reset()
 
@@ -581,7 +587,18 @@ class EpisodicTD3(BaseAlgorithm):
         #  the timestep information in each episode
         if self.episode_timesteps == 0:
             done = False
+            #self.weights = self.actor.mp.weights
+            #print("rollout, weight", self.actor.mp.weights)
+            #self.actor.mp.weights = noise_weights #th.Tensor(self.weight_noise()).to(device='cuda')
             self.actor.update()
+            if self.weight_noise_judge:
+                noise_weights = th.Tensor(self.weight_noise()).to(device='cuda')
+                trajectory_noise = th.matmul(self.actor.mp.pos_features, noise_weights).cpu().detach().numpy()
+                velocity_noise = th.matmul(self.actor.mp.vel_features, noise_weights).cpu().detach().numpy()
+                acceleration_noise = th.matmul(self.actor.mp.acc_features,noise_weights).cpu().detach().numpy()
+                self.actor.trajectory_np += trajectory_noise
+                self.actor.velocity_np += velocity_noise
+                self.actor.acceleration_np += acceleration_noise
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
                 self.ls_number < self.learning_starts:
