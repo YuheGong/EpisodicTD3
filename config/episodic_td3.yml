@@ -531,12 +531,13 @@ HopperXYJumpStep-v0:
       qf: 256
   promp_params:
     num_basis: 5
-    zero_start: True
+    zero_start: False
     zero_basis: 1
-    controller_type: motor
+    controller_type: pid
     controller_kwargs:
       p_gains: 1
       d_gains: 0.1
+      i_gains: 0
     width: 0.01
     weight_scale: 1
   env_params:
