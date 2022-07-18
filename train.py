@@ -51,8 +51,12 @@ promp_policy_kwargs = data['promp_params']
 
 
 # make the environment
-env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
-eval_env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
+if "Hopper" in data["env_params"]['env_name']:
+    env = gym.make(data["env_params"]['env_name'])
+    eval_env = gym.make(data["env_params"]['env_name'])
+else:
+    env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
+    eval_env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
 
 
 # learning rate and noise schedule

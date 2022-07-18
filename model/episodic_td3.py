@@ -435,7 +435,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.actor_target.update()
 
         # supervise the trajectory and weights, should be deleted when finished
-        print("context", self.env.context())
+        #print("context", self.env.context)
         print("weights", self.actor.mp.weights[-1])
 
         #for i in self.actor_contextNN.parameters():

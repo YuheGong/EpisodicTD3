@@ -263,7 +263,7 @@ class DetPMPWrapper(ABC):
         self.update()
         print("pos_model",self.mp.pos_features_np)
         ob1 = []
-        for i in range(2):
+        for i in range(1):
             if i == 1:
                 noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=[0.5,0.5,0.5,0.1] * np.ones(self.num_dof))
             else:
@@ -290,7 +290,7 @@ class DetPMPWrapper(ABC):
                     infos.append(info['obj_to_target'])
                     obs.append(self.env.sim.data.mocap_pos.copy())
                     rewards += reward
-                    #env.render(False)
+                    env.render(False)
                 ob1 = ob
                 infos = np.array(infos)
                 print(np.min(infos))
@@ -309,3 +309,4 @@ class DetPMPWrapper(ABC):
                     if done:
                         step_length = i + 1
                         break
+                print("rewards", rewards)

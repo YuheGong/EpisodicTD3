@@ -178,8 +178,8 @@ class PDController(BaseController):
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
         cur_vel = observation[:, -1 * self.num_dof:].reshape(observation.shape[0], self.num_dof)
         cur_pos = observation[:, -2 * self.num_dof:-1 * self.num_dof].reshape(observation.shape[0], self.num_dof)
-        cur_vel = observation[:, -2 * self.num_dof:-1 * self.num_dof].reshape(observation.shape[0], self.num_dof)
-        cur_pos = observation[:, -3 * self.num_dof:-2 * self.num_dof].reshape(observation.shape[0], self.num_dof)
+        #cur_vel = observation[:, -2 * self.num_dof:-1 * self.num_dof].reshape(observation.shape[0], self.num_dof)
+        #cur_pos = observation[:, -3 * self.num_dof:-2 * self.num_dof].reshape(observation.shape[0], self.num_dof)
         trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel - cur_vel)
         #trq = self.p_gains * (des_pos- cur_pos) + self.d_gains * (des_vel)
         return trq
