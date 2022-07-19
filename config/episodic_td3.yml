@@ -515,7 +515,7 @@ Meta-v2:
     num_envs: 1
 
 
-HopperXYJumpStep-v0:
+HopperXYJump-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 0.1
@@ -541,5 +541,5 @@ HopperXYJumpStep-v0:
     width: 0.01
     weight_scale: 1
   env_params:
-    env_name: alr_envs:HopperXYJumpStep-v0
+    env_name: alr_envs:HopperXYJump-v0
     num_envs: 1

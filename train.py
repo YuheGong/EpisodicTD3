@@ -5,6 +5,8 @@ import argparse
 from utils.model import policy_kwargs_building
 from model.episodic_td3 import EpisodicTD3
 import numpy as np
+
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from model.schedule import dmcCheetahDens_v0_schedule, \
     dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule,FetchReacher_schedule,\
     MetaPickAndPlace_schedule
@@ -70,6 +72,15 @@ if args.env in Schedule.keys():
 else:
     schedule = None
 
+
+def make_env(env_name, path, rank, seed=0):
+    def _init():
+        env = gym.make(env_name)
+        return env
+    return _init
+
+#env = DummyVecEnv(env_fns=[make_env(data["env_params"]['env_name'], data['path'], i) for i in range(1)])
+#env = VecNormalize(env, training = True, norm_obs=True, norm_reward=True)
 
 # load critic network type and architecture
 critic_kwargs = policy_kwargs_building(data)
