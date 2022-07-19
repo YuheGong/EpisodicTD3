@@ -459,6 +459,9 @@ class EpisodicTD3(BaseAlgorithm):
             logger.record("eval/last_object_to_target", self.actor.last_target_object)
             logger.record("eval/min_object_to_target", self.actor.min_target_object)
             logger.record("eval/control_cost", self.actor.control_cost)
+        elif "Hopper" in str(self.env):
+            logger.record("eval/max_height", self.actor.max_height)
+            logger.record("eval/min_goal_dist", self.actor.min_goal_dist)
 
 
     def learn(self, total_timesteps: int, callback: MaybeCallback = None, log_interval: int = 4,

@@ -19,19 +19,33 @@ algo = "episodic_td3"
 env = "FetchReacher-v0"
 env = "ALRReacherBalanceIP-v3"
 #env = "dmcCheetahDense-v0"
-env = 'MetaPickAndPlace-v0'
-#env = "MetaBottonPress-v0"
-env_id = env
 
-path = "logs/episodic_td3/" + env + "_16"
+env = 'MetaPickAndPlace-v0'
+env = 'Meta-dense-window-open-v2'
+#env = "MetaBottonPress-v0"
+env = 'Meta-dense-handle-pull-side-v2'
+env = 'Meta-dense-handle-pull-v2'
+env = 'Meta-dense-window-open-v2'
+env = 'Meta-pick-place-v2'
+env = 'Meta-dense-soccer-v2'
+env = 'Meta-dense-hammer-v2'
+
+#env = 'Meta-window-open-v2'
+#env = 'Meta-dial-turn-v2'
+env = 'Meta-soccer-v2'
+env = 'Meta-coffee-push-v2'
+env = 'HopperXYJumpStep-v0'
+#env = 'Meta-dense-peg-unplug-side-v2'
+#env_id = 'Meta-v2'
+
+path = "logs/episodic_td3/" + env + "_5"
 
 file_name = algo +".yml"
-data = read_yaml(file_name)[env_id]
-data['env_params']['env_name'] = data['env_params']['env_name']
-
+#data = read_yaml(file_name)[env_id]
+#data['env_params']['env_name'] = data['env_params']['env_name'] + ":" + env
+data = read_yaml(file_name)[env]
 # create log folder
 data['path'] = path
-#data['continue_path'] = "logs/promp_td3/" + env + "_13"
 
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
@@ -49,6 +63,7 @@ vel = path + "/vel_features.npz"
 pos_feature= np.load(pos, encoding='bytes', allow_pickle=True)
 for i in pos_feature:
     pos_feature = np.array(pos_feature[i])
+#pos_feature = None
 vel_feature= np.load(vel, encoding='bytes', allow_pickle=True)
 for i in vel_feature:
     vel_feature = np.array(vel_feature[i])

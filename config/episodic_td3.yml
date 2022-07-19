@@ -518,7 +518,7 @@ Meta-v2:
 HopperXYJumpStep-v0:
   algorithm: episodic_td3
   algo_params:
-    initial_promp_params: 0.01
+    initial_promp_params: 0.1
     actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
     total_timesteps: 1.e+7
@@ -530,7 +530,7 @@ HopperXYJumpStep-v0:
       pi: 256
       qf: 256
   promp_params:
-    num_basis: 5
+    num_basis: 10
     zero_start: False
     zero_basis: 1
     controller_type: pid

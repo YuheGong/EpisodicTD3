@@ -228,7 +228,9 @@ class DetPMPWrapper(ABC):
                 if done:
                     step_length = i + 1
                     break
-
+            if "Hopper" in str(env):
+                self.max_height = info["max_height"]
+                self.min_goal_dist = info["min_goal_dist"]
 
         if hasattr(self.env, "rewards_no_ip"):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
@@ -301,7 +303,7 @@ class DetPMPWrapper(ABC):
                     #time.sleep(0.1)
 
                     ac = self.get_action(i, noise=0)
-                    print("i",ac,)
+                    #print("i",ac,)
                     ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
                     obs, reward, done, info = env.step(ac)
                     rewards += reward
