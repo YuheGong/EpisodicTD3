@@ -493,23 +493,112 @@ Meta-v2:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 0.01
-    actor_learning_rate: 0.000001
+    actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
     total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: [0.3, 0.3, 0.3, 0.1]
+    noise_sigma: [0.5, 0.5, 0.5, 0.5]
+    policy_kwargs:
+      activation_fn: tanh
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 20
+    zero_start: True
+    zero_basis: 1
+    controller_type: MetaWorld
+    width: 0.001
+    weight_scale: 1
+  env_params:
+    env_name: alr_envs
+    num_envs: 1
+
+
+HopperXYJump-v0:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 0.1
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
+    total_timesteps: 1.e+7
+    policy: MlpPolicy
+    policy_type: off_policy
+    noise_sigma: 0.3
     policy_kwargs:
       activation_fn: tanh
       pi: 256
       qf: 256
   promp_params:
     num_basis: 10
-    zero_start: True
+    zero_start: False
     zero_basis: 1
-    controller_type: MetaWorld
+    controller_type: pid
+    controller_kwargs:
+      p_gains: 1
+      d_gains: 0.1
+      i_gains: 0
     width: 0.01
     weight_scale: 1
   env_params:
-    env_name: alr_envs
+    env_name: alr_envs:HopperXYJump-v0
+    num_envs: 1
+
+HopperXYJumpMiddle-v0:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 0.1
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
+    total_timesteps: 1.e+7
+    policy: MlpPolicy
+    policy_type: off_policy
+    noise_sigma: 0.3
+    policy_kwargs:
+      activation_fn: tanh
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 10
+    zero_start: False
+    zero_basis: 1
+    controller_type: pid
+    controller_kwargs:
+      p_gains: 1
+      d_gains: 0.1
+      i_gains: 0
+    width: 0.01
+    weight_scale: 1
+  env_params:
+    env_name: alr_envs:HopperXYJumpMiddle-v0
+    num_envs: 1
+
+
+HopperXYJumpStep-v0:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 0.1
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
+    total_timesteps: 1.e+7
+    policy: MlpPolicy
+    policy_type: off_policy
+    noise_sigma: 0.3
+    policy_kwargs:
+      activation_fn: tanh
+      pi: 256
+      qf: 256
+  promp_params:
+    num_basis: 10
+    zero_start: False
+    zero_basis: 1
+    controller_type: pid
+    controller_kwargs:
+      p_gains: 1
+      d_gains: 0.1
+      i_gains: 0
+    width: 0.01
+    weight_scale: 1
+  env_params:
+    env_name: alr_envs:HopperXYJumpStep-v0
     num_envs: 1

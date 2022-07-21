@@ -42,7 +42,7 @@ else:
     data = read_yaml(file_name)[args.env]
 
 if "Meta" in args.env:
-    data['env_params']['env_name'] = data['env_params']['env_name'] + ":" + args.env_id
+    data['env_params']['env_name'] = data['env_params']['env_name'] + ":" + args.env
 
 # create log folder
 path = logging(data['env_params']['env_name'], data['algorithm'])
@@ -51,15 +51,12 @@ promp_policy_kwargs = data['promp_params']
 
 
 # make the environment
-env = gym.make(data["env_params"]['env_name'], seed=args.seed)
-eval_env = gym.make(data["env_params"]['env_name'], seed=args.seed)
+env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
+eval_env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
 
 
 # learning rate and noise schedule
 Schedule = {
-        #'dmcCheetahDense-v0': dmcCheetahDens_v0_schedule,
-        #'dmcHopperDense-v0': dmcHopperDens_v0_schedule,
-        #'dmcWalkerDense-v0': dmcWalkerDens_v0_schedule,
         'FetchReacher-v0': FetchReacher_schedule,
         'MetaPickAndPlace-v0': MetaPickAndPlace_schedule,
 }
