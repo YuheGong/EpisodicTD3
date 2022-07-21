@@ -218,12 +218,6 @@ class PIDController(BaseController):
         return trq, des_pos, des_vel
 
     def predict_actions(self, des_pos, des_vel, des_acc, observation):
-        #cur_acc = observation[:, -self.num_dof:].reshape(observation.shape[0], self.num_dof)
-        #cur_vel = observation[:, -2 * self.num_dof:-self.num_dof].reshape(observation.shape[0], self.num_dof)
-        #cur_pos = observation[:, -3 * self.num_dof:-2*self.num_dof].reshape(observation.shape[0], self.num_dof)
-        #trq = self.p_gains * (des_pos - cur_pos) + self.d_gains * (des_vel- cur_vel ) #\
-        trq = self.p_gains * (des_pos) +  self.d_gains * (des_vel) #* 0.01  #\
-        return trq, des_pos, des_vel
+        trq = self.p_gains * (des_pos) +  self.d_gains * (des_vel)
+        return trq
 
-    def obs(self):
-        return self.env.obs_for_promp()
