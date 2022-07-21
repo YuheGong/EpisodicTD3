@@ -19,15 +19,20 @@ algo = "episodic_td3"
 env = "FetchReacher-v0"
 env = "ALRReacherBalanceIP-v3"
 #env = "dmcCheetahDense-v0"
-env = 'MetaPickAndPlace-v0'
+env = 'Meta-basketball-v2'
+env = 'Meta-door-open-v2'
+env = 'HopperXYJumpMiddle-v0'
 #env = "MetaBottonPress-v0"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_16"
+path = "logs/episodic_td3/" + env + "_1"
 
 file_name = algo +".yml"
-data = read_yaml(file_name)[env_id]
-data['env_params']['env_name'] = data['env_params']['env_name']
+if 'Meta' in env_id:
+    data = read_yaml(file_name)['Meta-v2']
+    data['env_params']['env_name'] =  data['env_params']['env_name'] + ":" + env
+else:
+    data = read_yaml(file_name)[env_id]
 
 # create log folder
 data['path'] = path

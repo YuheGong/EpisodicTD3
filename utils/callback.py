@@ -1,5 +1,28 @@
 import numpy as np
 from stable_baselines3.common.callbacks import BaseCallback
+from stable_baselines3.common.callbacks import EvalCallback
+
+
+def callback_building(env, path, data):
+    callback = EvalCallback(env, best_model_save_path=path,  n_eval_episodes=data['eval_env']['n_eval_episode'],
+                                 log_path=path, eval_freq=data['eval_env']['eval_freq'],
+                                 deterministic=False, render=False)
+    return callback
+
+class TensorboardCallback(BaseCallback):
+    """
+    Custom callback for plotting additional values in tensorboard.
+    """
+
+    def __init__(self, verbose=0):
+        super(TensorboardCallback, self).__init__(verbose)
+
+    def _on_step(self) -> bool:
+        # Log scalar value (here a random variable)
+        value = np.random.random()
+        self.logger.record('random_value', value)
+        return True
+
 
 
 def callback_function(data: dict):
