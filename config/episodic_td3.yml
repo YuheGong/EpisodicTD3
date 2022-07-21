@@ -515,13 +515,13 @@ Meta-v2:
     num_envs: 1
 
 
-HopperXYJump-v0:
+HopperXYJumpMiddle-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 0.1
     actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
-    total_timesteps: 5.e+6
+    total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
     noise_sigma: 0.3
@@ -541,5 +541,5 @@ HopperXYJump-v0:
     width: 0.01
     weight_scale: 1
   env_params:
-    env_name: alr_envs:HopperXYJump-v0
+    env_name: alr_envs:HopperXYJumpMiddle-v0
     num_envs: 1
