@@ -228,7 +228,9 @@ class DetPMPWrapper(ABC):
                 if done:
                     step_length = i + 1
                     break
-
+            if "Hopper" in str(env):
+                self.max_height = info["max_height"]
+                self.min_goal_dist = info["min_goal_dist"]
 
         if hasattr(self.env, "rewards_no_ip"):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
@@ -262,44 +264,51 @@ class DetPMPWrapper(ABC):
         self.mp.weights = th.Tensor(weights).to(device='cuda')
         self.update()
         print("pos_model",self.mp.pos_features_np)
-        noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=0 * np.ones(self.num_dof))
-
-        rewards = 0
-        step_length = self.step_length
-        ob = env.reset()
-        print("ob", ob, self.env.sim.data.qpos, self.env.sim.data.qvel)
-        obs = []
-        ac1 = []
-        infos = []
-        import time
-        if "Meta" in str(env):
-            for i in range(int(self.step_length)):
-                time.sleep(0.05)
-                ac = self.get_action(i)
-                #ac = np.tanh(ac)
-                acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
-                #acs[2] = 0
-
-                ob, reward, dones, info = env.step(acs)
-                print(i, acs, reward)
-                infos.append(info['obj_to_target'])
-                obs.append(self.env.sim.data.mocap_pos.copy())
-                rewards += reward
-                env.render(False)
-            infos = np.array(infos)
-            print(np.min(infos))
-            print("rewards", rewards)
-        else:
+        ob1 = []
+        for i in range(1):
+            if i == 1:
+                noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=[0.5,0.5,0.5,0.1] * np.ones(self.num_dof))
+            else:
+                noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof),
+                                               sigma=0 * np.ones(self.num_dof))
+            rewards = 0
+            step_length = self.step_length
+            ob = env.reset()
+            print("ob", ob, self.env.sim.data.qpos, self.env.sim.data.qvel)
+            obs = []
+            ac1 = []
+            infos = []
             import time
-            for i in range(step_length):
-                #time.sleep(0.1)
+            if "Meta" in str(env):
+                for i in range(int(self.step_length)):
+                    time.sleep(0.05)
+                    ac = self.get_action(i)
+                    #ac = np.tanh(ac)
+                    acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
+                    #acs[2] = 0
 
-                ac = self.get_action(i, noise=0)
-                print("i",ac,)
-                ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-                obs, reward, done, info = env.step(ac)
-                rewards += reward
-                env.render()
-                if done:
-                    step_length = i + 1
-                    break
+                    ob, reward, dones, info = env.step(acs)
+                    print(i, acs, reward)
+                    infos.append(info['obj_to_target'])
+                    obs.append(self.env.sim.data.mocap_pos.copy())
+                    rewards += reward
+                    env.render(False)
+                ob1 = ob
+                infos = np.array(infos)
+                print(np.min(infos))
+                print("rewards", rewards)
+            else:
+                import time
+                for i in range(step_length):
+                    #time.sleep(0.1)
+
+                    ac = self.get_action(i, noise=0)
+                    #print("i",ac,)
+                    ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
+                    obs, reward, done, info = env.step(ac)
+                    rewards += reward
+                    env.render()
+                    if done:
+                        step_length = i + 1
+                        break
+                print("rewards", rewards)

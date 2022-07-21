@@ -5,6 +5,8 @@ import argparse
 from utils.model import policy_kwargs_building
 from model.episodic_td3 import EpisodicTD3
 import numpy as np
+
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from model.schedule import dmcCheetahDens_v0_schedule, \
     dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule,FetchReacher_schedule,\
     MetaPickAndPlace_schedule
@@ -51,9 +53,12 @@ promp_policy_kwargs = data['promp_params']
 
 
 # make the environment
-env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
-eval_env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
-
+if "Hopper" in data["env_params"]['env_name']:
+    env = gym.make(data["env_params"]['env_name'])
+    eval_env = gym.make(data["env_params"]['env_name'])
+else:
+    env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
+    eval_env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
 
 # learning rate and noise schedule
 Schedule = {
@@ -66,6 +71,15 @@ if args.env in Schedule.keys():
 else:
     schedule = None
 
+
+def make_env(env_name, path, rank, seed=0):
+    def _init():
+        env = gym.make(env_name)
+        return env
+    return _init
+
+#env = DummyVecEnv(env_fns=[make_env(data["env_params"]['env_name'], data['path'], i) for i in range(1)])
+#env = VecNormalize(env, training = True, norm_obs=True, norm_reward=True)
 
 # load critic network type and architecture
 critic_kwargs = policy_kwargs_building(data)

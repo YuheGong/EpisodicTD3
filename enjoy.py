@@ -36,7 +36,6 @@ else:
 
 # create log folder
 data['path'] = path
-#data['continue_path'] = "logs/promp_td3/" + env + "_13"
 
 # make the environment
 env = gym.make(data["env_params"]['env_name'])
@@ -54,6 +53,7 @@ vel = path + "/vel_features.npz"
 pos_feature= np.load(pos, encoding='bytes', allow_pickle=True)
 for i in pos_feature:
     pos_feature = np.array(pos_feature[i])
+#pos_feature = None
 vel_feature= np.load(vel, encoding='bytes', allow_pickle=True)
 for i in vel_feature:
     vel_feature = np.array(vel_feature[i])
