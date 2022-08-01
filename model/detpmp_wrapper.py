@@ -168,6 +168,7 @@ class DetPMPWrapper(ABC):
         self.velocities = self.velocity[step].reshape(-1, self.num_dof)
         self.accelerations = self.acceleration[step].reshape(-1, self.num_dof)
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
+        actions = th.tanh(actions)
         return actions
 
     def get_action(self, timesteps, noise=0):
@@ -185,6 +186,7 @@ class DetPMPWrapper(ABC):
         velocity = self.velocity_np[timesteps].copy()
         acceleration = self.acceleration_np[timesteps].copy()
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
+        action = np.tanh(action)
         return action
 
     def eval_rollout(self, env):
@@ -201,7 +203,7 @@ class DetPMPWrapper(ABC):
         """
         rewards = 0
         step_length = self.step_length
-        env.reset()
+        #env.reset()
         if "Meta" in str(env):
             self.min_target_object = 100
             self.last_target_object = 0
@@ -237,7 +239,6 @@ class DetPMPWrapper(ABC):
         else:
             episode_reward = rewards
 
-        print("episode_reward", episode_reward)
         return episode_reward, step_length
 
     # should be deleted when finished, use render_rollout to render the environment
@@ -251,64 +252,3 @@ class DetPMPWrapper(ABC):
         return des_pos, des_vel
     '''
 
-    def render_rollout(self, weights, env, pos, vel):
-        """
-        This function render the environment.
-
-        Input:
-            weights: the learned weights.
-            env: the environment we want to render.
-        """
-        import time
-
-        self.mp.weights = th.Tensor(weights).to(device='cuda')
-        self.update()
-        print("pos_model",self.mp.pos_features_np)
-        ob1 = []
-        for i in range(1):
-            if i == 1:
-                noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof), sigma=[0.5,0.5,0.5,0.1] * np.ones(self.num_dof))
-            else:
-                noise_dist = NormalActionNoise(mean=np.zeros(self.num_dof),
-                                               sigma=0 * np.ones(self.num_dof))
-            rewards = 0
-            step_length = self.step_length
-            ob = env.reset()
-            print("ob", ob, self.env.sim.data.qpos, self.env.sim.data.qvel)
-            obs = []
-            ac1 = []
-            infos = []
-            import time
-            if "Meta" in str(env):
-                for i in range(int(self.step_length)):
-                    time.sleep(0.05)
-                    ac = self.get_action(i)
-                    #ac = np.tanh(ac)
-                    acs = np.clip(ac, -1, 1).reshape(self.num_dof) + noise_dist()
-                    #acs[2] = 0
-
-                    ob, reward, dones, info = env.step(acs)
-                    print(i, acs, reward)
-                    infos.append(info['obj_to_target'])
-                    obs.append(self.env.sim.data.mocap_pos.copy())
-                    rewards += reward
-                    env.render(False)
-                ob1 = ob
-                infos = np.array(infos)
-                print(np.min(infos))
-                print("rewards", rewards)
-            else:
-                import time
-                for i in range(step_length):
-                    #time.sleep(0.1)
-
-                    ac = self.get_action(i, noise=0)
-                    #print("i",ac,)
-                    ac = np.clip(ac, -1, 1).reshape(1, self.num_dof)
-                    obs, reward, done, info = env.step(ac)
-                    rewards += reward
-                    env.render()
-                    if done:
-                        step_length = i + 1
-                        break
-                print("rewards", rewards)

@@ -81,6 +81,8 @@ class EpisodicTD3(BaseAlgorithm):
         data_path: str = None,
         contextual: bool = False,
         context_hidden_layer: int = 256,
+        weight_noise_judge: bool = False,
+        weight_noise: int = 1,
     ):
 
 
@@ -153,17 +155,13 @@ class EpisodicTD3(BaseAlgorithm):
         # set the exploration noise
         self.noise_sigma = noise_sigma
 
-        self.weight_noise_judge = False
+        self.weight_noise_judge = weight_noise_judge
         if self.weight_noise_judge == True:
-            self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=0 * np.ones(self.dof))
-            self.weight_noise = NormalActionNoise(mean=np.zeros((self.basis_num, self.dof)),
-                                              sigma=self.noise_sigma * np.ones((self.basis_num, self.dof)))
-        else:
-            self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
+            self.weight_noise = weight_noise
+        self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
 
 
         # Setup initial ProMP parameters
-        contextual = False
         self.contextual = contextual
         if self.contextual:
             self.context_hidden_layer = context_hidden_layer
@@ -330,7 +328,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.env.context()).to(device='cuda').reshape(1,-1)).reshape(self.basis_num, self.dof)
             self.actor_optimizer = self.policy.actor.optimizer
             self.actor_optimizer.param_groups[0]['lr'] = self.actor_learning_rate
-            self.weights_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
+            #self.weights_optimizer = th.optim.Adam([self.actor.mp.pos_features], lr=self.actor_learning_rate)
         else:
             # Pass the promp parameters value to ProMP weights
             self.actor.mp.weights = self.promp_params.to(device='cuda')
@@ -594,6 +592,16 @@ class EpisodicTD3(BaseAlgorithm):
             #print("rollout, weight", self.actor.mp.weights)
             #self.actor.mp.weights = noise_weights #th.Tensor(self.weight_noise()).to(device='cuda')
             self.actor.update()
+
+            self.param_noise = NormalActionNoise(mean=np.zeros(self.dof * self.basis_num),
+                                                 sigma=self.weight_noise * np.ones(self.dof * self.basis_num))
+
+            self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                        @ self.param_noise().reshape(self.basis_num, self.dof)
+
+            self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                      @ self.param_noise().reshape(self.basis_num, self.dof)
+
             if self.weight_noise_judge:
                 noise_weights = th.Tensor(self.weight_noise()).to(device='cuda')
                 trajectory_noise = th.matmul(self.actor.mp.pos_features, noise_weights).cpu().detach().numpy()
@@ -686,6 +694,14 @@ class EpisodicTD3(BaseAlgorithm):
                 if log_interval is not None and self._episode_num % log_interval == 0:
                     print("")
                     self._dump_logs()
+
+                self.actor.update()
+
+                self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                            @ self.param_noise().reshape(self.basis_num, self.dof)
+
+                self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                          @ self.param_noise().reshape(self.basis_num, self.dof)
 
         mean_reward = np.mean(episode_rewards) if num_collected_episodes > 0 else 0.0
 
@@ -786,9 +802,40 @@ class EpisodicTD3(BaseAlgorithm):
         """
 
         # evaluate the current policy, and save the reward and the episode length
-        self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
-        self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
-        self.env.reset()
+        self.eval_reward = 0
+        eval_epi_length = 0
+        if "Hopper" in str(self.env):
+            self.max_height = 0
+            self.min_goal_dist = 0
+        elif "Meta" in str(self.env):
+            self.last_success = 0
+            self.last_target_object = 0
+            self.min_target_object = 0
+        self.eval_num = 10
+        for i in range(self.eval_num):
+            self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
+            episode_reward, eval_length = self.actor.eval_rollout(self.env)
+            self.env.reset()
+            self.eval_reward += episode_reward
+            eval_epi_length += eval_length
+            if "Hopper" in str(self.env):
+                self.max_height += self.actor.max_height
+                self.min_goal_dist += self.actor.min_goal_dist
+            elif "Meta" in str(self.env):
+                self.last_success += self.actor.last_success
+                self.last_target_object += self.actor.last_target_object
+                self.min_target_object += self.actor.min_target_object
+        if "Hopper" in str(self.env):
+            self.max_height /= self.eval_num
+            self.min_goal_dist /= self.eval_num
+        elif "Meta" in str(self.env):
+            self.last_success /= self.eval_num
+            self.last_target_object /= self.eval_num
+            self.min_target_object /= self.eval_num
+        self.eval_reward /= self.eval_num
+        eval_epi_length /= self.eval_num
+
+        print("episode_reward", self.eval_reward)
 
         # learning rate and noise schedule
         if self.need_schedule:
@@ -797,12 +844,15 @@ class EpisodicTD3(BaseAlgorithm):
         # save the best evaluate reward
         if self.best_model < self.eval_reward:
             self.best_model = self.eval_reward
-            np.savez(self.data_path + "/best_model", self.actor.mp.weights.cpu().detach().numpy())
+            #np.savez(self.data_path + "/best_model", self.actor.mp.weights.cpu().detach().numpy())
+            th.save(self.policy.actor.state_dict(), self.data_path + '/best_model.pt')
 
         # save current policy parameters
-        np.savez(self.data_path + "/algo_mean", self.actor.mp.weights.cpu().detach().numpy())
-        np.savez(self.data_path + "/pos_features", self.actor.mp.pos_features.cpu().detach().numpy())
-        np.savez(self.data_path + "/vel_features", self.actor.mp.vel_features.cpu().detach().numpy())
+        #np.savez(self.data_path + "/algo_mean", self.actor.mp.weights.cpu().detach().numpy())
+        #np.savez(self.data_path + "/pos_features", self.actor.mp.pos_features.cpu().detach().numpy())
+        #np.savez(self.data_path + "/vel_features", self.actor.mp.vel_features.cpu().detach().numpy())
+        th.save(self.policy.actor.state_dict(), self.data_path + '/algo_mean.pt')
+
 
         # critic learning rate schedule
         self._update_learning_rate([self.critic.optimizer])
@@ -861,7 +911,9 @@ class EpisodicTD3(BaseAlgorithm):
                 self.actor_optimizer.zero_grad()
                 #self.controller_optimizer.zero_grad()
                 actor_loss.backward()
+                #th.nn.utils.clip_grad_norm_(self.policy.actor.parameters(), 0.1)
                 self.actor_optimizer.step()
+                #th.nn.utils.clip_grad_norm_(self.policy.parameters(), 0.5)
                 #self.controller_optimizer.step()
 
                 # Update actor target
@@ -877,7 +929,7 @@ class EpisodicTD3(BaseAlgorithm):
         # supervise the trajectory and weights, should be deleted when finished
         print("context", self.env.context())
         print("weights", self.actor.mp.weights[0])
-        print("features", self.actor.mp.pos_features[0])
+        #print("features", self.actor.mp.pos_features[0])
         #for i in self.actor_contextNN.parameters():
         #    print(i[0][:10])
 
@@ -894,6 +946,14 @@ class EpisodicTD3(BaseAlgorithm):
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
         logger.record("eval/episode_length", eval_epi_length)
+        if "Meta" in str(self.env):
+            logger.record("eval/last_success", self.last_success)
+            logger.record("eval/last_object_to_target", self.last_target_object)
+            logger.record("eval/min_object_to_target", self.min_target_object)
+            logger.record("eval/control_cost", self.actor.control_cost)
+        elif "Hopper" in str(self.env):
+            logger.record("eval/max_height", self.max_height)
+            logger.record("eval/min_goal_dist", self.min_goal_dist)
 
     def collect_rollouts_context(self, env: VecEnv, callback: BaseCallback, train_freq: TrainFreq,
                          replay_buffer: ReplayBufferStep, learning_starts: int = 0,
@@ -917,7 +977,17 @@ class EpisodicTD3(BaseAlgorithm):
         #  the timestep information in each episode
         if self.episode_timesteps == 0:
             done = False
-            self.actor.update()
+            #self.actor.update()
+            self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
+            self.param_noise = NormalActionNoise(mean=np.zeros(self.dof * self.basis_num),
+                                                 sigma=10 * np.ones(self.dof * self.basis_num))
+
+            self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                        @ self.param_noise().reshape(self.basis_num, self.dof)
+
+            self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                      @ self.param_noise().reshape(self.basis_num, self.dof)
+
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
                 self.ls_number < self.learning_starts:
@@ -960,8 +1030,8 @@ class EpisodicTD3(BaseAlgorithm):
                 next_step = self.episode_timesteps
                 if self.episode_timesteps == self.max_episode_steps:
                     next_step = self.max_episode_steps-1
-                    self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
-                                           self.episode_timesteps - 1, next_step, context)
+                self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
+                                       self.episode_timesteps - 1, next_step, context)
 
                 self._update_current_progress_remaining(self.num_timesteps, self._total_timesteps)
 
@@ -990,8 +1060,15 @@ class EpisodicTD3(BaseAlgorithm):
 
                 # Log training infos
                 if log_interval is not None and self._episode_num % log_interval == 0:
-                    print("")
                     self._dump_logs()
+
+                #self.actor.update()
+                self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
+                self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                            @ self.param_noise().reshape(self.basis_num, self.dof)
+
+                self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                          @ self.param_noise().reshape(self.basis_num, self.dof)
 
         mean_reward = np.mean(episode_rewards) if num_collected_episodes > 0 else 0.0
 
@@ -1000,5 +1077,74 @@ class EpisodicTD3(BaseAlgorithm):
         return RolloutReturn(mean_reward, num_collected_steps, num_collected_episodes, continue_training)
 
 
+    def render_rollout(self, weights, env, pos, vel):
+        """
+        This function render the environment.
+
+        Input:
+            weights: the learned weights.
+            env: the environment we want to render.
+        """
+        import time
+
+        self.actor.mp.weights = th.Tensor(weights).to(device='cuda')
+        self.actor.update()
+        #print("pos_model",self.actor.mp.pos_features_np)
+
+
+        ob1 = []
+        ob = env.reset()
+        if self.contextual:
+            self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
+
+        print("algorithm", self.actor.mp.weights)
+
+        for i in range(1):
+            if i == 1:
+                noise_dist = NormalActionNoise(mean=np.zeros(self.dof), sigma=[0] * np.ones(self.dof))
+            else:
+                noise_dist = NormalActionNoise(mean=np.zeros(self.dof),
+                                               sigma=0 * np.ones(self.dof))
+            rewards = 0
+            step_length = self.max_episode_steps
+            #print("ob", ob, self.env.sim.data.qpos, self.env.sim.data.qvel)
+            obs = []
+            ac1 = []
+            infos = []
+            infos = []
+            import time
+            if "Meta" in str(env):
+                for i in range(int(self.max_episode_steps)):
+                    time.sleep(0.05)
+                    ac = self.actor.get_action(i)
+                    #ac = np.tanh(ac)
+                    acs = np.clip(ac, -1, 1).reshape(self.dof) + noise_dist()
+                    #acs[2] = 0
+
+                    ob, reward, dones, info = env.step(acs)
+                    print(i, acs, reward)
+                    infos.append(info['obj_to_target'])
+                    obs.append(self.env.sim.data.mocap_pos.copy())
+                    rewards += reward
+                    env.render(False)
+                ob1 = ob
+                infos = np.array(infos)
+                print(np.min(infos))
+                print("rewards", rewards)
+            else:
+                import time
+                for i in range(step_length):
+                    time.sleep(0.01)
+                    ac = self.actor.get_action(i, noise=0)
+                    print("i",ac,)
+                    ac = np.clip(ac, -1, 1).reshape(1, self.dof)
+                    obs, reward, done, info = env.step(ac)
+                    rewards += reward
+                    env.render()
+                    if done:
+                        step_length = i + 1
+                        break
+                print("context", self.env.context())
+                print("rewards", rewards)
 
 

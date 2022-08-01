@@ -21,7 +21,8 @@ class DeterministicProMP:
         else:
             self.widths = np.ones(self.n_basis + self.n_zero_bases) * width
 
-        #basis_function = "rythmic"
+        # basis_function = "rythmic"
+
         if basis_function == "rbf":
             self._exponential_kernel = self._exponential_kernel_RBF
         elif basis_function == "rythmic":
@@ -33,7 +34,7 @@ class DeterministicProMP:
         self.t = th.Tensor(t).cuda()
 
         #drop out the featrues for zero_basis
-        self.pos_features_np , self.vel_features_np , self.acc_features_np = self._exponential_kernel(t)
+        self.pos_features_np, self.vel_features_np , self.acc_features_np = self._exponential_kernel(t)
         self.pos_features_np *= self.weight_scale
         self.vel_features_np *= self.weight_scale
         self.acc_features_np *= self.weight_scale
