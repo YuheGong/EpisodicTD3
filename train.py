@@ -10,7 +10,14 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from model.schedule import dmcCheetahDens_v0_schedule, \
     dmcHopperDens_v0_schedule, dmcWalkerDens_v0_schedule,FetchReacher_schedule,\
     MetaPickAndPlace_schedule
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
+from stable_baselines3.common.vec_env.obs_dict_wrapper import  ObsDictWrapper
 
+def make_env(env_name, path, rank, seed=0):
+    def _init():
+        env = gym.make(env_name)
+        return env
+    return _init
 
 ''''
 env_id = "dmcWalkerDense-v0"
@@ -30,14 +37,17 @@ env_id = "dmcWalkerDense-v0"
 parser = argparse.ArgumentParser()
 parser.add_argument("--env", type=str, help="the environment")
 parser.add_argument("--seed", type=str, help="the seed")
+parser.add_argument("--con", type=str, help="context")
 args = parser.parse_args()
-
-
 
 
 # load yaml file
 algo = "episodic_td3"
-file_name = algo +".yml"
+if int(args.con) == 1:
+    file_name = "context.yml"
+else:
+    file_name = "non_context.yml"
+
 if "Meta" in args.env:
     data = read_yaml(file_name)["Meta-v2"]
 else:
@@ -45,6 +55,7 @@ else:
 
 if "Meta" in args.env:
     data['env_params']['env_name'] = data['env_params']['env_name'] + ":" + args.env
+
 
 # create log folder
 path = logging(data['env_params']['env_name'], data['algorithm'])
@@ -96,12 +107,16 @@ model = EpisodicTD3(critic, env,
              seed=int(args.seed),
              critic_network_kwargs=critic_kwargs,
              verbose=1,
-             noise_sigma=data["algo_params"]['noise_sigma'],
+             noise_sigma=data["algo_params"]['action_noise_sigma'],
              promp_policy_kwargs=promp_policy_kwargs,
              critic_learning_rate=data["algo_params"]['critic_learning_rate'],
              actor_learning_rate=data["algo_params"]['actor_learning_rate'],
              basis_num=data['promp_params']['num_basis'],
-             data_path=data["path"])
+             data_path=data["path"],
+             contextual=args.con,
+             weight_noise_judge=data["algo_params"]["weight_noise_judge"],
+             weight_noise=data["algo_params"]["weight_noise"],
+)
 
 
 # csv file path
