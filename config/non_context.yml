@@ -498,7 +498,9 @@ Meta-v2:
     total_timesteps: 5.e+6
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: [0.5, 0.5, 0.5, 0.5]
+    action_noise_sigma: 0.5
+    weight_noise_judge: False
+    weight_noise: 0
     policy_kwargs:
       activation_fn: tanh
       pi: 256
@@ -525,7 +527,9 @@ HopperXYJump-v0:
     total_timesteps: 2.e+7
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.8
+    action_noise_sigma: 0.1
+    weight_noise_judge: True
+    weight_noise: 0
     policy_kwargs:
       activation_fn: tanh
       pi: 256
@@ -554,7 +558,9 @@ HopperXYJumpMiddle-v0:
     total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.8
+    action_noise_sigma: 0.1
+    weight_noise_judge: True
+    weight_noise: 0
     policy_kwargs:
       activation_fn: tanh
       pi: 256
@@ -584,7 +590,9 @@ HopperXYJumpStep-v0:
     total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.5
+    action_noise_sigma: 0.1
+    weight_noise_judge: True
+    weight_noise: 0
     policy_kwargs:
       activation_fn: tanh
       pi: 256

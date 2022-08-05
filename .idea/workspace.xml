@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/context.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/context.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/non_context.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/non_context.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/detpmp_wrapper.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/detpmp_wrapper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/episodic_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/episodic_td3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/model.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,17 +37,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/yre/Desktop/KIT/masterthesis/hopper/GradientProMP (copy)",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/yre/Desktop/KIT/masterthesis/hopper/GradientProMP (copy)&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="Python.enjoy">
+}</component>
+  <component name="RunManager" selected="Python.train">
     <configuration name="enjoy" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="GradientProMP_6" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -124,7 +128,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/train.py" />
-      <option name="PARAMETERS" value="--e HopperXYJumpStep-v0 --seed 0" />
+      <option name="PARAMETERS" value="--e Meta-dense-reach-v2 --seed 1 --c 0" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -223,7 +227,8 @@
       <workItem from="1658620743671" duration="599000" />
       <workItem from="1658655039111" duration="1569000" />
       <workItem from="1658749690055" duration="3631000" />
-      <workItem from="1658949020133" duration="150209000" />
+      <workItem from="1658949020133" duration="257033000" />
+      <workItem from="1659689086706" duration="5506000" />
     </task>
     <servers />
   </component>
@@ -310,12 +315,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>363</line>
+          <line>368</line>
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>570</line>
+          <line>578</line>
           <option name="timeStamp" value="204" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -340,53 +345,83 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/hopper_jump/hopper_jump.py</url>
-          <line>52</line>
+          <line>54</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>388</line>
+          <line>393</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/hopper_jump/hopper_jump.py</url>
-          <line>179</line>
+          <line>191</line>
           <option name="timeStamp" value="252" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>330</line>
+          <line>335</line>
           <option name="timeStamp" value="255" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>926</line>
+          <line>911</line>
           <option name="timeStamp" value="264" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/enjoy.py</url>
-          <line>75</line>
+          <line>77</line>
           <option name="timeStamp" value="271" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>1101</line>
+          <line>1086</line>
           <option name="timeStamp" value="272" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/hopper_jump/hopper_jump.py</url>
+          <line>32</line>
+          <option name="timeStamp" value="274" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/hopper_jump/hopper_jump.py</url>
+          <line>304</line>
+          <option name="timeStamp" value="275" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/hopper_jump/hopper_jump.py</url>
+          <line>410</line>
+          <option name="timeStamp" value="276" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../../Compare-Episodic-and-Step-based-Reinforcement-Learning/src/alr-envs/alr_envs/mujoco/hopper_jump/hopper_jump.py</url>
+          <line>259</line>
+          <option name="timeStamp" value="277" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
+          <line>997</line>
+          <option name="timeStamp" value="279" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
+          <line>165</line>
+          <option name="timeStamp" value="280" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/GradientProMP__copy_$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1659301112071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP__copy_$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1654720755679" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_6_easz$simple.coverage" NAME="simple Coverage Results" MODIFIED="1642339100773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP$plot.coverage" NAME="plot_best Coverage Results" MODIFIED="1652103553085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/plots" />
+    <SUITE FILE_PATH="coverage/GradientProMP__copy_$train.coverage" NAME="train Coverage Results" MODIFIED="1659539607070" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1650617243857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP$train.coverage" NAME="train Coverage Results" MODIFIED="1658394652170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1646044840453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP$enjoy_1.coverage" NAME="enjoy_1 Coverage Results" MODIFIED="1652719352954" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP__copy_$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1659301112071" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP__copy_$train.coverage" NAME="train Coverage Results" MODIFIED="1659174996655" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1646861640081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP$plot.coverage" NAME="plot_best Coverage Results" MODIFIED="1652103553085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/plots" />
+    <SUITE FILE_PATH="coverage/GradientProMP$train.coverage" NAME="train Coverage Results" MODIFIED="1658394652170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/GradientProMP$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1658760123857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_1$simple.coverage" NAME="simple Coverage Results" MODIFIED="1646044840453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/GradientProMP_1$enjoy.coverage" NAME="enjoy Coverage Results" MODIFIED="1646861640081" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

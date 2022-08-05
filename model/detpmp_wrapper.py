@@ -150,7 +150,7 @@ class DetPMPWrapper(ABC):
         self.velocities = self.velocity.reshape(-1, self.num_dof)
         self.accelerations = self.acceleration.reshape(-1, self.num_dof)
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
-        actions = th.tanh(actions)
+        #actions = th.tanh(actions)
         return actions
 
     def predict_action(self, step, observation):
@@ -168,7 +168,7 @@ class DetPMPWrapper(ABC):
         self.velocities = self.velocity[step].reshape(-1, self.num_dof)
         self.accelerations = self.acceleration[step].reshape(-1, self.num_dof)
         actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
-        actions = th.tanh(actions)
+        #actions = th.tanh(actions)
         return actions
 
     def get_action(self, timesteps, noise=0):
@@ -186,7 +186,7 @@ class DetPMPWrapper(ABC):
         velocity = self.velocity_np[timesteps].copy()
         acceleration = self.acceleration_np[timesteps].copy()
         action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
-        action = np.tanh(action)
+        #action = np.tanh(action)
         return action
 
     def eval_rollout(self, env):
@@ -222,6 +222,7 @@ class DetPMPWrapper(ABC):
             self.last_target_object = info['obj_to_target']
 
         else:
+            import time
             for i in range(step_length):
                 ac = self.get_action(i, noise=0)
                 ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)

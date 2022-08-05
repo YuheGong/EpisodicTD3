@@ -158,7 +158,12 @@ class EpisodicTD3(BaseAlgorithm):
         self.weight_noise_judge = weight_noise_judge
         if self.weight_noise_judge == True:
             self.weight_noise = weight_noise
-        self.noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
+            self.param_noise = NormalActionNoise(mean=np.zeros(self.dof * self.basis_num),
+                                                 sigma=self.weight_noise * np.ones(self.dof * self.basis_num))
+        else:
+            self.weight_noise = 0
+
+        self.action_noise = NormalActionNoise(mean=np.zeros(self.dof), sigma=self.noise_sigma * np.ones(self.dof))
 
 
         # Setup initial ProMP parameters
@@ -445,10 +450,11 @@ class EpisodicTD3(BaseAlgorithm):
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
         logger.record("train/critic_loss", np.mean(critic_losses))
-        logger.record("eval/noise_reward", self.reward_with_noise)
+        logger.record("eval/noise_reward", np.mean(np.array(self.reward_with_noise)))
         logger.record("train/actor_learning_rate", self.actor_learning_rate)
         logger.record("train/gradient_steps", gradient_steps)
-        logger.record("train/noise_sigma", self.noise_sigma)
+        logger.record("train/noise_sigma_action", self.noise_sigma)
+        logger.record("train/noise_sigma_weights", self.weight_noise)
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
         logger.record("eval/episode_length", eval_epi_length)
@@ -512,12 +518,14 @@ class EpisodicTD3(BaseAlgorithm):
                 unscaled_action = np.tanh(unscaled_action)
                 scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
                 scaled_action = np.clip(scaled_action, -1, 1)
-                scaled_action += self.noise().reshape(-1)
+                if self.weight_noise_judge is False:
+                    scaled_action += self.action_noise().reshape(-1)
                 buffer_action = scaled_action
                 action = self.policy.unscale_action(scaled_action)
             else:
                 #unscaled_action = np.tanh(unscaled_action)
-                unscaled_action += self.noise().reshape(-1)
+                if self.weight_noise_judge is False:
+                    unscaled_action += self.action_noise().reshape(-1)
                 action = unscaled_action
                 buffer_action = action
         else:
@@ -587,29 +595,17 @@ class EpisodicTD3(BaseAlgorithm):
 
         #  the timestep information in each episode
         if self.episode_timesteps == 0:
+            self.reward_with_noise = []
             done = False
             #self.weights = self.actor.mp.weights
             #print("rollout, weight", self.actor.mp.weights)
             #self.actor.mp.weights = noise_weights #th.Tensor(self.weight_noise()).to(device='cuda')
             self.actor.update()
-
-            self.param_noise = NormalActionNoise(mean=np.zeros(self.dof * self.basis_num),
-                                                 sigma=self.weight_noise * np.ones(self.dof * self.basis_num))
-
-            self.actor.trajectory_np += self.actor.mp.pos_features_np \
-                                        @ self.param_noise().reshape(self.basis_num, self.dof)
-
-            self.actor.velocity_np += self.actor.mp.vel_features_np \
-                                      @ self.param_noise().reshape(self.basis_num, self.dof)
-
             if self.weight_noise_judge:
-                noise_weights = th.Tensor(self.weight_noise()).to(device='cuda')
-                trajectory_noise = th.matmul(self.actor.mp.pos_features, noise_weights).cpu().detach().numpy()
-                velocity_noise = th.matmul(self.actor.mp.vel_features, noise_weights).cpu().detach().numpy()
-                acceleration_noise = th.matmul(self.actor.mp.acc_features,noise_weights).cpu().detach().numpy()
-                self.actor.trajectory_np += trajectory_noise
-                self.actor.velocity_np += velocity_noise
-                self.actor.acceleration_np += acceleration_noise
+                self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                            @ self.param_noise().reshape(self.basis_num, self.dof)
+                self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                          @ self.param_noise().reshape(self.basis_num, self.dof)
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
                 self.ls_number < self.learning_starts:
@@ -624,30 +620,19 @@ class EpisodicTD3(BaseAlgorithm):
             while not done:  # loop for steps during one episode (timesteps plus one)
 
                 # Select action according to policy
-                ##import time
-                #ime.sleep(0.5)
-                #self.obs.append(self.env.obs_for_promp())
-
                 action, buffer_action = self._sample_action(self.episode_timesteps)
-                #print("actions", action)
-                # print("obs, sample", self.actor.controller.obs())
 
                 # Rescale and perform action
-                #action = action + self.noise().reshape(action.shape)
                 if 'Meta' in str(env):
                     action = action.reshape(-1)
-                #self.obs.append(self.env.current_pos())
 
                 new_obs, reward, done, infos = env.step(action)
-
-
                 new_obs = np.hstack([new_obs]).reshape(1, -1)
                 action = action.reshape(1,-1)
                 #action = action + self.noise().reshape(action.shape)
                 #action = action.reshape(1, -1)
                 new_obs = new_obs.reshape(1,-1)
                 self.actions.append(action)
-
 
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
@@ -680,9 +665,9 @@ class EpisodicTD3(BaseAlgorithm):
             if done:
                 # save the reward of the noisy sampling environment
                 if hasattr(self.env, "rewards_no_ip"):
-                    self.reward_with_noise = self.env.rewards_no_ip  # the total reward without initial phase
+                    self.reward_with_noise.append(self.env.rewards_no_ip)  # the total reward without initial phase
                 else:
-                    self.reward_with_noise = episode_reward
+                    self.reward_with_nois.append(episode_reward)
                 env.reset()
                 num_collected_episodes += 1
                 self._episode_num += 1
@@ -696,12 +681,12 @@ class EpisodicTD3(BaseAlgorithm):
                     self._dump_logs()
 
                 self.actor.update()
+                if self.weight_noise_judge:
+                    self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                                @ self.param_noise().reshape(self.basis_num, self.dof)
 
-                self.actor.trajectory_np += self.actor.mp.pos_features_np \
-                                            @ self.param_noise().reshape(self.basis_num, self.dof)
-
-                self.actor.velocity_np += self.actor.mp.vel_features_np \
-                                          @ self.param_noise().reshape(self.basis_num, self.dof)
+                    self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                              @ self.param_noise().reshape(self.basis_num, self.dof)
 
         mean_reward = np.mean(episode_rewards) if num_collected_episodes > 0 else 0.0
 
@@ -939,10 +924,11 @@ class EpisodicTD3(BaseAlgorithm):
         if len(actor_losses) > 0:
             logger.record("train/actor_loss", np.mean(actor_losses))
         logger.record("train/critic_loss", np.mean(critic_losses))
-        logger.record("eval/noise_reward", self.reward_with_noise)
+        logger.record("eval/noise_reward", np.mean(np.array(self.reward_with_noise)))
         logger.record("train/actor_learning_rate", self.actor_learning_rate)
         logger.record("train/gradient_steps", gradient_steps)
-        logger.record("train/noise_sigma", self.noise_sigma)
+        logger.record("train/noise_sigma_action", self.noise_sigma)
+        logger.record("train/noise_sigma_weights", self.weight_noise)
         logger.record("train/num_basis", self.basis_num)
         logger.record("eval/mean_reward", self.eval_reward)
         logger.record("eval/episode_length", eval_epi_length)
@@ -979,14 +965,12 @@ class EpisodicTD3(BaseAlgorithm):
             done = False
             #self.actor.update()
             self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
-            self.param_noise = NormalActionNoise(mean=np.zeros(self.dof * self.basis_num),
-                                                 sigma=10 * np.ones(self.dof * self.basis_num))
+            if self.weight_noise_judge:
+                self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                            @ self.param_noise().reshape(self.basis_num, self.dof)
 
-            self.actor.trajectory_np += self.actor.mp.pos_features_np \
-                                        @ self.param_noise().reshape(self.basis_num, self.dof)
-
-            self.actor.velocity_np += self.actor.mp.vel_features_np \
-                                      @ self.param_noise().reshape(self.basis_num, self.dof)
+                self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                          @ self.param_noise().reshape(self.basis_num, self.dof)
 
 
         while should_collect_more_steps(train_freq, num_collected_steps, num_collected_episodes) or \
@@ -1062,13 +1046,14 @@ class EpisodicTD3(BaseAlgorithm):
                 if log_interval is not None and self._episode_num % log_interval == 0:
                     self._dump_logs()
 
-                #self.actor.update()
                 self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
-                self.actor.trajectory_np += self.actor.mp.pos_features_np \
-                                            @ self.param_noise().reshape(self.basis_num, self.dof)
 
-                self.actor.velocity_np += self.actor.mp.vel_features_np \
-                                          @ self.param_noise().reshape(self.basis_num, self.dof)
+                if self.weight_noise_judge:
+                    self.actor.trajectory_np += self.actor.mp.pos_features_np \
+                                                @ self.param_noise().reshape(self.basis_num, self.dof)
+
+                    self.actor.velocity_np += self.actor.mp.vel_features_np \
+                                              @ self.param_noise().reshape(self.basis_num, self.dof)
 
         mean_reward = np.mean(episode_rewards) if num_collected_episodes > 0 else 0.0
 
@@ -1141,6 +1126,8 @@ class EpisodicTD3(BaseAlgorithm):
                     obs, reward, done, info = env.step(ac)
                     rewards += reward
                     env.render()
+                    if i == 0 or i == 125 or i == 249:
+                        time.sleep(5)
                     if done:
                         step_length = i + 1
                         break
