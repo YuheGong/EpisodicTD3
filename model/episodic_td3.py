@@ -167,7 +167,7 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # Setup initial ProMP parameters
-        self.contextual = contextual
+        self.contextual = bool(int(contextual))
         if self.contextual:
             self.context_hidden_layer = context_hidden_layer
             self.train = self.train_context
@@ -667,7 +667,7 @@ class EpisodicTD3(BaseAlgorithm):
                 if hasattr(self.env, "rewards_no_ip"):
                     self.reward_with_noise.append(self.env.rewards_no_ip)  # the total reward without initial phase
                 else:
-                    self.reward_with_nois.append(episode_reward)
+                    self.reward_with_noise.append(episode_reward)
                 env.reset()
                 num_collected_episodes += 1
                 self._episode_num += 1
