@@ -169,8 +169,8 @@ def policy_kwargs_building(data):
         net_arch = [dict(net_arch)]
     elif data["algo_params"]["policy_type"] == "off_policy":
         #net_arch["pi"] = [int(data["algo_params"]["policy_kwargs"]["pi"]), int(data["algo_params"]["policy_kwargs"]["pi"])]
-        net_arch["pi"] = [32, 32]
-        net_arch["qf"] = [int(data["algo_params"]["policy_kwargs"]["qf"]), int(data["algo_params"]["policy_kwargs"]["qf"])]
+        net_arch["pi"] = data["algo_params"]["policy_kwargs"]["pi"]
+        net_arch["qf"] = data["algo_params"]["policy_kwargs"]["qf"]
 
     if data["algo_params"]["policy_kwargs"]["activation_fn"] == "tanh":
         activation_fn = th.nn.Tanh

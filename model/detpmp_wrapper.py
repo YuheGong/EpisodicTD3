@@ -124,7 +124,7 @@ class DetPMPWrapper(ABC):
                 self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
                     device='cuda')
             elif self.controller_type == "MetaWorld":
-                self.trajectory[:,:, :-1] += th.Tensor(self.env.current_pos()[:-1].reshape(self.num_dof-1)).to(
+                self.trajectory[:,:, :] += th.Tensor(self.env.current_pos()[:].reshape(self.num_dof)).to(
                     device='cuda')
             elif self.controller_type == 'pid':
                self.trajectory += th.Tensor(
@@ -209,6 +209,7 @@ class DetPMPWrapper(ABC):
             self.last_target_object = 0
             self.last_success = 0
             self.control_cost = 0
+            self.success_rate = []
             for i in range(int(self.step_length)):
                 ac = self.get_action(i)
                 #ac = np.tanh(ac)
@@ -216,8 +217,10 @@ class DetPMPWrapper(ABC):
                 obs, reward, dones, info = env.step(ac)
                 rewards += reward
                 self.control_cost += np.sum(np.square(ac))
+                self.success_rate.append(info['success'])
                 if self.min_target_object > info['obj_to_target']:
                     self.min_target_object = info['obj_to_target']
+            self.success_rate = np.any(np.array(self.success_rate))
             self.last_success = info['success']
             self.last_target_object = info['obj_to_target']
 

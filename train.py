@@ -95,7 +95,7 @@ def make_env(env_name, path, rank, seed=0):
 # load critic network type and architecture
 critic_kwargs = policy_kwargs_building(data)
 critic = data['algo_params']['policy']
-
+data['seed'] = args.seed
 #data["algo_params"]['initial_promp_params'] = np.ones(30).reshape(5,6)
 #data["algo_params"]['initial_promp_params'][:,:3] = -1
 
@@ -130,11 +130,11 @@ try:
     model.learn(total_timesteps=int(data['algo_params']['total_timesteps']))
 except KeyboardInterrupt:
     write_yaml(data)
-    model.save(data["path"] + "/model.zip")
+    #model.save(data["path"] + "/model.zip")
     print('')
     print('training interrupt, save the model and config file to ' + data["path"])
 else:
     write_yaml(data)
-    model.save(data["path"] + "/model.zip")
+    #model.save(data["path"] + "/model.zip")
     print('')
     print('training FINISH, save the model and config file to ' + data['path'])

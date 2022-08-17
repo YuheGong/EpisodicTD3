@@ -420,7 +420,7 @@ class EpisodicTD3(BaseAlgorithm):
                 actor_losses.append(actor_loss.item())
 
                 # Optimize the actor
-                #self.weights_optimizer.zero_grad()
+                #self.weights_Contextoptimizer.zero_grad()
                 self.actor_optimizer.zero_grad()
                 #self.controller_optimizer.zero_grad()
                 actor_loss.backward()
@@ -438,7 +438,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.actor_target.update()
 
         # supervise the trajectory and weights, should be deleted when finished
-        #print("context", self.env.context)
+        print("context", self.env.context())
         print("weights", self.actor.mp.weights[-1])
 
         #for i in self.actor_contextNN.parameters():
@@ -515,13 +515,19 @@ class EpisodicTD3(BaseAlgorithm):
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):
             if self.contextual:
-                unscaled_action = np.tanh(unscaled_action)
+                #unscaled_action = np.tanh(unscaled_action)
+                if self.weight_noise_judge is False:
+                    unscaled_action += self.action_noise().reshape(-1)
+                action = unscaled_action
+                buffer_action = action
+                '''
                 scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
                 scaled_action = np.clip(scaled_action, -1, 1)
                 if self.weight_noise_judge is False:
                     scaled_action += self.action_noise().reshape(-1)
                 buffer_action = scaled_action
                 action = self.policy.unscale_action(scaled_action)
+                '''
             else:
                 #unscaled_action = np.tanh(unscaled_action)
                 if self.weight_noise_judge is False:
@@ -794,6 +800,7 @@ class EpisodicTD3(BaseAlgorithm):
             self.min_goal_dist = 0
         elif "Meta" in str(self.env):
             self.last_success = 0
+            self.success_rate = []
             self.last_target_object = 0
             self.min_target_object = 0
         self.eval_num = 10
@@ -807,6 +814,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.max_height += self.actor.max_height
                 self.min_goal_dist += self.actor.min_goal_dist
             elif "Meta" in str(self.env):
+                self.success_rate.append(self.actor.success_rate)
                 self.last_success += self.actor.last_success
                 self.last_target_object += self.actor.last_target_object
                 self.min_target_object += self.actor.min_target_object
@@ -814,6 +822,7 @@ class EpisodicTD3(BaseAlgorithm):
             self.max_height /= self.eval_num
             self.min_goal_dist /= self.eval_num
         elif "Meta" in str(self.env):
+            self.success_rate = np.mean(np.array(self.success_rate))
             self.last_success /= self.eval_num
             self.last_target_object /= self.eval_num
             self.min_target_object /= self.eval_num
@@ -896,7 +905,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.actor_optimizer.zero_grad()
                 #self.controller_optimizer.zero_grad()
                 actor_loss.backward()
-                #th.nn.utils.clip_grad_norm_(self.policy.actor.parameters(), 0.1)
+                th.nn.utils.clip_grad_norm_(self.policy.actor.parameters(), 0.5)
                 self.actor_optimizer.step()
                 #th.nn.utils.clip_grad_norm_(self.policy.parameters(), 0.5)
                 #self.controller_optimizer.step()
@@ -934,6 +943,7 @@ class EpisodicTD3(BaseAlgorithm):
         logger.record("eval/episode_length", eval_epi_length)
         if "Meta" in str(self.env):
             logger.record("eval/last_success", self.last_success)
+            logger.record("eval/success_rate", self.success_rate)
             logger.record("eval/last_object_to_target", self.last_target_object)
             logger.record("eval/min_object_to_target", self.min_target_object)
             logger.record("eval/control_cost", self.actor.control_cost)
@@ -1084,7 +1094,7 @@ class EpisodicTD3(BaseAlgorithm):
 
         print("algorithm", self.actor.mp.weights)
 
-        for i in range(1):
+        for i in range(2):
             if i == 1:
                 noise_dist = NormalActionNoise(mean=np.zeros(self.dof), sigma=[0] * np.ones(self.dof))
             else:
@@ -1104,12 +1114,18 @@ class EpisodicTD3(BaseAlgorithm):
                     ac = self.actor.get_action(i)
                     #ac = np.tanh(ac)
                     acs = np.clip(ac, -1, 1).reshape(self.dof) + noise_dist()
+                    acs[-1] = .5
+                    if i > 50:
+                        acs[-1] = -0.1
                     #acs[2] = 0
 
                     ob, reward, dones, info = env.step(acs)
                     print(i, acs, reward)
                     infos.append(info['obj_to_target'])
                     obs.append(self.env.sim.data.mocap_pos.copy())
+                    #if i == 59 or i == 89 or i == 199 or i == 19 or i == 1:
+                    #if i == 199:
+                    #    time.sleep(5)
                     rewards += reward
                     env.render(False)
                 ob1 = ob
