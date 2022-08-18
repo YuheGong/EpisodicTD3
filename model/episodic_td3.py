@@ -1110,13 +1110,13 @@ class EpisodicTD3(BaseAlgorithm):
             import time
             if "Meta" in str(env):
                 for i in range(int(self.max_episode_steps)):
-                    time.sleep(0.05)
+                    #time.sleep(0.05)
                     ac = self.actor.get_action(i)
                     #ac = np.tanh(ac)
                     acs = np.clip(ac, -1, 1).reshape(self.dof) + noise_dist()
-                    acs[-1] = .5
-                    if i > 50:
-                        acs[-1] = -0.1
+                    #acs[-1] = .5
+                    #if i > 50:
+                    #    acs[-1] = -0.1
                     #acs[2] = 0
 
                     ob, reward, dones, info = env.step(acs)

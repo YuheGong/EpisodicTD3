@@ -785,7 +785,7 @@ def create_sde_features_extractor(
     # Special case: when using states as features (i.e. sde_net_arch is an empty list)
     # don't use any activation function
     sde_activation = activation_fn if len(sde_net_arch) > 0 else None
-    latent_sde_net = create_mlp(features_dim, -1, sde_net_arch, activation_fn=sde_activation, squash_output=False)
+    latent_sde_net = create_mlp(features_dim, -1, sde_net_arch, activation_fn=sde_activation, squash_output=True)
     latent_sde_dim = sde_net_arch[-1] if len(sde_net_arch) > 0 else features_dim
     sde_features_extractor = nn.Sequential(*latent_sde_net)
     return sde_features_extractor, latent_sde_dim

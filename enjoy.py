@@ -29,12 +29,19 @@ env = 'Meta-dense-soccer-v2'
 env = "Meta-dense-window-open-v2"
 env = "Meta-dense-soccer-v2"
 env = "HopperXYJumpStep-v0"
+env = "Meta-dense-window-open-v2"
 #env = "Meta-dense-reach-v2"
-#env = "Meta-dense-pick-place-v2"
+env = "Meta-soccer-v2"
+env = "Meta-dense-coffee-push-v2"
+env = "Meta-button-press-v2"
+env = "Meta-dense-coffee-push-v2"
+env = "Meta-soccer-v2"
+#env = "Meta-dense-handle-pull-v2"
+env = "Meta-context-dense-reach-v2"
 env_id = env
 
-path = "logs/episodic_td3/" + env + "_2"
-con = 0
+path = "logs/episodic_td3/" + env + "_1"
+con = 1
 if int(con) == 1:
     file_name = "context.yml"
 else:

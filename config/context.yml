@@ -7,9 +7,9 @@ Meta-v2:
     total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
-    action_noise_sigma: 0.5
-    weight_noise_judge: False
-    weight_noise: 0
+    action_noise_sigma: 0
+    weight_noise_judge: True
+    weight_noise: 1
     policy_kwargs:
       activation_fn: tanh
       pi: [256,256]
@@ -20,7 +20,7 @@ Meta-v2:
     zero_basis: 1
     controller_type: MetaWorld
     width: 0.01
-    weight_scale: 0.01
+    weight_scale: 1
   env_params:
     env_name: alr_envs
     num_envs: 1
@@ -82,7 +82,7 @@ HopperXYJumpStepContext-v0:
       d_gains: 0.1
       i_gains: 0
     width: 0.01
-    weight_scale: 0.005
+    weight_scale: 0.01
   env_params:
     env_name: alr_envs:HopperXYJumpStepContext-v0
     num_envs: 1
