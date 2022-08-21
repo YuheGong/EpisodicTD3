@@ -467,7 +467,7 @@ MetaPickAndPlace-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 0.01
-    actor_learning_rate: 0.000001
+    actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
     total_timesteps: 1.e+7
     policy: MlpPolicy
@@ -492,22 +492,22 @@ MetaPickAndPlace-v0:
 Meta-v2:
   algorithm: episodic_td3
   algo_params:
-    initial_promp_params: 0.01
+    initial_promp_params: -0.01
     actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
     total_timesteps: 2.e+6
     policy: MlpPolicy
     policy_type: off_policy
-    action_noise_sigma: 0
-    weight_noise_judge: True
-    weight_noise: 1
+    action_noise_sigma: 0.8
+    weight_noise_judge: False
+    weight_noise: 0
     policy_kwargs:
       activation_fn: tanh
-      pi: 256
-      qf: 256
+      pi: [256]
+      qf: [256,256]
   promp_params:
-    num_basis: 10
-    zero_start: True
+    num_basis: 5
+    zero_start: False
     zero_basis: 1
     controller_type: MetaWorld
     width: 0.01

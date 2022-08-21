@@ -245,15 +245,13 @@ class EpisodicTD3(BaseAlgorithm):
         """
         if initial_promp_params is None:
             initial_promp_params = 1 * th.ones(self.basis_num * self.dof)
-        elif isinstance(initial_promp_params, float):
-            initial_promp_params = initial_promp_params * th.ones(self.basis_num * self.dof)
-        elif isinstance(initial_promp_params, int):
-            initial_promp_params = initial_promp_params * th.ones(self.basis_num * self.dof)
         else:
-            if initial_promp_params.shape != (self.basis_num, self.dof):
-                raise AssertionError(f'The shape of ProMP parameters should be {self.basis_num} * {self.dof}, '
-                                     f'now it is {initial_promp_params.shape}')
-            initial_promp_params = th.Tensor(initial_promp_params)
+            initial_promp_params = th.Tensor(np.array(initial_promp_params) * np.ones((self.basis_num, self.dof)))
+        #else:
+        #    if initial_promp_params.shape != (self.basis_num, self.dof):
+        #        raise AssertionError(f'The shape of ProMP parameters should be {self.basis_num} * {self.dof}, '
+        #                             f'now it is {initial_promp_params.shape}')
+        #    initial_promp_params = th.Tensor(initial_promp_params)
 
         initial_promp_params = initial_promp_params.reshape(self.basis_num, self.dof)
 
@@ -1083,6 +1081,7 @@ class EpisodicTD3(BaseAlgorithm):
         import time
 
         self.actor.mp.weights = th.Tensor(weights).to(device='cuda')
+        #self.actor.mp.weights = th.Tensor(np.array([-0.1,-0.1,-0.1,-0.1])*np.ones((5,4))).to(device='cuda')
         self.actor.update()
         #print("pos_model",self.actor.mp.pos_features_np)
 
@@ -1094,7 +1093,7 @@ class EpisodicTD3(BaseAlgorithm):
 
         print("algorithm", self.actor.mp.weights)
 
-        for i in range(2):
+        for i in range(1):
             if i == 1:
                 noise_dist = NormalActionNoise(mean=np.zeros(self.dof), sigma=[0] * np.ones(self.dof))
             else:
@@ -1110,7 +1109,7 @@ class EpisodicTD3(BaseAlgorithm):
             import time
             if "Meta" in str(env):
                 for i in range(int(self.max_episode_steps)):
-                    #time.sleep(0.05)
+                    time.sleep(0.01)
                     ac = self.actor.get_action(i)
                     #ac = np.tanh(ac)
                     acs = np.clip(ac, -1, 1).reshape(self.dof) + noise_dist()
