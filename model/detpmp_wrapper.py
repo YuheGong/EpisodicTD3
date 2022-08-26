@@ -33,25 +33,32 @@ class DetPMPWrapper(ABC):
             zero_start=False,
             zero_basis=0,
             noise_sigma=0,
+            pos_traj_steps = 0,
+            context = False,
             **controller_kwargs):
 
         self.controller_type = controller_kwargs['controller_type']
         self.controller_setup(env=env, controller_kwargs=controller_kwargs, num_dof=num_dof)
 
         self.zero_start = zero_start
+        self.context = context
         self.start_traj = None
         self.trajectory = None
         self.velocity = None
+        self.pos_traj_steps = pos_traj_steps
         #self.noise = NormalActionNoise(mean=np.zeros(num_dof * num_basis), sigma=noise_sigma * np.ones(num_dof * num_basis))
 
         self.step_length = step_length
+        self.max_episodes = self.step_length + pos_traj_steps
         self.env = env
         dt = self.env.dt
+
 
         self.num_dof = num_dof
         self.mp = DeterministicProMP(n_basis=num_basis, n_dof=num_dof, width=width,
                                      zero_start=zero_start, n_zero_bases=zero_basis,
-                                     step_length=self.step_length, dt=dt, weight_scale=weights_scale)
+                                     step_length=self.step_length, dt=dt, weight_scale=weights_scale,
+                                     pos_traj_steps=pos_traj_steps)
 
 
     def controller_setup(self, env, controller_kwargs, num_dof):
@@ -82,8 +89,7 @@ class DetPMPWrapper(ABC):
         according to the current weights in each iteration.
         """
         # torch version of the reference trajectory
-        _,  self.trajectory, self.velocity, self.acceleration = self.mp.compute_trajectory()
-
+        _,  self.trajectory, self.velocity, __ = self.mp.compute_trajectory()
         # add initial position
         if self.zero_start:
             if self.controller_type == 'motor':
@@ -104,7 +110,7 @@ class DetPMPWrapper(ABC):
         # numpy version of the reference trajectory
         self.trajectory_np = self.trajectory.cpu().detach().numpy()
         self.velocity_np = self.velocity.cpu().detach().numpy()
-        self.acceleration_np = self.acceleration.cpu().detach().numpy()
+        #self.acceleration_np = self.acceleration.cpu().detach().numpy()
 
     def update_context(self, steps):
         """
@@ -114,7 +120,7 @@ class DetPMPWrapper(ABC):
         # torch version of the reference trajectory
         self.trajectory = self.mp.pos_features[steps] @ self.mp.weights
         self.velocity = self.mp.vel_features[steps] @ self.mp.weights
-        self.acceleration = self.mp.acc_features[steps] @ self.mp.weights
+        #self.acceleration = self.mp.acc_features[steps] @ self.mp.weights
 
         # add initial position
         if self.zero_start:
@@ -148,8 +154,8 @@ class DetPMPWrapper(ABC):
         """
         self.positions = self.trajectory.reshape(-1, self.num_dof)
         self.velocities = self.velocity.reshape(-1, self.num_dof)
-        self.accelerations = self.acceleration.reshape(-1, self.num_dof)
-        actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
+        #self.accelerations = self.acceleration.reshape(-1, self.num_dof)
+        actions = self.controller.predict_actions(self.positions, self.velocities, None, observation)
         #actions = th.tanh(actions)
         return actions
 
@@ -166,8 +172,8 @@ class DetPMPWrapper(ABC):
         """
         self.positions = self.trajectory[step].reshape(-1, self.num_dof)
         self.velocities = self.velocity[step].reshape(-1, self.num_dof)
-        self.accelerations = self.acceleration[step].reshape(-1, self.num_dof)
-        actions = self.controller.predict_actions(self.positions, self.velocities, self.accelerations, observation)
+        #self.accelerations = self.acceleration[step].reshape(-1, self.num_dof)
+        actions = self.controller.predict_actions(self.positions, self.velocities, None, observation)
         #actions = th.tanh(actions)
         return actions
 
@@ -184,8 +190,8 @@ class DetPMPWrapper(ABC):
 
         trajectory = self.trajectory_np[timesteps].copy() #+ noise_traj
         velocity = self.velocity_np[timesteps].copy()
-        acceleration = self.acceleration_np[timesteps].copy()
-        action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, acceleration)
+        #acceleration = self.acceleration_np[timesteps].copy()
+        action, des_pos, des_vel = self.controller.get_action(trajectory, velocity, None)
         #action = np.tanh(action)
         return action
 
@@ -202,7 +208,7 @@ class DetPMPWrapper(ABC):
             step_length: the step length of one episode based on current ProMP model.
         """
         rewards = 0
-        step_length = self.step_length
+        step_length = self.max_episodes
         #env.reset()
         if "Meta" in str(env):
             self.min_target_object = 100
@@ -210,9 +216,10 @@ class DetPMPWrapper(ABC):
             self.last_success = 0
             self.control_cost = 0
             self.success_rate = []
-            for i in range(int(self.step_length)):
+            for i in range(int(self.max_episodes)):
                 ac = self.get_action(i)
-                #ac = np.tanh(ac)
+                if self.context:
+                    ac = np.tanh(ac)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
                 rewards += reward
@@ -223,11 +230,12 @@ class DetPMPWrapper(ABC):
             self.success_rate = np.any(np.array(self.success_rate))
             self.last_success = info['success']
             self.last_target_object = info['obj_to_target']
-
         else:
             import time
-            for i in range(step_length):
+            for i in range(self.max_episodes):
                 ac = self.get_action(i, noise=0)
+                if self.context:
+                    ac = np.tanh(ac)
                 ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward

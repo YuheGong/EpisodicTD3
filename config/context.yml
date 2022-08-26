@@ -7,7 +7,7 @@ Meta-v2:
     total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
-    action_noise_sigma: 0.5
+    action_noise_sigma: 0.1
     weight_noise_judge: False
     weight_noise: 0
     policy_kwargs:
@@ -15,8 +15,8 @@ Meta-v2:
       pi: [256,256]
       qf: [256,256]
   promp_params:
-    num_basis: 5
-    zero_start: False
+    num_basis: 10
+    zero_start: True
     zero_basis: 1
     controller_type: MetaWorld
     width: 0.01
@@ -35,7 +35,7 @@ HopperXYJumpMiddleContext-v0:
     total_timesteps: 1.e+7
     policy: MlpPolicy
     policy_type: off_policy
-    noise_sigma: 0.3
+    noise_sigma: 0.1
     policy_kwargs:
       activation_fn: tanh
       pi: 256

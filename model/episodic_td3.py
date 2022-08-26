@@ -83,6 +83,7 @@ class EpisodicTD3(BaseAlgorithm):
         context_hidden_layer: int = 256,
         weight_noise_judge: bool = False,
         weight_noise: int = 1,
+        pos_traj_steps: int = 150,
     ):
 
 
@@ -129,6 +130,8 @@ class EpisodicTD3(BaseAlgorithm):
         self.target_policy_noise = target_policy_noise
 
         # Environment episode length
+        self.pos_traj_steps = pos_traj_steps
+
         if "Meta" in str(env):
             self.env.random_init = False
             self.max_episode_steps = self.env.max_path_length
@@ -302,17 +305,20 @@ class EpisodicTD3(BaseAlgorithm):
         self.actor = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
                                    controller_type=self.controller_type, weights_scale=self.weight_scale,
                                    zero_start=self.zero_start, zero_basis= self.zero_basis,
-                                   step_length=self.max_episode_steps,
+                                   step_length=self.max_episode_steps-self.pos_traj_steps,
                                    noise_sigma=self.noise_sigma,
-                                   controller_kwargs=self.actor_kwargs)
+                                   controller_kwargs=self.actor_kwargs,
+                                   pos_traj_steps=self.pos_traj_steps, context=self.contextual)
 
 
         self.actor_target = DetPMPWrapper(self.env, num_dof=self.dof, num_basis=self.basis_num, width=self.width,
                                           controller_type=self.controller_type, weights_scale=self.weight_scale,
                                           zero_start=self.zero_start, zero_basis= self.zero_basis,
-                                          step_length=self.max_episode_steps,
+                                          step_length=self.max_episode_steps-self.pos_traj_steps,
                                           noise_sigma=self.noise_sigma,
-                                          controller_kwargs=self.actor_kwargs)
+                                          controller_kwargs=self.actor_kwargs,
+                                          pos_traj_steps=self.pos_traj_steps,context=self.contextual
+                                          )
 
 
         # Set the ProMP weights optimizer
@@ -514,9 +520,9 @@ class EpisodicTD3(BaseAlgorithm):
         if isinstance(self.action_space, gym.spaces.Box):
             if self.contextual:
                 #unscaled_action = np.tanh(unscaled_action)
+                action = np.tanh(unscaled_action)
                 if self.weight_noise_judge is False:
                     unscaled_action += self.action_noise().reshape(-1)
-                action = unscaled_action
                 buffer_action = action
                 '''
                 scaled_action = self.policy.scale_action(unscaled_action).reshape(1, self.dof)
@@ -867,7 +873,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.update_context_in_training(replay_data.context, replay_data.next_steps)
                 #self.env.reset()
 
-                next_actions = (self.actor_target.predict_action_context(next_step, replay_data.next_observations) + noise).clamp(-1, 1)
+                next_actions = (th.tanh(self.actor_target.predict_action_context(next_step, replay_data.next_observations)) + noise).clamp(-1, 1)
 
                 # Compute the next Q-values: min over all critics targets
                 next_q_values = th.cat(self.critic_target(replay_data.next_observations, next_actions, (next_step+1)/self.max_episode_steps),
@@ -895,7 +901,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.update_context_in_training(replay_data.context, replay_data.steps)
                 #self.env.reset()
 
-                act = self.actor.predict_action_context(replay_data.steps, replay_data.observations)
+                act = th.tanh(self.actor.predict_action_context(replay_data.steps, replay_data.observations))
                 actor_loss = -self.critic.q1_forward(replay_data.observations, act,  (replay_data.steps+1)/self.max_episode_steps).mean()
                 actor_losses.append(actor_loss.item())
 
@@ -996,10 +1002,10 @@ class EpisodicTD3(BaseAlgorithm):
                 # Select action according to policy
                 action, buffer_action = self._sample_action(self.episode_timesteps)
 
-                # Rescale and perform action
                 if 'Meta' in str(env):
                     action = action.reshape(-1)
 
+                # Rescale and perform action
                 new_obs, reward, done, infos = env.step(action)
 
                 context = self.env.context().reshape(1,-1)
@@ -1007,7 +1013,6 @@ class EpisodicTD3(BaseAlgorithm):
                 action = action.reshape(1,-1)
                 new_obs = new_obs.reshape(1,-1)
                 self.actions.append(action)
-
 
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
@@ -1022,6 +1027,7 @@ class EpisodicTD3(BaseAlgorithm):
                 next_step = self.episode_timesteps
                 if self.episode_timesteps == self.max_episode_steps:
                     next_step = self.max_episode_steps-1
+
                 self._store_transition(replay_buffer, buffer_action, new_obs, reward, done, infos,
                                        self.episode_timesteps - 1, next_step, context)
 
@@ -1109,8 +1115,12 @@ class EpisodicTD3(BaseAlgorithm):
             import time
             if "Meta" in str(env):
                 for i in range(int(self.max_episode_steps)):
-                    time.sleep(0.01)
+                    time.sleep(0.05)
                     ac = self.actor.get_action(i)
+                    if self.contextual:
+                        ac = np.tanh(ac)
+                    #if self.pos_traj_steps < i:
+                    #    ac[:3] = 0#self.env.sim.data.mocap_pos
                     #ac = np.tanh(ac)
                     acs = np.clip(ac, -1, 1).reshape(self.dof) + noise_dist()
                     #acs[-1] = .5
@@ -1119,7 +1129,7 @@ class EpisodicTD3(BaseAlgorithm):
                     #acs[2] = 0
 
                     ob, reward, dones, info = env.step(acs)
-                    print(i, acs, reward)
+                    print(i, acs, reward,self.actor.trajectory_np[i])
                     infos.append(info['obj_to_target'])
                     obs.append(self.env.sim.data.mocap_pos.copy())
                     #if i == 59 or i == 89 or i == 199 or i == 19 or i == 1:
@@ -1136,7 +1146,9 @@ class EpisodicTD3(BaseAlgorithm):
                 for i in range(step_length):
                     time.sleep(0.01)
                     ac = self.actor.get_action(i, noise=0)
-                    print("i",ac,)
+                    if self.contextual:
+                        ac = np.tanh(ac)
+                    print("i",ac)
                     ac = np.clip(ac, -1, 1).reshape(1, self.dof)
                     obs, reward, done, info = env.step(ac)
                     rewards += reward

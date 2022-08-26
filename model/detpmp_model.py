@@ -4,7 +4,8 @@ import torch as th
 class DeterministicProMP:
 
     def __init__(self, n_basis, n_dof, basis_function="rbf", width=None, off=0.01, zero_start=False, n_zero_bases=0, step_length=None,
-                 dt=0.02, weight_scale=1):
+                 dt=0.02, weight_scale=1, pos_traj_steps=0):
+
         self.n_basis = n_basis
         self.n_dof = n_dof
         self.weights = th.zeros(size=(self.n_basis, self.n_dof))
@@ -33,8 +34,16 @@ class DeterministicProMP:
         self.cr_scale = th.Tensor([step_length * dt]).to(device="cuda")
         self.t = th.Tensor(t).cuda()
 
+        self.pos_traj_steps = pos_traj_steps
+
         #drop out the featrues for zero_basis
         self.pos_features_np, self.vel_features_np , self.acc_features_np = self._exponential_kernel(t)
+
+        if self.pos_traj_steps > 0:
+            self.pos_features_np = np.vstack([self.pos_features_np, np.tile(self.pos_features_np[-1, :], [self.pos_traj_steps, 1])])
+            #self.pos_features_np = np.vstack([self.pos_features_np, np.zeros(shape=(self.pos_traj_steps, self.n_basis + self.n_zero_bases))])
+            self.vel_features_np = np.vstack([self.vel_features_np, np.zeros(shape=(self.pos_traj_steps, self.n_basis + self.n_zero_bases))])
+
         self.pos_features_np *= self.weight_scale
         self.vel_features_np *= self.weight_scale
         self.acc_features_np *= self.weight_scale
