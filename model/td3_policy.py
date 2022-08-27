@@ -53,7 +53,7 @@ class Actor(BasePolicy):
         self.activation_fn = activation_fn
 
         action_dim = self.action_space #et_action_dim(self.action_space)
-        actor_net = create_mlp(features_dim, action_dim, net_arch, activation_fn, squash_output=False)
+        actor_net = create_mlp(features_dim, action_dim, net_arch, activation_fn, squash_output=True)
 
         # Deterministic action
         self.mu = nn.Sequential(*actor_net)

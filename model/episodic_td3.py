@@ -83,7 +83,7 @@ class EpisodicTD3(BaseAlgorithm):
         context_hidden_layer: int = 256,
         weight_noise_judge: bool = False,
         weight_noise: int = 1,
-        pos_traj_steps: int = 150,
+        pos_traj_steps: int = 0,
     ):
 
 
@@ -1089,7 +1089,7 @@ class EpisodicTD3(BaseAlgorithm):
         self.actor.mp.weights = th.Tensor(weights).to(device='cuda')
         #self.actor.mp.weights = th.Tensor(np.array([-0.1,-0.1,-0.1,-0.1])*np.ones((5,4))).to(device='cuda')
         self.actor.update()
-        #print("pos_model",self.actor.mp.pos_features_np)
+        print("pos_model",self.actor.mp.pos_features_np)
 
 
         ob1 = []
