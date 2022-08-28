@@ -1123,13 +1123,14 @@ class EpisodicTD3(BaseAlgorithm):
                     #    ac[:3] = 0#self.env.sim.data.mocap_pos
                     #ac = np.tanh(ac)
                     acs = np.clip(ac, -1, 1).reshape(self.dof) + noise_dist()
+                    #acs[-1] = 1
                     #acs[-1] = .5
                     #if i > 50:
                     #    acs[-1] = -0.1
                     #acs[2] = 0
 
                     ob, reward, dones, info = env.step(acs)
-                    print(i, acs, reward,self.actor.trajectory_np[i])
+                    print(i, acs, reward,self.actor.trajectory_np[i], info['success'])
                     infos.append(info['obj_to_target'])
                     obs.append(self.env.sim.data.mocap_pos.copy())
                     #if i == 59 or i == 89 or i == 199 or i == 19 or i == 1:
