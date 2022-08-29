@@ -218,8 +218,8 @@ class DetPMPWrapper(ABC):
             self.success_rate = []
             for i in range(int(self.max_episodes)):
                 ac = self.get_action(i)
-                if self.context:
-                    ac = np.tanh(ac)
+                #if self.context:
+                #    ac = np.tanh(ac)
                 ac = np.clip(ac, -1, 1).reshape(self.num_dof)
                 obs, reward, dones, info = env.step(ac)
                 rewards += reward
@@ -234,8 +234,8 @@ class DetPMPWrapper(ABC):
             import time
             for i in range(self.max_episodes):
                 ac = self.get_action(i, noise=0)
-                if self.context:
-                    ac = np.tanh(ac)
+                #if self.context:
+                #    ac = np.tanh(ac)
                 ac = np.clip(ac, -1, 1).reshape(1,self.num_dof)
                 obs, reward, done, info = env.step(ac)
                 rewards += reward

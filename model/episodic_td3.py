@@ -520,7 +520,7 @@ class EpisodicTD3(BaseAlgorithm):
         if isinstance(self.action_space, gym.spaces.Box):
             if self.contextual:
                 #unscaled_action = np.tanh(unscaled_action)
-                action = np.tanh(unscaled_action)
+                action = unscaled_action
                 if self.weight_noise_judge is False:
                     unscaled_action += self.action_noise().reshape(-1)
                 buffer_action = action
@@ -873,7 +873,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.update_context_in_training(replay_data.context, replay_data.next_steps)
                 #self.env.reset()
 
-                next_actions = (th.tanh(self.actor_target.predict_action_context(next_step, replay_data.next_observations)) + noise).clamp(-1, 1)
+                next_actions = (self.actor_target.predict_action_context(next_step, replay_data.next_observations) + noise).clamp(-1, 1)
 
                 # Compute the next Q-values: min over all critics targets
                 next_q_values = th.cat(self.critic_target(replay_data.next_observations, next_actions, (next_step+1)/self.max_episode_steps),
@@ -901,7 +901,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.update_context_in_training(replay_data.context, replay_data.steps)
                 #self.env.reset()
 
-                act = th.tanh(self.actor.predict_action_context(replay_data.steps, replay_data.observations))
+                act = self.actor.predict_action_context(replay_data.steps, replay_data.observations)
                 actor_loss = -self.critic.q1_forward(replay_data.observations, act,  (replay_data.steps+1)/self.max_episode_steps).mean()
                 actor_losses.append(actor_loss.item())
 
@@ -1115,10 +1115,10 @@ class EpisodicTD3(BaseAlgorithm):
             import time
             if "Meta" in str(env):
                 for i in range(int(self.max_episode_steps)):
-                    time.sleep(0.05)
+                    #time.sleep(0.05)
                     ac = self.actor.get_action(i)
-                    if self.contextual:
-                        ac = np.tanh(ac)
+                    #if self.contextual:
+                    #    ac = np.tanh(ac)
                     #if self.pos_traj_steps < i:
                     #    ac[:3] = 0#self.env.sim.data.mocap_pos
                     #ac = np.tanh(ac)
@@ -1139,6 +1139,7 @@ class EpisodicTD3(BaseAlgorithm):
                     rewards += reward
                     env.render(False)
                 ob1 = ob
+
                 infos = np.array(infos)
                 print(np.min(infos))
                 print("rewards", rewards)
@@ -1147,8 +1148,8 @@ class EpisodicTD3(BaseAlgorithm):
                 for i in range(step_length):
                     time.sleep(0.01)
                     ac = self.actor.get_action(i, noise=0)
-                    if self.contextual:
-                        ac = np.tanh(ac)
+                    #if self.contextual:
+                    #    ac = np.tanh(ac)
                     print("i",ac)
                     ac = np.clip(ac, -1, 1).reshape(1, self.dof)
                     obs, reward, done, info = env.step(ac)
