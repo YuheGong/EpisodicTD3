@@ -67,9 +67,12 @@ promp_policy_kwargs = data['promp_params']
 if "Hopper" in data["env_params"]['env_name']:
     env = gym.make(data["env_params"]['env_name'])
     eval_env = gym.make(data["env_params"]['env_name'])
-else:
+elif "Meta" in data["env_params"]['env_name']:
     env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
     eval_env = gym.make(data["env_params"]['env_name'], seed=int(args.seed))
+else:
+    env = gym.make(data["env_params"]['env_name'])
+    eval_env = gym.make(data["env_params"]['env_name'])
 
 # learning rate and noise schedule
 Schedule = {

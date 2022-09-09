@@ -1085,7 +1085,6 @@ class EpisodicTD3(BaseAlgorithm):
             env: the environment we want to render.
         """
         import time
-
         self.actor.mp.weights = th.Tensor(weights).to(device='cuda')
         #self.actor.mp.weights = th.Tensor(np.array([-0.1,-0.1,-0.1,-0.1])*np.ones((5,4))).to(device='cuda')
         self.actor.update()
@@ -1115,7 +1114,7 @@ class EpisodicTD3(BaseAlgorithm):
             import time
             if "Meta" in str(env):
                 for i in range(int(self.max_episode_steps)):
-                    #time.sleep(0.05)
+                    time.sleep(1)
                     ac = self.actor.get_action(i)
                     #if self.contextual:
                     #    ac = np.tanh(ac)
