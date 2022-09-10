@@ -16,7 +16,6 @@ Autonomous Learning Robots (ALR) Lab: https://alr.anthropomatik.kit.edu/
 | `continue.py` | An example for continue training an environment. |
 
 
-
 ### FOLDER config:
 
 The yaml file which stores the parameters. When you want to use our framework, please add an environment configuration into context.yml or non_context.yml
