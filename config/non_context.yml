@@ -597,8 +597,8 @@ HopperXYJumpStep-v0:
     weight_noise: 0
     policy_kwargs:
       activation_fn: tanh
-      pi: 256
-      qf: 256
+      pi: [ 256,256 ]
+      qf: [ 256,256 ]
   promp_params:
     num_basis: 10
     zero_start: False

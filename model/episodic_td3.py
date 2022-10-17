@@ -1097,6 +1097,8 @@ class EpisodicTD3(BaseAlgorithm):
             self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
 
         print("algorithm", self.actor.mp.weights)
+        jump_height = []
+        goal_dist =[]
 
         for i in range(1):
             if i == 1:
@@ -1145,17 +1147,20 @@ class EpisodicTD3(BaseAlgorithm):
             else:
                 import time
                 for i in range(step_length):
-                    time.sleep(0.01)
+                    #time.sleep(0.01)
                     ac = self.actor.get_action(i, noise=0)
                     #if self.contextual:
                     #    ac = np.tanh(ac)
                     print("i",ac)
                     ac = np.clip(ac, -1, 1).reshape(1, self.dof)
                     obs, reward, done, info = env.step(ac)
-                    rewards += reward
+                    rewards += info["reward"]
+                    jump_height.append(info["height"])
+                    goal_dist.append(info["goal_dist"])
+                    #rewards += reward
                     env.render()
-                    if i == 0 or i == 125 or i == 249:
-                        time.sleep(5)
+                    #if i == 0 or i == 125 or i == 249:
+                    #    time.sleep(5)
                     if done:
                         step_length = i + 1
                         break
@@ -1163,3 +1168,27 @@ class EpisodicTD3(BaseAlgorithm):
                 print("rewards", rewards)
 
 
+            env.render()
+            #if i == 0 or i==125 or i==249:
+            #    time.sleep(5)
+            env.close()
+
+            import matplotlib.pyplot as plt
+            jump_height = np.array(jump_height)
+            goal_dist = np.array(goal_dist)
+            np.savez("jump_hieght"+"Epi.TD3",jump_height)
+            np.savez("goal_dist"+"Epi.TD3",goal_dist)
+            # plt.plot(goal[:, 0], label='x axis')
+            plt.plot(jump_height, label='TD3')
+            # plt.plot(goal[:, 1], label='y axis')
+            #plt.plot(goal[:, 1], label='y-axis')
+            # plt.plot(goal[:, 2], label='x axis')
+            plt.legend()
+            plt.xlabel("timesteps")
+            plt.ylabel("jump height")
+            # plt.show()
+            # plt.title('Goal Position')
+            import tikzplotlib
+            tikzplotlib.save("hopper_height.tex")
+            #plt.show()
+            print(reward)
