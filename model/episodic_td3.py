@@ -514,7 +514,11 @@ class EpisodicTD3(BaseAlgorithm):
         """
         This function samples the data from the environment.
         """
-        unscaled_action = self.actor.get_action(episode_timesteps)
+        if self.num_timesteps < self.learning_starts:
+            # Warmup phase
+            unscaled_action = np.array([self.action_space.sample()])
+        else:
+            unscaled_action = self.actor.get_action(episode_timesteps)
 
         # Rescale the action from [low, high] to [-1, 1]
         if isinstance(self.action_space, gym.spaces.Box):

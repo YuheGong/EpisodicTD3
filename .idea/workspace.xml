@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="444e170a-0c0a-451c-93ca-c202beb49054" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cluster.py" beforeDir="false" afterPath="$PROJECT_DIR$/cluster.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/context.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config/context.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/enjoy.py" beforeDir="false" afterPath="$PROJECT_DIR$/enjoy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/episodic_td3.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/episodic_td3.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +38,7 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/yre/Desktop/KIT/masterthesis/hopper/GradientProMP (copy)&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/yre/Desktop/KIT/masterthesis/hopper/GradientProMP&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -228,6 +229,8 @@
       <workItem from="1659689086706" duration="141976000" />
       <workItem from="1660695031254" duration="72117000" />
       <workItem from="1660937022592" duration="51451000" />
+      <workItem from="1665950613974" duration="2431000" />
+      <workItem from="1665954083963" duration="15251000" />
     </task>
     <servers />
   </component>
@@ -319,7 +322,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>582</line>
+          <line>586</line>
           <option name="timeStamp" value="204" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -369,7 +372,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>1095</line>
+          <line>1099</line>
           <option name="timeStamp" value="272" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -404,7 +407,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>530</line>
+          <line>534</line>
           <option name="timeStamp" value="285" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -414,7 +417,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/model/episodic_td3.py</url>
-          <line>829</line>
+          <line>833</line>
           <option name="timeStamp" value="291" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
