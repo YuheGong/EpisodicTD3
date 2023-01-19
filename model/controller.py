@@ -44,13 +44,13 @@ class BaseController:
                 p_gains = np.fromstring(p_gains, dtype=float, sep=',')
                 self.p_gains = torch.Tensor(p_gains).to(device='cuda')
             else:
-                self.p_gains = p_gains * torch.ones(self.num_dof).to(device='cuda')
+                self.p_gains = (torch.tensor(p_gains) * torch.ones(self.num_dof)).to(device='cuda')
         if d_gains is not None:
             if isinstance(d_gains, str):
                 d_gains = np.fromstring(d_gains, dtype=float, sep=',')
                 self.d_gains = torch.Tensor(d_gains).to(device='cuda')
             else:
-                self.d_gains = d_gains * torch.ones(self.num_dof).to(device='cuda')
+                self.d_gains = (torch.tensor(d_gains) * torch.ones(self.num_dof)).to(device='cuda')
 
 
     def get_action(self, des_pos, des_vel, des_acc):

@@ -1159,8 +1159,8 @@ class EpisodicTD3(BaseAlgorithm):
                     ac = np.clip(ac, -1, 1).reshape(1, self.dof)
                     obs, reward, done, info = env.step(ac)
                     rewards += info["reward"]
-                    jump_height.append(info["height"])
-                    goal_dist.append(info["goal_dist"])
+                    #jump_height.append(info["height"])
+                    #goal_dist.append(info["goal_dist"])
                     #rewards += reward
                     env.render()
                     #if i == 0 or i == 125 or i == 249:
