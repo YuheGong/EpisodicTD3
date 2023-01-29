@@ -94,7 +94,7 @@ class DetPMPWrapper(ABC):
         if self.zero_start:
             if self.controller_type == 'motor':
                 self.trajectory += th.Tensor(
-                    self.env.current_pos().reshape(self.num_dof)).to(device='cuda')
+                    self.env.current_pos.reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
                     device='cuda')
@@ -125,7 +125,7 @@ class DetPMPWrapper(ABC):
         # add initial position
         if self.zero_start:
             if self.controller_type == 'motor':
-                self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(device='cuda')
+                self.trajectory += th.Tensor(self.env.current_pos.reshape(self.num_dof)).to(device='cuda')
             elif self.controller_type == 'position':
                 self.trajectory += th.Tensor(self.env.current_pos().reshape(self.num_dof)).to(
                     device='cuda')

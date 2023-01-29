@@ -117,9 +117,9 @@ ALRReacherBalanceIP-v4:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 1
-    actor_learning_rate: 0.00005
+    actor_learning_rate: 0.0001
     critic_learning_rate: 0.0001
-    action_noise_sigma: 0.3
+    action_noise_sigma: 0.1
     weight_noise_judge: False
     weight_noise: 0
     n_steps: 20000
@@ -134,7 +134,7 @@ ALRReacherBalanceIP-v4:
   promp_params:
     controller_type: motor
     controller_kwargs:
-      p_gains: 1
+      p_gains: 5
       d_gains: 0.1
     num_basis: 10
     zero_start: True
@@ -258,6 +258,36 @@ dmcWalkerDense-v0:
     weight_scale: 1
   env_params:
     env_name: alr_envs:dmcWalkerDense-v0
+    num_envs: 1
+
+DeepMindBallInCupDense-v0:
+  algorithm: episodic_td3
+  algo_params:
+    initial_promp_params: 1
+    actor_learning_rate: 0.00001
+    critic_learning_rate: 0.0001
+    total_timesteps: 6.e+6
+    policy: MlpPolicy
+    policy_type: off_policy
+    action_noise_sigma: 0
+    weight_noise_judge: True
+    weight_noise: 1
+    policy_kwargs:
+      activation_fn: tanh
+      pi: [ 64,64 ]
+      qf: [ 256,256 ]
+  promp_params:
+    num_basis: 10
+    zero_start: True
+    zero_basis: 1
+    controller_type: motor
+    controller_kwargs:
+      p_gains: 0.1
+      d_gains: 0.1
+    width: 0.01
+    weight_scale: 10
+  env_params:
+    env_name: alr_envs:DeepMindBallInCupDense-v0
     num_envs: 1
 
 dmcCheetahDense-v0:

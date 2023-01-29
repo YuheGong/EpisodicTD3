@@ -3,7 +3,7 @@ import torch as th
 
 class DeterministicProMP:
 
-    def __init__(self, n_basis, n_dof, basis_function="rbf", width=None, off=0.01, zero_start=False, n_zero_bases=0, step_length=None,
+    def __init__(self, n_basis, n_dof, basis_function="rbf", width=None, off=0.2, zero_start=False, n_zero_bases=0, step_length=None,
                  dt=0.02, weight_scale=1, pos_traj_steps=0):
 
         self.n_basis = n_basis

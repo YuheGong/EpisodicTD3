@@ -63,7 +63,7 @@ class EpisodicTD3(BaseAlgorithm):
         schedule=None,
         initial_promp_params: th.Tensor = None,
         basis_num: int = 10,
-        learning_start_episodes: int = 10,
+        learning_start_episodes: int = 0,
         critic_learning_rate: Union[float, Schedule] = 1e-3,
         actor_learning_rate:  Union[float, Schedule] = 1e-3,
         buffer_size: int = int(1e6),
@@ -83,7 +83,7 @@ class EpisodicTD3(BaseAlgorithm):
         context_hidden_layer: int = 256,
         weight_noise_judge: bool = False,
         weight_noise: int = 1,
-        pos_traj_steps: int = 0,
+        pos_traj_steps: int =0,
     ):
 
 
@@ -1021,6 +1021,7 @@ class EpisodicTD3(BaseAlgorithm):
                 self.num_timesteps += 1
                 self.episode_timesteps += 1
                 self.ls_number += 1
+                self.obs.append(new_obs)
                 num_collected_steps += 1
 
                 # Give access to local variables
@@ -1089,7 +1090,11 @@ class EpisodicTD3(BaseAlgorithm):
             env: the environment we want to render.
         """
         import time
-        self.actor.mp.weights = th.Tensor(weights).to(device='cuda')
+        weights =  [ 3.866005,   13.95614717, -5.93345186, -1.63408393,  2.20220428 , 6.0007491,
+ -2.64415641 , 2.98523954 , 0.37388714 , 7.37791405, -5.51926262 , 2.30173161,
+  3.77279033,  1.99008031 ,-7.42969107 , 6.62747452,  0.08030289 , 5.66564416,
+ -1.02849363 , 0.90259802]
+        self.actor.mp.weights = th.Tensor(weights).to(device='cuda').reshape(10,2)
         #self.actor.mp.weights = th.Tensor(np.array([-0.1,-0.1,-0.1,-0.1])*np.ones((5,4))).to(device='cuda')
         self.actor.update()
         print("pos_model",self.actor.mp.pos_features_np)
@@ -1151,6 +1156,7 @@ class EpisodicTD3(BaseAlgorithm):
             else:
                 import time
                 for i in range(step_length):
+                    print(self.actor.mp.weights)
                     #time.sleep(0.01)
                     ac = self.actor.get_action(i, noise=0)
                     #if self.contextual:
@@ -1158,7 +1164,9 @@ class EpisodicTD3(BaseAlgorithm):
                     print("i",ac)
                     ac = np.clip(ac, -1, 1).reshape(1, self.dof)
                     obs, reward, done, info = env.step(ac)
-                    rewards += info["reward"]
+                    ob1.append(obs)
+                    time.sleep(0.1)
+                    #rewards += info["reward"]
                     #jump_height.append(info["height"])
                     #goal_dist.append(info["goal_dist"])
                     #rewards += reward
