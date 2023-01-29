@@ -32,7 +32,7 @@ DeepMindBallInCupDense-v0:
   algorithm: episodic_td3
   algo_params:
     initial_promp_params: 0.1
-    actor_learning_rate: 0.0000001
+    actor_learning_rate: 0.00001
     critic_learning_rate: 0.0001
     total_timesteps: 6.e+6
     policy: MlpPolicy
@@ -42,7 +42,7 @@ DeepMindBallInCupDense-v0:
     weight_noise: 0
     policy_kwargs:
       activation_fn: tanh
-      pi: [ 256,256]
+      pi: [ 64,64]
       qf: [ 256,256]
   promp_params:
     num_basis: 10
@@ -50,9 +50,9 @@ DeepMindBallInCupDense-v0:
     zero_basis: 2
     controller_type: motor
     controller_kwargs:
-      p_gains: [0.1, 0.1]
+      p_gains: 0.1
       d_gains: 0.1
-    width: 0.005
+    width: 0.01
     weight_scale: 100
   env_params:
     env_name: alr_envs:DeepMindBallInCupDense-v0
