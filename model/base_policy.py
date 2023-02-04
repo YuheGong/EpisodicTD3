@@ -522,15 +522,9 @@ class ActorCriticPolicy(BasePolicy):
         :return: action, value and log probability of the action
         """
         latent_pi, latent_vf, latent_sde = self._get_latent(obs)
-        #print("latent_pi",latent_pi)
-        #print("latent_vf",latent_vf)
-        #print("latent_sde",latent_sde)
-
 
         # Evaluate the values for the given observations
         values = self.value_net(latent_vf)
-        #print("latent_pi",latent_pi)
-        #print("latent_ade", latent_sde)
         distribution = self._get_action_dist_from_latent(latent_pi, latent_sde=latent_sde)
         actions = distribution.get_actions(deterministic=deterministic)
         log_prob = distribution.log_prob(actions)

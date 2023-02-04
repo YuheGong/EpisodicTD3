@@ -83,7 +83,7 @@ class EpisodicTD3(BaseAlgorithm):
         context_hidden_layer: int = 256,
         weight_noise_judge: bool = False,
         weight_noise: int = 1,
-        pos_traj_steps: int =30,
+        pos_traj_steps: int =32,
     ):
 
 
@@ -1090,7 +1090,7 @@ class EpisodicTD3(BaseAlgorithm):
             env: the environment we want to render.
         """
         import time
-        self.actor.mp.weights = th.Tensor(weights).to(device='cuda').reshape(10,2)
+        self.actor.mp.weights = th.Tensor(weights).to(device='cuda').reshape(-1,self.dof)
         #self.actor.mp.weights = th.Tensor(np.array([-0.1,-0.1,-0.1,-0.1])*np.ones((5,4))).to(device='cuda')
         self.actor.update()
         #print("pos_model",self.actor.mp.pos_features_np)
@@ -1165,7 +1165,7 @@ class EpisodicTD3(BaseAlgorithm):
                     #rewards += info["reward"]
                     #jump_height.append(info["height"])
                     #goal_dist.append(info["goal_dist"])
-                    #rewards += reward
+                    rewards += reward
                     env.render()
                     #if i == 0 or i == 125 or i == 249:
                     #    time.sleep(5)
