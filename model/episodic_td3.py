@@ -101,7 +101,7 @@ class EpisodicTD3(BaseAlgorithm):
             supported_action_spaces=None,
         )
 
-        self.eval_numsteps = 10000
+        self.eval_numsteps = 0
 
 
         # Setup the default setting of stable baselines3, for details please check OpenAI Stable baselines3
@@ -362,8 +362,7 @@ class EpisodicTD3(BaseAlgorithm):
 
         # evaluate the current policy, and save the reward and the episode length
         self.actor.update()
-        self.eval_numsteps += 1
-        if self.eval_numsteps >= 10000:
+        if self.num_timesteps/10000 >= self.eval_numsteps:
             self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
             self.env.reset()
 
@@ -454,7 +453,8 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # tensorboard logger
-        if self.eval_numsteps >= 10000:
+        if self.num_timesteps/10000 >= self.eval_numsteps:
+
             logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
             if len(actor_losses) > 0:
                 logger.record("train/actor_loss", np.mean(actor_losses))
@@ -467,7 +467,7 @@ class EpisodicTD3(BaseAlgorithm):
             logger.record("train/num_basis", self.basis_num)
             logger.record("eval/mean_reward", self.eval_reward)
             logger.record("eval/episode_length", eval_epi_length)
-            self.eval_numsteps = 0
+            self.eval_numsteps +=1
             if "Meta" in str(self.env):
                 logger.record("eval/last_success", self.actor.last_success)
                 logger.record("eval/last_object_to_target", self.actor.last_target_object)
@@ -801,8 +801,7 @@ class EpisodicTD3(BaseAlgorithm):
         """
 
         # evaluate the current policy, and save the reward and the episode length
-        self.eval_numsteps += 1
-        if self.eval_numsteps >= 10000:
+        if self.num_timesteps/10000 >= self.eval_numsteps:
             self.eval_reward = 0
             eval_epi_length = 0
             if "Hopper" in str(self.env):
@@ -944,7 +943,7 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # tensorboard logger
-        if self.eval_numsteps >= 10000:
+        if self.num_timesteps/10000 >= self.eval_numsteps:
             logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
             if len(actor_losses) > 0:
                 logger.record("train/actor_loss", np.mean(actor_losses))
@@ -957,7 +956,7 @@ class EpisodicTD3(BaseAlgorithm):
             logger.record("train/num_basis", self.basis_num)
             logger.record("eval/mean_reward", self.eval_reward)
             logger.record("eval/episode_length", eval_epi_length)
-            self.eval_numsteps = 0
+            self.eval_numsteps += 1
             if "Meta" in str(self.env):
                 logger.record("eval/last_success", self.last_success)
                 logger.record("eval/success_rate", self.success_rate)
