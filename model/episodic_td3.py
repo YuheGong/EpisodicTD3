@@ -101,6 +101,8 @@ class EpisodicTD3(BaseAlgorithm):
             supported_action_spaces=None,
         )
 
+        self.eval_numsteps = 10000
+
 
         # Setup the default setting of stable baselines3, for details please check OpenAI Stable baselines3
         self.remove_time_limit_termination = False
@@ -360,8 +362,10 @@ class EpisodicTD3(BaseAlgorithm):
 
         # evaluate the current policy, and save the reward and the episode length
         self.actor.update()
-        self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
-        self.env.reset()
+        self.eval_numsteps += 1
+        if self.eval_numsteps >= 10000:
+            self.eval_reward, eval_epi_length = self.actor.eval_rollout(self.env)
+            self.env.reset()
 
         # learning rate and noise schedule
         if self.need_schedule:
@@ -450,26 +454,30 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # tensorboard logger
-        logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
-        if len(actor_losses) > 0:
-            logger.record("train/actor_loss", np.mean(actor_losses))
-        logger.record("train/critic_loss", np.mean(critic_losses))
-        logger.record("eval/noise_reward", np.mean(np.array(self.reward_with_noise)))
-        logger.record("train/actor_learning_rate", self.actor_learning_rate)
-        logger.record("train/gradient_steps", gradient_steps)
-        logger.record("train/noise_sigma_action", self.noise_sigma)
-        logger.record("train/noise_sigma_weights", self.weight_noise)
-        logger.record("train/num_basis", self.basis_num)
-        logger.record("eval/mean_reward", self.eval_reward)
-        logger.record("eval/episode_length", eval_epi_length)
-        if "Meta" in str(self.env):
-            logger.record("eval/last_success", self.actor.last_success)
-            logger.record("eval/last_object_to_target", self.actor.last_target_object)
-            logger.record("eval/min_object_to_target", self.actor.min_target_object)
-            logger.record("eval/control_cost", self.actor.control_cost)
-        elif "Hopper" in str(self.env):
-            logger.record("eval/max_height", self.actor.max_height)
-            logger.record("eval/min_goal_dist", self.actor.min_goal_dist)
+        if self.eval_numsteps >= 10000:
+            logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
+            if len(actor_losses) > 0:
+                logger.record("train/actor_loss", np.mean(actor_losses))
+            logger.record("train/critic_loss", np.mean(critic_losses))
+            logger.record("eval/noise_reward", np.mean(np.array(self.reward_with_noise)))
+            logger.record("train/actor_learning_rate", self.actor_learning_rate)
+            logger.record("train/gradient_steps", gradient_steps)
+            logger.record("train/noise_sigma_action", self.noise_sigma)
+            logger.record("train/noise_sigma_weights", self.weight_noise)
+            logger.record("train/num_basis", self.basis_num)
+            logger.record("eval/mean_reward", self.eval_reward)
+            logger.record("eval/episode_length", eval_epi_length)
+            self.eval_numsteps = 0
+            if "Meta" in str(self.env):
+                logger.record("eval/last_success", self.actor.last_success)
+                logger.record("eval/last_object_to_target", self.actor.last_target_object)
+                logger.record("eval/min_object_to_target", self.actor.min_target_object)
+                logger.record("eval/control_cost", self.actor.control_cost)
+            elif "Hopper" in str(self.env):
+                logger.record("eval/max_height", self.actor.max_height)
+                logger.record("eval/min_goal_dist", self.actor.min_goal_dist)
+            elif "DeepMind" in str(self.env):
+                logger.record("eval/success", self.actor.last_success)
 
 
     def learn(self, total_timesteps: int, callback: MaybeCallback = None, log_interval: int = 4,
@@ -736,14 +744,6 @@ class EpisodicTD3(BaseAlgorithm):
         """
         assert self.replay_buffer is not None, "The replay buffer is not defined"
         save_to_pkl(path, self.replay_buffer, self.verbose)
-
-    def load_replay_buffer(self, path: Union[str, pathlib.Path, io.BufferedIOBase]) -> None:
-        """
-        This function loads the replay buffer.
-        """
-        self.replay_buffer = load_from_pkl(path, self.verbose)
-        assert isinstance(self.replay_buffer, ReplayBuffer), "The replay buffer must inherit from ReplayBuffer class"
-
     def _setup_learn(self, total_timesteps: int, eval_env: Optional[GymEnv], callback: MaybeCallback = None,
                      eval_freq: int = 10000, n_eval_episodes: int = 5, log_path: Optional[str] = None,
                      reset_num_timesteps: bool = True, tb_log_name: str = "run",
@@ -801,43 +801,51 @@ class EpisodicTD3(BaseAlgorithm):
         """
 
         # evaluate the current policy, and save the reward and the episode length
-        self.eval_reward = 0
-        eval_epi_length = 0
-        if "Hopper" in str(self.env):
-            self.max_height = 0
-            self.min_goal_dist = 0
-        elif "Meta" in str(self.env):
-            self.last_success = 0
-            self.success_rate = []
-            self.last_target_object = 0
-            self.min_target_object = 0
-        self.eval_num = 10
-        for i in range(self.eval_num):
-            self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
-            episode_reward, eval_length = self.actor.eval_rollout(self.env)
-            self.env.reset()
-            self.eval_reward += episode_reward
-            eval_epi_length += eval_length
+        self.eval_numsteps += 1
+        if self.eval_numsteps >= 10000:
+            self.eval_reward = 0
+            eval_epi_length = 0
             if "Hopper" in str(self.env):
-                self.max_height += self.actor.max_height
-                self.min_goal_dist += self.actor.min_goal_dist
+                self.max_height = 0
+                self.min_goal_dist = 0
             elif "Meta" in str(self.env):
-                self.success_rate.append(self.actor.success_rate)
-                self.last_success += self.actor.last_success
-                self.last_target_object += self.actor.last_target_object
-                self.min_target_object += self.actor.min_target_object
-        if "Hopper" in str(self.env):
-            self.max_height /= self.eval_num
-            self.min_goal_dist /= self.eval_num
-        elif "Meta" in str(self.env):
-            self.success_rate = np.mean(np.array(self.success_rate))
-            self.last_success /= self.eval_num
-            self.last_target_object /= self.eval_num
-            self.min_target_object /= self.eval_num
-        self.eval_reward /= self.eval_num
-        eval_epi_length /= self.eval_num
+                self.last_success = 0
+                self.success_rate = []
+                self.last_target_object = 0
+                self.min_target_object = 0
+            elif "DeepMind" in str(self.env):
+                self.success = []
+            self.eval_num = 10
+            for i in range(self.eval_num):
+                self.update_context(th.Tensor(self.env.context()).to(device='cuda'))
+                episode_reward, eval_length = self.actor.eval_rollout(self.env)
+                self.env.reset()
+                self.eval_reward += episode_reward
+                eval_epi_length += eval_length
+                if "Hopper" in str(self.env):
+                    self.max_height += self.actor.max_height
+                    self.min_goal_dist += self.actor.min_goal_dist
+                elif "Meta" in str(self.env):
+                    self.success_rate.append(self.actor.success_rate)
+                    self.last_success += self.actor.last_success
+                    self.last_target_object += self.actor.last_target_object
+                    self.min_target_object += self.actor.min_target_object
+                elif "DeepMind" in str(self.env):
+                    self.success.append(self.actor.last_success)
+            if "Hopper" in str(self.env):
+                self.max_height /= self.eval_num
+                self.min_goal_dist /= self.eval_num
+            elif "Meta" in str(self.env):
+                self.success_rate = np.mean(np.array(self.success_rate))
+                self.last_success /= self.eval_num
+                self.last_target_object /= self.eval_num
+                self.min_target_object /= self.eval_num
+            elif "DeepMind" in str(self.env):
+                self.success_rate = np.mean(np.array(self.success))
+            self.eval_reward /= self.eval_num
+            eval_epi_length /= self.eval_num
 
-        print("episode_reward", self.eval_reward)
+            print("episode_reward", self.eval_reward)
 
         # learning rate and noise schedule
         if self.need_schedule:
@@ -880,8 +888,7 @@ class EpisodicTD3(BaseAlgorithm):
                 next_actions = (self.actor_target.predict_action_context(next_step, replay_data.next_observations) + noise).clamp(-1, 1)
 
                 # Compute the next Q-values: min over all critics targets
-                next_q_values = th.cat(self.critic_target(replay_data.next_observations, next_actions, (next_step+1)/self.max_episode_steps),
-                                       dim=1)
+                next_q_values = th.cat(self.critic_target(replay_data.next_observations, next_actions, (next_step+1)/self.max_episode_steps), dim=1)
                 next_q_values, _ = th.min(next_q_values, dim=1, keepdim=True)
                 target_q_values = replay_data.rewards + (1 - replay_data.dones) * self.gamma * next_q_values
 
@@ -937,27 +944,32 @@ class EpisodicTD3(BaseAlgorithm):
 
 
         # tensorboard logger
-        logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
-        if len(actor_losses) > 0:
-            logger.record("train/actor_loss", np.mean(actor_losses))
-        logger.record("train/critic_loss", np.mean(critic_losses))
-        logger.record("eval/noise_reward", np.mean(np.array(self.reward_with_noise)))
-        logger.record("train/actor_learning_rate", self.actor_learning_rate)
-        logger.record("train/gradient_steps", gradient_steps)
-        logger.record("train/noise_sigma_action", self.noise_sigma)
-        logger.record("train/noise_sigma_weights", self.weight_noise)
-        logger.record("train/num_basis", self.basis_num)
-        logger.record("eval/mean_reward", self.eval_reward)
-        logger.record("eval/episode_length", eval_epi_length)
-        if "Meta" in str(self.env):
-            logger.record("eval/last_success", self.last_success)
-            logger.record("eval/success_rate", self.success_rate)
-            logger.record("eval/last_object_to_target", self.last_target_object)
-            logger.record("eval/min_object_to_target", self.min_target_object)
-            logger.record("eval/control_cost", self.actor.control_cost)
-        elif "Hopper" in str(self.env):
-            logger.record("eval/max_height", self.max_height)
-            logger.record("eval/min_goal_dist", self.min_goal_dist)
+        if self.eval_numsteps >= 10000:
+            logger.record("train/n_updates", self._n_updates, exclude="tensorboard")
+            if len(actor_losses) > 0:
+                logger.record("train/actor_loss", np.mean(actor_losses))
+            logger.record("train/critic_loss", np.mean(critic_losses))
+            logger.record("eval/noise_reward", np.mean(np.array(self.reward_with_noise)))
+            logger.record("train/actor_learning_rate", self.actor_learning_rate)
+            logger.record("train/gradient_steps", gradient_steps)
+            logger.record("train/noise_sigma_action", self.noise_sigma)
+            logger.record("train/noise_sigma_weights", self.weight_noise)
+            logger.record("train/num_basis", self.basis_num)
+            logger.record("eval/mean_reward", self.eval_reward)
+            logger.record("eval/episode_length", eval_epi_length)
+            self.eval_numsteps = 0
+            if "Meta" in str(self.env):
+                logger.record("eval/last_success", self.last_success)
+                logger.record("eval/success_rate", self.success_rate)
+                logger.record("eval/last_object_to_target", self.last_target_object)
+                logger.record("eval/min_object_to_target", self.min_target_object)
+                logger.record("eval/control_cost", self.actor.control_cost)
+            elif "Hopper" in str(self.env):
+                logger.record("eval/max_height", self.max_height)
+                logger.record("eval/min_goal_dist", self.min_goal_dist)
+            elif "DeepMind" in str(self.env):
+                self.success = []
+                logger.record("eval/success", self.success_rate)
 
     def collect_rollouts_context(self, env: VecEnv, callback: BaseCallback, train_freq: TrainFreq,
                          replay_buffer: ReplayBufferStep, learning_starts: int = 0,

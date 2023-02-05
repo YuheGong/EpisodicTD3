@@ -38,13 +38,13 @@ env = "Meta-dense-coffee-push-v2"
 env = "Meta-dense-soccer-v2"
 env = "Meta-context-dense-faucet-open-v2"
 env = "HopperXYJumpStep-v0"
-#env = "Meta-context-faucet-open-v2"
-#env = "Meta-dense-handle-pull-v2"
-#env = "Meta-context-dense-reach-v2"
+env = "BeerPong-v0"
+env = "DeepMindBallInCupDense-v0"
+
 env_id = env
 
 
-path = "logs/episodic_td3/" + env + "_3"
+path = "logs/episodic_td3/" + env + "_2"
 con = 0
 if int(con) == 1:
     file_name = "context.yml"

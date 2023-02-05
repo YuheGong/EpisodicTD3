@@ -245,11 +245,14 @@ class DetPMPWrapper(ABC):
             if "Hopper" in str(env):
                 self.max_height = info["max_height"]
                 self.min_goal_dist = info["min_goal_dist"]
+            elif "DeepMind" in str(env):
+                self.last_success = info['success']
 
         if hasattr(self.env, "rewards_no_ip"):
             episode_reward = env.rewards_no_ip  # the total reward without initial phase
         else:
             episode_reward = rewards
+
 
         return episode_reward, step_length
 
